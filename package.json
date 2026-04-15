@@ -1,6 +1,10 @@
 {
   "name": "pos-management-software",
   "version": "0.1.0",
+  "author": {
+    "name": "xuantruong",
+    "url": "https://github.com/xuantruong5/FE_Pos_management_software?tab=readme-ov-file"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -15,12 +19,12 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
+    "@types/node": "25.6.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "10.2.0",
     "eslint-config-next": "16.2.3",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "tailwindcss": "4.2.2",
+    "typescript": "6.0.2"
   }
 }
