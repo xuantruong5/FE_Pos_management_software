@@ -1,6 +1,7 @@
 "use client"
 
 import { usePosStore } from "@/store/pos.store"
+import { Clock, TruckElectric, Zap } from "lucide-react"
 
 const Clientfooter = () => {
     const mode = usePosStore((s) => s.mode)
@@ -19,15 +20,15 @@ const Clientfooter = () => {
 
                 <div className="flex gap-3 ml-4">
                     <div onClick={() => setMode("quick")} className={itemClass("quick")}>
-                        ⚡ Bán nhanh
+                        <Zap /> Bán nhanh
                     </div>
 
                     <div onClick={() => setMode("normal")} className={itemClass("normal")}>
-                        ⏱ Bán thường
+                        <Clock /> Bán thường
                     </div>
 
                     <div onClick={() => setMode("delivery")} className={itemClass("delivery")}>
-                        🚚 Giao hàng
+                        <TruckElectric /> Giao hàng
                     </div>
                 </div>
 
