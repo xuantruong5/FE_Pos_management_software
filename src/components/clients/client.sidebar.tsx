@@ -1,7 +1,7 @@
 const ClientSideBar = () => {
     return (
         <div>
-            sidebar
+            {/* sidebar */}
         </div>
     )
 
