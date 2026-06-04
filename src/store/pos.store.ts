@@ -1,40 +1,60 @@
 "use client"
+
 import { create } from "zustand"
 
-type Invoice = {
+export type CartItem = {
     id: number
-    items: any[]
-    total: number
-    orderType: "invoice" | "order"
+    name: string
+    price: number
+    quantity: number
 }
 
-type Mode = "quick" | "normal" | "delivery"
-type OrderType = "invoice" | "order"
+export type OrderType = "invoice" | "order"
+export type Mode = "quick" | "normal" | "delivery"
+
+export type Invoice = {
+    id: number
+    items: CartItem[]
+    total: number
+    orderType: OrderType
+}
 
 type PosState = {
     invoices: Invoice[]
     currentInvoiceId: number | null
     mode: Mode
 
-
-    quantity: number
-    isEditingQty: boolean
-
     addInvoice: () => void
     addOrder: () => void
+    deleteInvoice: (id: number) => void
     switchInvoice: (id: number) => void
-    setMode: (mode: Mode) => void
 
     toggleOrderType: (id: number) => void
-    setQuantity: (q: number) => void
-    setEditingQty: (v: boolean) => void
+    setMode: (mode: Mode) => void
+
+    addProduct: (
+        invoiceId: number,
+        product: Omit<CartItem, "quantity">
+    ) => void
+
+    removeProduct: (
+        invoiceId: number,
+        productId: number
+    ) => void
+
+    updateQuantity: (
+        invoiceId: number,
+        productId: number,
+        quantity: number
+    ) => void
 }
+
 export const usePosStore = create<PosState>((set) => {
-    const firstInvoice = {
+    const firstInvoice: Invoice = {
         id: Date.now(),
         items: [],
         total: 0,
-        orderType: "invoice" as const,
+        orderType: "invoice",
     }
 
     return {
@@ -43,73 +63,196 @@ export const usePosStore = create<PosState>((set) => {
 
         mode: "normal",
 
-        quantity: 0,
-        isEditingQty: false,
-
         addInvoice: () =>
             set((state) => {
-                const newInvoice = {
+                const newInvoice: Invoice = {
                     id: Date.now(),
                     items: [],
                     total: 0,
-                    orderType: "invoice" as const,
+                    orderType: "invoice",
                 }
+
                 return {
                     invoices: [...state.invoices, newInvoice],
                     currentInvoiceId: newInvoice.id,
                 }
             }),
+
         addOrder: () =>
             set((state) => {
-                const newOrder = {
+                const newOrder: Invoice = {
                     id: Date.now(),
                     items: [],
                     total: 0,
-                    orderType: "order" as const,
+                    orderType: "order",
                 }
+
                 return {
                     invoices: [...state.invoices, newOrder],
                     currentInvoiceId: newOrder.id,
                 }
             }),
-        deleteInvoice: (id: number) =>
-            set((state) => {
-                // ❗ luôn giữ ít nhất 1 hóa đơn
-                if (state.invoices.length <= 1) return state
 
-                const newInvoices = state.invoices.filter(inv => inv.id !== id)
+        deleteInvoice: (id) =>
+            set((state) => {
+                if (state.invoices.length <= 1) {
+                    return state
+                }
+
+                const newInvoices = state.invoices.filter(
+                    (inv) => inv.id !== id
+                )
 
                 return {
                     invoices: newInvoices,
-                    currentInvoiceId: newInvoices[0].id,
+                    currentInvoiceId: newInvoices[0]?.id ?? null,
                 }
             }),
-        switchInvoice: (id) =>
-            set(() => ({
-                currentInvoiceId: id,
-            })),
 
-        toggleOrderType: (id: number) =>
+        switchInvoice: (id) =>
+            set({
+                currentInvoiceId: id,
+            }),
+
+        toggleOrderType: (id) =>
             set((state) => ({
-                invoices: state.invoices.map(inv =>
+                invoices: state.invoices.map((inv) =>
                     inv.id === id
                         ? {
-                            ...inv,
-                            orderType: inv.orderType === "invoice" ? "order" : "invoice"
-                        }
+                              ...inv,
+                              orderType:
+                                  inv.orderType === "invoice"
+                                      ? "order"
+                                      : "invoice",
+                          }
                         : inv
-                )
+                ),
             })),
 
-        setQuantity: (q) => set(() => ({ quantity: q })),
+        setMode: (mode) =>
+            set({
+                mode,
+            }),
 
-        setEditingQty: (v) => set(() => ({ isEditingQty: v })),
+        addProduct: (invoiceId, product) =>
+            set((state) => ({
+                invoices: state.invoices.map((inv) => {
+                    if (inv.id !== invoiceId) {
+                        return inv
+                    }
 
-        setMode: (mode) => set(() => ({ mode })),
+                    const exist = inv.items.find(
+                        (item) => item.id === product.id
+                    )
+
+                    if (exist) {
+                        const updatedItems = inv.items.map((item) =>
+                            item.id === product.id
+                                ? {
+                                      ...item,
+                                      quantity:
+                                          item.quantity + 1,
+                                  }
+                                : item
+                        )
+
+                        return {
+                            ...inv,
+                            items: updatedItems,
+                            total: updatedItems.reduce(
+                                (sum, item) =>
+                                    sum +
+                                    item.price *
+                                        item.quantity,
+                                0
+                            ),
+                        }
+                    }
+
+                    const updatedItems = [
+                        ...inv.items,
+                        {
+                            ...product,
+                            quantity: 1,
+                        },
+                    ]
+
+                    return {
+                        ...inv,
+                        items: updatedItems,
+                        total: updatedItems.reduce(
+                            (sum, item) =>
+                                sum +
+                                item.price *
+                                    item.quantity,
+                            0
+                        ),
+                    }
+                }),
+            })),
+
+        removeProduct: (invoiceId, productId) =>
+            set((state) => ({
+                invoices: state.invoices.map((inv) => {
+                    if (inv.id !== invoiceId) {
+                        return inv
+                    }
+
+                    const updatedItems = inv.items.filter(
+                        (item) =>
+                            item.id !== productId
+                    )
+
+                    return {
+                        ...inv,
+                        items: updatedItems,
+                        total: updatedItems.reduce(
+                            (sum, item) =>
+                                sum +
+                                item.price *
+                                    item.quantity,
+                            0
+                        ),
+                    }
+                }),
+            })),
+
+        updateQuantity: (
+            invoiceId,
+            productId,
+            quantity
+        ) =>
+            set((state) => ({
+                invoices: state.invoices.map((inv) => {
+                    if (inv.id !== invoiceId) {
+                        return inv
+                    }
+
+                    const updatedItems = inv.items.map(
+                        (item) =>
+                            item.id === productId
+                                ? {
+                                      ...item,
+                                      quantity:
+                                          quantity < 1
+                                              ? 1
+                                              : quantity,
+                                  }
+                                : item
+                    )
+
+                    return {
+                        ...inv,
+                        items: updatedItems,
+                        total: updatedItems.reduce(
+                            (sum, item) =>
+                                sum +
+                                item.price *
+                                    item.quantity,
+                            0
+                        ),
+                    }
+                }),
+            })),
     }
 })
-
-
-
-
-

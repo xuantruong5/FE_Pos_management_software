@@ -158,3 +158,162 @@
 .custom-tree .ant-tree-list-holder-inner {
     gap: 3px;
 }
+
+
+
+/* quickSale */
+* {
+  box-sizing: border-box;
+}
+
+.quicksale {
+  display: flex;
+  gap: 12px;
+  height: calc(100vh - 70px);
+  padding: 10px;
+  background: #f4f5f7;
+}
+
+/* Bên trái */
+.quicksale-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.product-area {
+  flex: 1;
+  border-radius: 12px;
+}
+
+.note-box {
+  margin-top: 10px;
+  background: white; /* nền xám ngoài */
+  padding: 8px;
+  border-radius: 12px;
+}
+
+.note-box input {
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+  padding: 0 40px; /* chừa chỗ icon */
+  font-size: 15px;
+  outline: none;
+ 
+  color: black;
+}
+
+.note-box input::placeholder {
+  color: black;
+}
+
+/* Bên phải */
+.quicksale-right {
+  width: 420px;
+  min-width: 320px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.customer-search {
+  width: 100%;
+  height: 42px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0 12px;
+}
+
+.summary {
+  margin-top: 20px;
+}
+
+.summary div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.total {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.bank-box {
+  margin-top: 20px;
+  background: #f6f6f6;
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+}
+
+.bank-box button {
+  border: none;
+  background: transparent;
+  color: #1677ff;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.payment-btn {
+  margin-top: auto;
+  height: 56px;
+  border: none;
+  border-radius: 10px;
+  background: #1677ff;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+/* Responsive cho Laptop nhỏ và Mobile */
+/* Laptop nhỏ */
+@media (max-width: 1366px) {
+  .quicksale-right {
+    width: 360px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  .quicksale {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .quicksale-right {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .product-area {
+    min-height: 400px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .quicksale {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .payment-btn {
+    height: 50px;
+    font-size: 16px;
+  }
+
+  .note-box input {
+    height: 48px;
+  }
+}

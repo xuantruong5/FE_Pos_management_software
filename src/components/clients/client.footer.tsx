@@ -19,15 +19,24 @@ const Clientfooter = () => {
             <div className="bg-white  shadow-sm border px-5 py-4 flex items-center justify-between text-lg  ">
 
                 <div className="flex gap-3 ml-4">
-                    <div onClick={() => setMode("quick")} className={itemClass("quick")}>
+                    <div
+                        onClick={() => setMode("quick")}
+                        className={itemClass("quick")}
+                    >
                         <Zap /> Bán nhanh
                     </div>
 
-                    <div onClick={() => setMode("normal")} className={itemClass("normal")}>
+                    <div
+                        onClick={() => setMode("normal")}
+                        className={itemClass("normal")}
+                    >
                         <Clock /> Bán thường
                     </div>
 
-                    <div onClick={() => setMode("delivery")} className={itemClass("delivery")}>
+                    <div
+                        onClick={() => setMode("delivery")}
+                        className={itemClass("delivery")}
+                    >
                         <TruckElectric /> Giao hàng
                     </div>
                 </div>
