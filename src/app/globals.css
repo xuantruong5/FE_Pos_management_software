@@ -169,7 +169,7 @@
 .quicksale {
   display: flex;
   gap: 12px;
-  height: calc(100vh - 70px);
+  height: calc(87vh - 60px);
   padding: 10px;
   background: #f4f5f7;
 }
@@ -211,7 +211,7 @@
 
 /* Bên phải */
 .quicksale-right {
-  width: 420px;
+  width: 490px;
   min-width: 320px;
   background: white;
   border-radius: 12px;
@@ -226,12 +226,44 @@
   margin-bottom: 12px;
 }
 
+.customer-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 .customer-search {
   width: 100%;
   height: 42px;
-  border: 1px solid #ddd;
+  border: none;
   border-radius: 8px;
-  padding: 0 12px;
+  background: #f3f4f6;
+  padding-left: 40px;
+  padding-right: 50px;
+  font-size: 15px;
+  outline: none;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #9ca3af;
+}
+
+.add-customer-btn {
+  position: absolute;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #374151;
 }
 
 .summary {
@@ -276,6 +308,19 @@
   font-weight: 600;
   cursor: pointer;
 }
+.openaddCustomer{
+  width: "32px";
+  height: "32px";
+  borderRadius: "50%";
+  border: "none";
+  background: "#e5e7eb";
+  display: "flex";
+  alignItems: "center";
+  justifyContent: "center";
+  cursor: "pointer",
+                               
+                                
+}
 /* Responsive cho Laptop nhỏ và Mobile */
 /* Laptop nhỏ */
 @media (max-width: 1366px) {
@@ -317,3 +362,8 @@
     height: 48px;
   }
 }
+
+
+
+/* Deliverysale */
+
