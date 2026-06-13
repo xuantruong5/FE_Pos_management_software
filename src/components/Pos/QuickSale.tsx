@@ -41,6 +41,7 @@ const Quicksale = () => {
             onClick={() => setOpenaddCustomer(true)}>
             <Plus size={18} />
           </button>
+          
           {openaddCustomer && (
             <div
               className="fixed inset-0 bg-black/30 flex items-center justify-center z-[9999]"
