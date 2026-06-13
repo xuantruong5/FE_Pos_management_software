@@ -16,16 +16,11 @@ const ClientHeader = () => {
         addOrder,
         invoices,
         currentInvoiceId,
-        quantity,
-        setQuantity,
-        setEditingQty,
         toggleOrderType,
         switchInvoice,
-
-
     } = usePosStore()
 
-    const [tempQty, setTempQty] = useState(quantity.toString())
+    const [tempQty, setTempQty] = useState("1")
     const currentInvoice = invoices.find(inv => inv.id === currentInvoiceId)
 
     const [isEditingBox, setIsEditingBox] = useState(false)
@@ -73,8 +68,7 @@ const ClientHeader = () => {
 
     const handleBlur = () => {
         const num = Number(tempQty)
-        setQuantity(num > 0 ? num : 1)
-        setEditingQty(false)
+        // Quantity handling moved to product management
     }
 
     const handleBoxBlur = () => {
