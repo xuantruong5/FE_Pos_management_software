@@ -1,40 +1,41 @@
 "use client";
-import { Plus, List, Funnel, Image as ImageIcon, Search, Trash2, } from "lucide-react";
+import { Plus, List, Funnel, Image as ImageIcon, Search, Trash2, Minus, MoreVertical, } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Drawer, Input, Tree } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
+import { usePosStore } from "@/store/pos.store";
 
 const products = [
-    { images: "https://cdn.hstatic.net/products/1000193091/ang-ren-thua-vinahardware-wood-screws_437d9b6e5ec448e1aafc27754bbaab35_0f28a25e03d04774af9d23c0f3a8db71.jpg", name: "Vít đầu bằng răng thưa M4", price: "12000" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "Sữa rửa mặt Kose Nhật 220g", price: "95000" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "P/S kem đánh răng trà xanh 180g", price: "35000" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "Lương khô hạt dinh dưỡng 80g", price: "10000" },
-    { images: "michinh.jpg", name: "Mì chính Ajinomoto Nhật 1kg", price: "185000" },
-    { images: "xitvime.jpg", name: "Xịt môi trường Vime Frondog", price: "78000" },
-    { images: "khaydasilicon1.jpg", name: "Khay đá silicon 14 viên", price: "45000" },
-    { images: "mangboc.jpg", name: "Màng bọc thực phẩm PVC", price: "25000" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "Túi thơm Hygiene đen 8ml", price: "32000" },
-    { images: "keosocola.jpg", name: "Kẹo socola sữa Popit", price: "18000" },
-    { images: "nuocnghe.jpg", name: "Nước nghệ Hàn Quốc Curcumin", price: "65000" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "Kẹo thạch Zai Zai", price: "22000" },
-    { images: "satuoi.jpg", name: "Sả tươi 500g", price: "15000" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "Sealect cá ngừ ngâm dầu", price: "42000" },
-    { images: "mauacrylic.jpg", name: "Màu dạ acrylic 60 màu", price: "99000" },
-    { images: "banhbao.jpg", name: "Bánh bao Thọ Phát trái đào", price: "28000" },
-    { images: "khaydasilicon2.jpg", name: "Khay đá silicon 213", price: "50000" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "Sủi cảo tôm thịt Cholimex", price: "55000" },
-    { images: "kiwi.jpg", name: "Kiwi vàng New Zealand 3.5kg", price: "320000" },
-    { images: "suadac.jpg", name: "Sữa đặc Ông Thọ trắng", price: "29000" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "Kẹo dẻo cốt trái cây xoài", price: "27000" },
-    { images: "coca.jpg", name: "Coca Cola lon 330ml", price: "12000" },
-    { images: "pepsi.jpg", name: "Pepsi chai 1.5L", price: "18000" },
-    { images: "banhquy.jpg", name: "Bánh quy bơ hộp thiếc", price: "89000" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "Cà phê hòa tan G7", price: "45000" },
-    { images: "traxanh.jpg", name: "Trà xanh đóng chai 500ml", price: "10000" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "Nước suối Aquafina", price: "8000" },
-    { images: "mytom.jpg", name: "Mì tôm Hảo Hảo", price: "4500" },
-    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", name: "Dầu ăn Simply 1L", price: "52000" },
-    { images: "duong.jpg", name: "Đường trắng Biên Hòa 1kg", price: "24000" }
+    { images: "https://cdn.hstatic.net/products/1000193091/ang-ren-thua-vinahardware-wood-screws_437d9b6e5ec448e1aafc27754bbaab35_0f28a25e03d04774af9d23c0f3a8db71.jpg", ma: "555532839283", name: "Vít đầu bằng răng thưa M4", price: "12000" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "Sữa rửa mặt Kose Nhật 220g", price: "95000" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "P/S kem đánh răng trà xanh 180g", price: "35000" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "Lương khô hạt dinh dưỡng 80g", price: "10000" },
+    { images: "michinh.jpg", ma: "555532839283", name: "Mì chính Ajinomoto Nhật 1kg", price: "185000" },
+    { images: "xitvime.jpg", ma: "555532839283", name: "Xịt môi trường Vime Frondog", price: "78000" },
+    { images: "khaydasilicon1.jpg", ma: "555532839283", name: "Khay đá silicon 14 viên", price: "45000" },
+    { images: "mangboc.jpg", ma: "555532839283", name: "Màng bọc thực phẩm PVC", price: "25000" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "Túi thơm Hygiene đen 8ml", price: "32000" },
+    { images: "keosocola.jpg", ma: "555532839283", name: "Kẹo socola sữa Popit", price: "18000" },
+    { images: "nuocnghe.jpg", ma: "555532839283", name: "Nước nghệ Hàn Quốc Curcumin", price: "65000" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "Kẹo thạch Zai Zai", price: "22000" },
+    { images: "satuoi.jpg", ma: "555532839283", name: "Sả tươi 500g", price: "15000" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "Sealect cá ngừ ngâm dầu", price: "42000" },
+    { images: "mauacrylic.jpg", ma: "555532839283", name: "Màu dạ acrylic 60 màu", price: "99000" },
+    { images: "banhbao.jpg", ma: "555532839283", name: "Bánh bao Thọ Phát trái đào", price: "28000" },
+    { images: "khaydasilicon2.jpg", ma: "555532839283", name: "Khay đá silicon 213", price: "50000" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "Sủi cảo tôm thịt Cholimex", price: "55000" },
+    { images: "kiwi.jpg", ma: "555532839283", name: "Kiwi vàng New Zealand 3.5kg", price: "320000" },
+    { images: "suadac.jpg", ma: "555532839283", name: "Sữa đặc Ông Thọ trắng", price: "29000" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "Kẹo dẻo cốt trái cây xoài", price: "27000" },
+    { images: "coca.jpg", ma: "555532839283", name: "Coca Cola lon 330ml", price: "12000" },
+    { images: "pepsi.jpg", ma: "555532839283", name: "Pepsi chai 1.5L", price: "18000" },
+    { images: "banhquy.jpg", ma: "555532839283", name: "Bánh quy bơ hộp thiếc", price: "89000" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "Cà phê hòa tan G7", price: "45000" },
+    { images: "traxanh.jpg", ma: "555532839283", name: "Trà xanh đóng chai 500ml", price: "10000" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "Nước suối Aquafina", price: "8000" },
+    { images: "mytom.jpg", ma: "555532839283", name: "Mì tôm Hảo Hảo", price: "4500" },
+    { images: "https://wowmart.vn/wp-content/uploads/2015/07/sua-rua-mat-lam-trang-da-kose-softymo-white-nhat-ban-190g-220g-knc.jpg", ma: "555532839283", name: "Dầu ăn Simply 1L", price: "52000" },
+    { images: "duong.jpg", ma: "555532839283", name: "Đường trắng Biên Hòa 1kg", price: "24000" }
 ];
 
 const treeData = [
@@ -420,6 +421,40 @@ const Normalsale = () => {
 
     const allKeys = getAllKeys(treeData).filter((k) => k !== "0"); // cua loc
 
+
+    const addProduct = usePosStore((s) => s.addProduct); // chọn sản phẩm 
+    const currentInvoiceId = usePosStore(
+        (s) => s.currentInvoiceId
+    ); // chọn sản phẩm 
+
+    const invoices = usePosStore((s) => s.invoices);
+
+    const currentInvoice = invoices.find(
+        (inv) => inv.id === currentInvoiceId
+    );
+    const {
+        removeProduct,
+        updateQuantity,
+    } = usePosStore();
+
+
+
+    const [openMenu, setOpenMenu] = useState<number | null>(null); // của danh sách đơn hàng chọn 
+    const [showNote, setShowNote] = useState<number[]>([]);
+    const [focusId, setFocusId] = useState<number | null>(null); // hiệu ứng note
+
+
+    const [openDetail, setOpenDetail] = useState(false); // chi tiết 
+    const [selectedItem, setSelectedItem] = useState<any>(null);
+    const [detailQty, setDetailQty] = useState(1); // chi tiết 
+
+    const totalQuantity =
+        currentInvoice?.items.reduce(
+            (sum, item) => sum + item.quantity,
+            0
+        ) || 0; // tổng số lượng sản phẩm trong hóa đơn
+
+
     return (
         <div
             style={{
@@ -443,13 +478,627 @@ const Normalsale = () => {
                 <div
                     style={{
                         flex: 1,
-                        // background: "#fff",
+                        background: "#fff",
                         borderRadius: "12px",
                         padding: "16px",
-                        // boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                     }}
                 >
-                    Danh sách sản phẩm đã chọn
+                    {currentInvoice?.items.map((item, index) => (
+                        <div
+                            key={item.id}
+                            style={{
+                                background: "#fff",
+                                border: "1px solid #dcdfe4",
+                                borderRadius: "16px",
+                                padding: "14px 18px",
+                                marginBottom: "12px",
+                                boxShadow:
+                                    "0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06)",
+                            }}
+                        >
+                            {/* Dòng trên */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "16px",
+                                    }}
+                                >
+
+                                    <span
+                                        style={{
+                                            minWidth: "20px",
+                                            fontSize: "19px",
+                                        }}
+                                    >
+                                        {index + 1}
+                                    </span>
+
+                                    {/* Xóa */}
+                                    <button
+                                        onClick={() =>
+                                            removeProduct(currentInvoice.id, item.id)
+                                        }
+                                        style={{
+                                            border: "none",
+                                            background: "transparent",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        <Trash2 size={25} />
+                                    </button>
+
+                                    {/* Mã SP */}
+                                    <span
+                                        style={{
+                                            minWidth: "120px",
+                                            fontSize: "19px",
+                                        }}
+                                    >
+                                        {item.ma}
+                                    </span>
+
+                                    {/* Tên SP */}
+                                    <span
+                                        style={{
+                                            fontSize: "19px",
+                                            paddingLeft: "30px",
+                                        }}
+                                    >
+                                        {item.name}
+                                    </span>
+                                </div>
+
+                                {/* Icon bên phải */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "12px",
+                                        position: "relative",
+                                    }}
+                                >
+                                    <Plus
+                                        size={20}
+                                        style={{ cursor: "pointer" }}
+                                    />
+                                    <div style={{ position: "relative" }}>
+                                        <button
+                                            onClick={() =>
+                                                setOpenMenu(
+                                                    openMenu === item.id ? null : item.id
+                                                )
+                                            }
+                                            style={{
+                                                width: "32px",
+                                                height: "32px",
+                                                borderRadius: "50%",
+                                                border: "none",
+                                                background:
+                                                    openMenu === item.id
+                                                        ? "#e5e7eb"
+                                                        : "transparent",
+                                                cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <MoreVertical size={20} />
+                                        </button>
+
+                                        {openMenu === item.id && (
+                                            <div
+                                                style={{
+                                                    position: "absolute",
+                                                    top: "40px",
+                                                    right: 0,
+                                                    background: "#fff",
+                                                    borderRadius: "12px",
+                                                    minWidth: "180px",
+                                                    boxShadow:
+                                                        "0 4px 12px rgba(0,0,0,0.15)",
+                                                    padding: "8px 0",
+                                                    zIndex: 1000,
+                                                }}
+                                            >
+                                                <div
+                                                    onClick={() => {
+                                                        setShowNote((prev) =>
+                                                            prev.includes(item.id)
+                                                                ? prev.filter((id) => id !== item.id)
+                                                                : [...prev, item.id]
+                                                        );
+
+                                                        setOpenMenu(null);
+                                                    }}
+                                                    style={{
+                                                        padding: "12px 16px",
+                                                        cursor: "pointer",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        gap: "12px",
+                                                    }}
+                                                >
+                                                    ✏️ <span>Ghi chú</span>
+                                                </div>
+
+
+
+                                                <div
+                                                    onClick={() => {
+                                                        setSelectedItem(item);
+                                                        setDetailQty(item.quantity);
+                                                        setOpenDetail(true);
+                                                        setOpenMenu(null);
+                                                    }}
+                                                    style={{
+                                                        padding: "12px 16px",
+                                                        cursor: "pointer",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        gap: "12px",
+                                                    }}
+                                                >
+                                                    ℹ️ <span>Xem chi tiết</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {openDetail && selectedItem && (
+                                            <div
+                                                onClick={() => setOpenDetail(false)}
+                                                style={{
+                                                    position: "fixed",
+                                                    inset: 0,
+                                                    background: "rgba(0,0,0,0.3)",
+                                                    zIndex: 9999,
+                                                    display: "flex",
+                                                    justifyContent: "flex-end",
+                                                }}
+                                            >
+                                                <div
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    style={{
+                                                        width: "1000px",
+                                                        height: "100vh",
+                                                        background: "#fff",
+                                                        overflowY: "auto",
+                                                        overflow: "hidden",
+                                                        boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+                                                    }}
+                                                >
+                                                    {/* Header */}
+                                                    <div
+                                                        style={{
+                                                            padding: "20px 40px",
+                                                            borderBottom: "1px solid #eee",
+                                                            display: "flex",
+                                                            justifyContent: "space-between",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        <h2
+                                                            style={{
+                                                                margin: 0,
+                                                                fontSize: "30px",
+                                                                fontWeight: 600,
+                                                            }}
+                                                        >
+                                                            {selectedItem.name}
+                                                        </h2>
+
+                                                        <button
+                                                            onClick={() => setOpenDetail(false)}
+                                                            className="text-3xl text-gray-500 hover:text-black 
+                                                                text-3xl
+                                                                text-gray-500
+                                                                hover:text-red-500
+                                                                hover:rotate-90
+                                                                transition-all
+                                                                duration-300"
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </div>
+
+                                                    {/* Nội dung */}
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            gap: "40px",
+                                                            padding: "0 40px",
+                                                            borderBottom: "1px solid #eee",
+                                                        }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                padding: "16px 0",
+                                                                color: "#1677ff",
+                                                                borderBottom: "2px solid #1677ff",
+                                                                fontWeight: 600,
+                                                            }}
+                                                        >
+                                                            Thông tin chung
+                                                        </div>
+                                                        <div
+                                                            style={{
+                                                                padding: "16px 0",
+                                                                color: "#999",
+                                                            }}
+                                                        >
+                                                            Mô tả chi tiết
+                                                        </div>
+                                                    </div>
+                                                    <div style={{
+                                                        display: "flex",
+                                                        gap: "50px",
+                                                        padding: "40px",
+                                                        minHeight: "500px",
+                                                    }} >
+                                                        <div style={{
+                                                            width: "320px",
+                                                            textAlign: "center",
+                                                        }}>
+                                                            <img
+                                                                src={selectedItem.images}
+                                                                alt={selectedItem.name}
+                                                                style={{
+                                                                    width: "100%",
+                                                                    objectFit: "contain",
+                                                                }}
+                                                            />
+                                                            <div
+                                                                style={{
+                                                                    marginTop: "20px",
+                                                                    fontSize: "12px",
+                                                                    color: "#999",
+                                                                }}
+                                                            >
+                                                                {selectedItem.ma}
+                                                            </div>
+                                                        </div>
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                gap: "30px",
+                                                                marginBottom: "30px",
+                                                            }}>
+                                                                <span
+                                                                    style={{
+                                                                        fontSize: "20px",
+                                                                        fontWeight: 600,
+                                                                    }}
+                                                                >
+                                                                    Giá bán:
+                                                                </span>
+                                                                <span
+                                                                    style={{
+                                                                        color: "#1677ff",
+                                                                        fontSize: "25px",
+                                                                        fontWeight: 700,
+                                                                    }}
+                                                                >
+                                                                    {selectedItem.price.toLocaleString()}
+                                                                </span>
+                                                            </div>
+                                                            <div
+                                                                style={{
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    gap: "15px",
+                                                                    marginBottom: "40px",
+                                                                }}
+                                                            >
+                                                                <span
+                                                                    style={{
+                                                                        width: "100px",
+                                                                        fontWeight: 600,
+                                                                    }}
+                                                                >
+                                                                    Số lượng:
+                                                                </span>
+
+                                                                <button
+                                                                    onClick={() => {
+                                                                        if (detailQty > 1) {
+                                                                            setDetailQty(detailQty - 1);
+                                                                        }
+                                                                    }}
+                                                                    style={{
+                                                                        width: "36px",
+                                                                        height: "36px",
+                                                                        borderRadius: "50%",
+                                                                        border: "1px solid #ddd",
+                                                                        background: "#f5f5f5",
+                                                                        cursor: "pointer",
+                                                                    }}
+                                                                >
+                                                                    -
+                                                                </button>
+
+                                                                <input
+                                                                    value={detailQty}
+                                                                    readOnly
+                                                                    style={{
+                                                                        width: "60px",
+                                                                        textAlign: "center",
+                                                                        border: "none",
+                                                                        borderBottom: "1px solid #ddd",
+                                                                        fontSize: "18px",
+                                                                    }}
+                                                                />
+
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setDetailQty(detailQty + 1);
+                                                                    }}
+                                                                    style={{
+                                                                        width: "36px",
+                                                                        height: "36px",
+                                                                        borderRadius: "50%",
+                                                                        border: "1px solid #ddd",
+                                                                        background: "#f5f5f5",
+                                                                        cursor: "pointer",
+                                                                    }}
+                                                                >
+                                                                    +
+                                                                </button>
+
+                                                                <span>
+                                                                    <b>Tồn:</b> {selectedItem.stock || 20}
+                                                                </span>
+
+                                                                <span
+                                                                    style={{
+                                                                        color: "#ddd",
+                                                                    }}
+                                                                >
+                                                                    |
+                                                                </span>
+
+                                                                <span>
+                                                                    <b>Có thể bán:</b>{" "}
+                                                                    {selectedItem.available || 20}
+                                                                </span>
+                                                            </div>
+                                                            <div
+                                                                style={{
+                                                                    padding: "16px 0",
+                                                                    borderBottom: "1px dashed #ddd",
+                                                                    display: "flex",
+                                                                }}
+                                                            >
+                                                                <div
+                                                                    style={{
+                                                                        width: "120px",
+                                                                        fontWeight: 600,
+                                                                    }}
+                                                                >
+                                                                    Thương hiệu:
+                                                                </div>
+
+                                                                <div>{selectedItem.brand || ""}</div>
+                                                            </div>
+                                                            <div
+                                                                style={{
+                                                                    padding: "16px 0",
+                                                                    borderBottom: "1px dashed #ddd",
+                                                                    display: "flex",
+                                                                }}
+                                                            >
+                                                                <div
+                                                                    style={{
+                                                                        width: "120px",
+                                                                        fontWeight: 600,
+                                                                    }}
+                                                                >
+                                                                    Vị trí:
+                                                                </div>
+
+                                                                <div>{selectedItem.location || ""}</div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            borderTop: "1px solid #eee",
+                                                            padding: "20px 40px",
+                                                            display: "flex",
+                                                            justifyContent: "flex-end",
+                                                            gap: "15px",
+                                                        }}
+                                                    >
+                                                        <button
+                                                            onClick={() => setOpenDetail(false)}
+                                                            style={{
+                                                                padding: "12px 30px",
+                                                                border: "1px solid #1677ff",
+                                                                background: "#fff",
+                                                                color: "#1677ff",
+                                                                borderRadius: "8px",
+                                                                cursor: "pointer",
+                                                            }}
+                                                        >
+                                                            Bỏ qua
+                                                        </button>
+
+                                                        <button
+                                                            onClick={() => {
+                                                                updateQuantity(
+                                                                    currentInvoice.id,
+                                                                    selectedItem.id,
+                                                                    detailQty
+                                                                );
+
+                                                                setOpenDetail(false);
+                                                            }}
+                                                            style={{
+                                                                padding: "12px 40px",
+                                                                border: "none",
+                                                                background: "#1677ff",
+                                                                color: "#fff",
+                                                                borderRadius: "8px",
+                                                                cursor: "pointer",
+                                                            }}
+                                                        >
+                                                            Xong
+                                                        </button>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Dòng dưới */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    marginTop: "12px",
+                                    paddingLeft: "80px",
+                                }}
+                            >
+                                {/* Số lượng */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "16px",
+                                        padding: "8px 12px",
+                                        borderRadius: "6px",
+                                        width: "fit-content",
+                                    }}
+                                >
+                                    <button
+                                        onClick={() =>
+                                            updateQuantity(
+                                                currentInvoice.id,
+                                                item.id,
+                                                item.quantity - 1
+                                            )
+                                        }
+                                        style={{
+                                            width: "32px",
+                                            height: "32px",
+                                            borderRadius: "50%",
+                                            border: "none",
+                                            background: "#e5e7eb",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        <Minus size={16} color="#666" />
+                                    </button>
+
+                                    <span
+                                        style={{
+                                            minWidth: "40px",
+                                            textAlign: "center",
+                                            fontSize: "18px",
+                                            borderBottom: "1px solid #d1d5db",
+                                            paddingBottom: "2px",
+                                        }}
+                                    >
+                                        {item.quantity}
+                                    </span>
+
+                                    <button
+                                        onClick={() =>
+                                            updateQuantity(
+                                                currentInvoice.id,
+                                                item.id,
+                                                item.quantity + 1
+                                            )
+                                        }
+                                        style={{
+                                            width: "32px",
+                                            height: "32px",
+                                            borderRadius: "50%",
+                                            border: "none",
+                                            background: "#e5e7eb",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        <Plus size={16} color="#666" />
+                                    </button>
+                                </div>
+
+                                {/* Giá */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "80px",
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            minWidth: "90px",
+                                            textAlign: "right",
+                                        }}
+                                    >
+                                        {item.price.toLocaleString()}
+                                    </span>
+
+                                    <strong
+                                        style={{
+                                            minWidth: "90px",
+                                            textAlign: "right",
+                                        }}
+                                    >
+                                        {(item.price * item.quantity).toLocaleString()}
+                                    </strong>
+                                </div>
+
+                            </div>
+                            {showNote.includes(item.id) && (
+                                <div
+                                    style={{
+                                        marginTop: "20px",
+                                        paddingLeft: "80px",
+
+                                    }}
+                                >
+                                    <input
+                                        type="text"
+                                        placeholder="Ghi chú..."
+                                        onFocus={() => setFocusId(item.id)}
+                                        onBlur={() => setFocusId(null)}
+                                        style={{
+                                            width: "100%",
+                                            padding: "12px",
+                                            border:
+                                                focusId === item.id
+                                                    ? "1px solid #3b82f6"
+                                                    : "none",
+
+                                            borderRadius: "8px",
+                                            outline: "none",
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
 
                 {/* Card 2 */}
@@ -481,13 +1130,33 @@ const Normalsale = () => {
                         style={{
                             display: "flex",
                             alignItems: "center",
-                            gap: "12px",
-                            minWidth: "280px",
-                            justifyContent: "space-between",
+                            gap: "30px",
+                            minWidth: "350px",
+                            justifyContent: "flex-end",
                         }}
                     >
                         <span>Tổng tiền hàng</span>
-                        <span style={{ fontWeight: "bold" }}>0 ₫</span>
+
+                        <span
+                            style={{
+                                minWidth: "30px",
+                                textAlign: "center",
+                                fontSize: "20px",
+                            }}
+                        >
+                            {totalQuantity}
+                        </span>
+
+                        <span
+                            style={{
+                                minWidth: "120px",
+                                textAlign: "right",
+                                fontWeight: 700,
+                                fontSize: "25px",
+                            }}
+                        >
+                            {currentInvoice?.total.toLocaleString()} ₫
+                        </span>
                     </div>
                 </div>
             </div>
@@ -1285,6 +1954,15 @@ const Normalsale = () => {
                     >
                         {currentProducts.map((item, index) => (
                             <div key={index}
+                                onClick={() =>
+                                    addProduct(currentInvoiceId!, {
+                                        id: index + 1,
+                                        ma: item.ma,
+                                        name: item.name,
+                                        price: Number(item.price),
+                                        images: item.images,
+                                    })
+                                }
                                 style={{
 
                                     padding: "10px",

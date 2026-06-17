@@ -5,8 +5,10 @@ import { create } from "zustand"
 export type CartItem = {
     id: number
     name: string
+    ma: string
     price: number
     quantity: number
+    images:string
 }
 
 export type OrderType = "invoice" | "order"

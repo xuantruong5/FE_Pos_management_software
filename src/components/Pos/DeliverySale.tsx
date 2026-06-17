@@ -1,4 +1,5 @@
 "use client";
+import { usePosStore } from "@/store/pos.store";
 import { Pencil, Search, Plus, ChevronDown, MapPin, Package, Truck, Trash2, } from "lucide-react";
 import { useState } from "react";
 const Deliverysale = () => {
@@ -58,10 +59,59 @@ const Deliverysale = () => {
 
 
 
+
+    const addProduct = usePosStore((s) => s.addProduct); // chọn sản phẩm 
+    const currentInvoiceId = usePosStore(
+        (s) => s.currentInvoiceId
+    );
+
+    const invoices = usePosStore((s) => s.invoices);
+
+    const currentInvoice = invoices.find(
+        (inv) => inv.id === currentInvoiceId
+    );
+
+
     return (
         <div className="delivery-sale">
             <div className="delivery-left">
-                <div className="product-area"></div>
+                <div
+                    style={{
+                        flex: 1,
+                        borderRadius: "12px",
+                        padding: "16px",
+                        background: "#fff",
+                    }}
+                >
+                    {/* <h3>Danh sách sản phẩm đã chọn</h3> */}
+
+                    {currentInvoice?.items.length === 0 && (
+                        <p>Chưa có sản phẩm</p>
+                    )}
+
+                    {currentInvoice?.items.map((item) => (
+                        <div
+                            key={item.id}
+                            style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0",
+                                borderBottom: "1px solid #eee",
+                            }}
+                        >
+                            <div>
+                                {item.name} x {item.quantity}
+                            </div>
+
+                            <div>
+                                {(
+                                    item.price * item.quantity
+                                ).toLocaleString()}
+                                ₫
+                            </div>
+                        </div>
+                    ))}
+                </div>
                 <div className="order-footer">
                     <div className="note">
                         <Pencil size={18} />
@@ -1034,14 +1084,12 @@ const Deliverysale = () => {
 
                         <button
                             onClick={() => setCodEnabled(!codEnabled)}
-                            className={`w-12 h-6 rounded-full relative transition-all ${
-                                codEnabled ? "bg-blue-500" : "bg-gray-300"
-                            }`}
+                            className={`w-12 h-6 rounded-full relative transition-all ${codEnabled ? "bg-blue-500" : "bg-gray-300"
+                                }`}
                         >
                             <div
-                                className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all ${
-                                    codEnabled ? "left-6" : "left-0.5"
-                                }`}
+                                className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all ${codEnabled ? "left-6" : "left-0.5"
+                                    }`}
                             />
                         </button>
                     </div>

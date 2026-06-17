@@ -3,17 +3,63 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Search, Plus } from "lucide-react";
+import { usePosStore } from "@/store/pos.store";
 const Quicksale = () => {
   const [openaddCustomer, setOpenaddCustomer] = useState(false);
   const [activeTab, setActiveTab] = useState<"general" | "invoice">("general");
   const [avatar, setAvatar] = useState<string | null>(null);
   const [taxCode, setTaxCode] = useState("");
+
+  const addProduct = usePosStore((s) => s.addProduct); // chọn sản phẩm 
+  const currentInvoiceId = usePosStore(
+    (s) => s.currentInvoiceId
+  );
+
+  const invoices = usePosStore((s) => s.invoices);
+
+  const currentInvoice = invoices.find(
+    (inv) => inv.id === currentInvoiceId
+  );
   return (
     <div className="quicksale">
       {/* Khu vực sản phẩm */}
       <div className="quicksale-left">
-        <div className="product-area">
-          {/* Danh sách sản phẩm */}
+        <div
+          style={{
+            flex: 1,
+            borderRadius: "12px",
+            padding: "16px",
+            background: "#fff",
+          }}
+        >
+          {/* <h3>Danh sách sản phẩm đã chọn</h3> */}
+
+          {currentInvoice?.items.length === 0 && (
+            <p>Chưa có sản phẩm</p>
+          )}
+
+          {currentInvoice?.items.map((item) => (
+            <div
+              key={item.id}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "8px 0",
+                borderBottom: "1px solid #eee",
+              }}
+            >
+              <div>
+                {item.name} x {item.quantity}
+              </div>
+
+              <div>
+                {(
+                  item.price * item.quantity
+                ).toLocaleString()}
+                ₫
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="note-box">
@@ -41,7 +87,7 @@ const Quicksale = () => {
             onClick={() => setOpenaddCustomer(true)}>
             <Plus size={18} />
           </button>
-          
+
           {openaddCustomer && (
             <div
               className="fixed inset-0 bg-black/30 flex items-center justify-center z-[9999]"
