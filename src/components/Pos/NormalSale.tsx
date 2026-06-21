@@ -1,8 +1,18 @@
 "use client";
-import { Plus, List, Funnel, Image as ImageIcon, Search, Trash2, Minus, MoreVertical, } from "lucide-react";
+import { Plus, List, Funnel, Image as ImageIcon, Search, Trash2, Minus, MoreVertical, ChevronDown, Check, ShoppingCart, } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Drawer, Input, Tree } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
+import DirectionsRunOutlinedIcon from '@mui/icons-material/DirectionsRunOutlined';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import {
+    Radio,
+    RadioGroup,
+    FormControlLabel,
+    IconButton,
+} from "@mui/material";
+
 import { usePosStore } from "@/store/pos.store";
 
 const products = [
@@ -347,6 +357,15 @@ const treeData = [
         ],
     },
 ];
+const sellers = [
+    "tramy",
+    "Hoàng - Kinh Doanh",
+    "Hương - Kế Toán",
+];
+const salesTypes = [
+    "👨‍💼 Bán Hàng Trực Tiếp",
+    "🛒 Bán Hàng Online",
+];
 
 
 const Normalsale = () => {
@@ -448,11 +467,39 @@ const Normalsale = () => {
     const [selectedItem, setSelectedItem] = useState<any>(null);
     const [detailQty, setDetailQty] = useState(1); // chi tiết 
 
+    const [openPayment, setOpenPayment] = useState(false); // thanh toán 
+    const [showSellerDropdown, setShowSellerDropdown] = useState(false);// mo cho nguoi ban
+    const [selectedSeller, setSelectedSeller] = useState("tramy"); // mo cho nguoi ban 
+    const [showPaymentDropdown, setShowPaymentDropdown] = useState(false); // cho ban truc tiep hay gian tiep 
+    const [selectedSalesType, setSelectedSalesType] = useState(null);// cho ban truc tiep hay gian tiep 
+    const [showChannelModal, setShowChannelModal] = useState(false);
+
+    const [currentTime, setCurrentTime] = useState(new Date()); // lấy ngày giờ
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []); // lấy ngày giờ 
+
+    const formattedDateTime = currentTime.toLocaleString("vi-VN", { // format lại 
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+
+
+
     const totalQuantity =
         currentInvoice?.items.reduce(
             (sum, item) => sum + item.quantity,
             0
         ) || 0; // tổng số lượng sản phẩm trong hóa đơn
+
+
 
 
     return (
@@ -1937,6 +1984,28 @@ const Normalsale = () => {
                     />
                 </div>
 
+                {/* <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px"
+                }}
+            >
+                    <div style={{
+                        padding: "8px 12px",
+                        background: "#f3f4f6",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    
+
+                    </div>
+
+                </div> */}
+
 
 
                 <div
@@ -2057,6 +2126,7 @@ const Normalsale = () => {
 
                     {/* Button thanh toán */}
                     <button
+                        onClick={() => setOpenPayment(true)}
                         style={{
                             flex: 1,
                             maxWidth: "500px",
@@ -2073,6 +2143,687 @@ const Normalsale = () => {
                         THANH TOÁN
                     </button>
                 </div>
+                {openPayment && (
+                    <div
+                        // onClick={() => setOpenPayment(false)}
+                        style={{
+                            position: "fixed",
+                            inset: 0,
+                            background: "rgba(0,0,0,0.3)",
+                            zIndex: 9999,
+                            display: "flex",
+                            justifyContent: "flex-end",
+                        }}
+                    >
+                        <div
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                                width: "560px",
+                                height: "100vh",
+                                background: "#fff",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            {/* Header */}
+                            <div
+                                style={{
+                                    padding: "18px 24px",
+                                    borderBottom: "1px dashed #ddd",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <div style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "12px",
+                                }}
+                                >
+                                    <div style={{
+                                        position: "relative",
+                                    }}>
+                                        <div
+                                            onClick={() => setShowSellerDropdown(!showSellerDropdown)}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "6px",
+                                                cursor: "pointer",
+                                                padding: "8px 12px",
+                                                background: "#f3f4f6",
+                                                borderRadius: "8px",
+                                            }}
+                                        >
+
+
+                                            <span style={{ fontSize: "15px" }}>
+                                                {selectedSeller}
+                                            </span>
+                                            <ChevronDown
+                                                size={16}
+                                                color="#666"
+                                            />
+                                        </div>
+                                        {showSellerDropdown && (
+                                            <div
+                                                style={{
+                                                    position: "absolute",
+                                                    top: "110%",
+                                                    left: 0,
+                                                    width: "260px",
+                                                    background: "#fff",
+                                                    borderRadius: "8px",
+                                                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                                                    padding: "10px",
+                                                    zIndex: 1000,
+                                                }}
+                                            >
+                                                {/* Search */}
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        border: "1px solid #d1d5db",
+                                                        borderRadius: "6px",
+                                                        padding: "8px",
+                                                        marginBottom: "10px",
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Tìm người bán"
+                                                        style={{
+                                                            flex: 1,
+                                                            border: "none",
+                                                            outline: "none",
+                                                        }}
+                                                    />
+                                                    <Search size={18} color="#666" />
+                                                </div>
+
+                                                {/* Danh sách */}
+                                                {sellers.map((seller) => (
+                                                    <div
+                                                        key={seller}
+                                                        onClick={() => {
+                                                            setSelectedSeller(seller);
+                                                            setShowSellerDropdown(false);
+                                                        }}
+                                                        style={{
+                                                            display: "flex",
+                                                            justifyContent: "space-between",
+                                                            alignItems: "center",
+                                                            padding: "12px",
+                                                            borderRadius: "6px",
+                                                            cursor: "pointer",
+                                                            background:
+                                                                selectedSeller === seller
+                                                                    ? "#dbeafe"
+                                                                    : "transparent",
+                                                        }}
+                                                    >
+                                                        <span>{seller}</span>
+
+                                                        {selectedSeller === seller && (
+                                                            <Check size={18} color="#2563eb" />
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                    </div>
+                                    <div style={{
+                                        position: "relative",
+                                    }}>
+                                        <div
+                                            onClick={() => setShowPaymentDropdown(!showPaymentDropdown)}
+                                            style={{
+                                                display: "flex",
+                                                gap: "6px",
+                                                cursor: "pointer",
+                                                padding: "8px 12px",
+                                                background: "#f3f4f6",
+                                                borderRadius: "8px",
+                                            }}
+                                        >
+                                            <DirectionsRunOutlinedIcon />
+
+                                            <ChevronDown
+                                                size={16}
+                                                color="#666"
+                                            />
+                                        </div>
+                                        {showPaymentDropdown && (
+                                            <div
+                                                style={{
+                                                    position: "absolute",
+                                                    top: "110%",
+                                                    left: 0,
+                                                    width: "260px",
+                                                    background: "#fff",
+                                                    borderRadius: "8px",
+                                                    boxShadow:
+                                                        "0 4px 12px rgba(0,0,0,0.15)",
+                                                    padding: "10px",
+                                                    zIndex: 1000,
+                                                }}
+                                            >
+                                                {/* Search */}
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        border: "1px solid #d1d5db",
+                                                        borderRadius: "6px",
+                                                        padding: "8px",
+                                                        marginBottom: "10px",
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Tìm kênh bán"
+                                                        style={{
+                                                            flex: 1,
+                                                            border: "none",
+                                                            outline: "none",
+                                                        }}
+                                                    />
+                                                    <Search size={18} color="#666" />
+                                                </div>
+
+                                                {salesTypes.map((type) => (
+                                                    <div
+                                                        key={type}
+                                                        onClick={() => {
+                                                            setSelectedSalesType(type);
+                                                            setShowPaymentDropdown(false);
+                                                        }}
+                                                        style={{
+                                                            display: "flex",
+                                                            justifyContent: "space-between",
+                                                            alignItems: "center",
+                                                            padding: "12px",
+                                                            borderRadius: "6px",
+                                                            cursor: "pointer",
+                                                            background:
+                                                                selectedSalesType === type
+                                                                    ? "#dbeafe"
+                                                                    : "transparent",
+                                                        }}
+                                                    >
+                                                        <span>{type}</span>
+
+
+                                                        {selectedSalesType === type && (
+                                                            <Check
+                                                                size={18}
+                                                                color="#2563eb"
+                                                            />
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                <div
+                                                    onClick={() => {
+                                                        setShowChannelModal(true);
+                                                        setShowPaymentDropdown(false);
+                                                    }}
+                                                    style={{
+                                                        marginTop: "10px",
+                                                        padding: "12px",
+                                                        textAlign: "center",
+                                                        background: "#f3f4f6",
+                                                        borderRadius: "6px",
+                                                        cursor: "pointer",
+                                                        fontWeight: 500,
+                                                    }}
+                                                >
+                                                    + Thêm kênh bán
+                                                </div>
+
+
+                                            </div>
+
+                                        )}
+                                    </div>
+                                    {showChannelModal && (
+                                        <div
+                                            style={{
+                                                position: "fixed",
+                                                inset: 0,
+                                                background: "rgba(0,0,0,0.45)",
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                zIndex: 9999,
+                                            }}
+                                        >
+                                            <div
+                                                style={{
+                                                    width: "640px",
+                                                    background: "#fff",
+                                                    borderRadius: "20px",
+                                                    padding: "28px 36px",
+                                                    position: "relative",
+                                                    boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+                                                }}
+                                            >
+                                                {/* Nút đóng */}
+                                                <button
+                                                    onClick={() => setShowChannelModal(false)}
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: "16px",
+                                                        right: "20px",
+                                                        border: "none",
+                                                        background: "transparent",
+                                                        fontSize: "34px",
+                                                        color: "#8c8c8c",
+                                                        cursor: "pointer",
+                                                        lineHeight: 1,
+                                                    }}
+                                                >
+                                                    ×
+                                                </button>
+
+                                                {/* Tiêu đề */}
+                                                <h2
+                                                    style={{
+                                                        margin: 0,
+                                                        marginBottom: "30px",
+                                                        fontSize: "18px",
+                                                        fontWeight: 600,
+                                                        color: "#222",
+                                                    }}
+                                                >
+                                                    Thêm kênh bán
+                                                </h2>
+
+                                                {/* Body */}
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        gap: "24px",
+                                                    }}
+                                                >
+                                                    {/* Icon */}
+                                                    <div
+                                                        style={{
+                                                            width: "96px",
+                                                            height: "96px",
+                                                            border: "1px dashed #cfcfcf",
+                                                            borderRadius: "4px",
+                                                            display: "flex",
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                            flexShrink: 0,
+                                                        }}
+                                                    >
+                                                        <ShoppingCartIcon
+                                                            style={{
+                                                                fontSize: "60px",
+                                                                color: "#111827",
+                                                            }}
+                                                        />
+                                                    </div>
+
+                                                    {/* Form */}
+                                                    <div
+                                                        style={{
+                                                            flex: 1,
+                                                        }}
+                                                    >
+                                                        {/* Tên */}
+                                                        <div
+                                                            style={{
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                marginBottom: "26px",
+                                                            }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    width: "80px",
+                                                                    fontSize: "16px",
+                                                                    fontWeight: 600,
+                                                                    color: "#333",
+                                                                }}
+                                                            >
+                                                                Tên
+                                                            </div>
+
+                                                            <input
+                                                                placeholder=""
+                                                                style={{
+                                                                    flex: 1,
+                                                                    border: "none",
+                                                                    borderBottom: "2px solid #1976d2",
+                                                                    outline: "none",
+                                                                    fontSize: "15px",
+                                                                    padding: "8px 0",
+                                                                }}
+                                                            />
+                                                        </div>
+
+                                                        {/* Mô tả */}
+                                                        <div
+                                                            style={{
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                            }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    width: "80px",
+                                                                    fontSize: "16px",
+                                                                    fontWeight: 600,
+                                                                    color: "#333",
+                                                                }}
+                                                            >
+                                                                Mô tả
+                                                            </div>
+
+                                                            <input
+                                                                placeholder=""
+                                                                style={{
+                                                                    flex: 1,
+                                                                    border: "none",
+                                                                    borderBottom: "1px solid #d9d9d9",
+                                                                    outline: "none",
+                                                                    fontSize: "15px",
+                                                                    padding: "8px 0",
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Footer */}
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        justifyContent: "flex-end",
+                                                        gap: "18px",
+                                                        marginTop: "48px",
+                                                    }}
+                                                >
+                                                    <button
+                                                        onClick={() => setShowChannelModal(false)}
+                                                        style={{
+                                                            width: "118px",
+                                                            height: "44px",
+                                                            border: "1px solid #1976d2",
+                                                            background: "#fff",
+                                                            color: "#1976d2",
+                                                            borderRadius: "10px",
+                                                            fontSize: "16px",
+                                                            fontWeight: 500,
+                                                            cursor: "pointer",
+                                                        }}
+                                                    >
+                                                        Bỏ qua
+                                                    </button>
+
+                                                    <button
+                                                        style={{
+                                                            width: "118px",
+                                                            height: "44px",
+                                                            border: "none",
+                                                            background: "#1976d2",
+                                                            color: "#fff",
+                                                            borderRadius: "10px",
+                                                            fontSize: "16px",
+                                                            fontWeight: 500,
+                                                            cursor: "pointer",
+                                                        }}
+                                                    >
+                                                        Lưu
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <span
+                                    style={{
+                                        fontSize: "18px",
+                                        color: "#666",
+                                        marginLeft: "70px",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    {formattedDateTime}
+                                </span>
+
+
+
+
+
+
+
+                                <button
+                                    onClick={() => setOpenPayment(false)}
+                                    style={{
+                                        border: "none",
+                                        background: "none",
+                                        fontSize: "28px",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    ×
+                                </button>
+                            </div>
+
+                            {/* Body */}
+                            <div
+                                style={{
+                                    flex: 1,
+                                    padding: "24px",
+                                    overflowY: "auto",
+                                }}
+                            >
+                                <h2
+                                    style={{
+                                        fontSize: "25px",
+                                        marginBottom: "30px",
+                                        fontWeight: 700,
+                                    }}
+                                >
+                                    Khách lẻ
+                                </h2>
+
+                                {/* Tổng tiền */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        marginBottom: "18px",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <span>Tổng tiền hàng</span>
+                                    <span>{currentInvoice?.total.toLocaleString()}</span>
+                                </div>
+
+                                {/* Giảm giá */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        marginBottom: "18px",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <span>Giảm giá</span>
+
+                                    <input
+                                        type="number"
+                                        placeholder="0"
+                                        style={{
+                                            width: "100px",
+                                            border: "none",
+                                            borderBottom: "1px solid #ccc",
+                                            outline: "none",
+                                            textAlign: "right",
+                                            fontSize: "20px",
+                                            padding: "4px 0",
+                                            background: "transparent",
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Khách cần trả */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        marginBottom: "20px",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <strong>Khách cần trả</strong>
+                                    <strong
+                                        style={{
+                                            color: "#1677ff",
+                                            fontSize: "25px",
+                                        }}
+                                    >
+                                        {currentInvoice?.total.toLocaleString()}
+                                    </strong>
+                                </div>
+
+                                {/* Khách thanh toán */}
+                                <div style={{ marginBottom: "25px" }}>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            fontSize: "18px",
+                                        }}
+                                    >
+                                        <strong>Khách thanh toán</strong>
+
+                                        <input
+                                            type="text"
+                                            defaultValue={currentInvoice?.total}
+                                            style={{
+                                                width: "180px",
+                                                border: "none",
+                                                borderBottom: "1px solid #ccc",
+                                                textAlign: "right",
+                                                fontSize: "26px",
+                                                outline: "none",
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Phương thức */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        paddingTop: "10px",
+                                        marginLeft: "40px",
+                                        paddingBottom: "20px",
+                                        
+                                    }}
+                                >
+                                    <RadioGroup row defaultValue="cash">
+                                        <FormControlLabel
+                                            value="cash"
+                                            control={<Radio size="medium" />}
+                                            label="Tiền mặt"
+                                        />
+                                        <FormControlLabel
+                                            value="bank"
+                                            control={<Radio size="medium" />}
+                                            label="Chuyển khoản"
+                                        />
+                                        <FormControlLabel
+                                            value="card"
+                                            control={<Radio size="medium" />}
+                                            label="Thẻ"
+                                        />
+                                        <FormControlLabel
+                                            value="wallet"
+                                            control={<Radio size="medium" />}
+                                            label="Ví"
+                                        />
+                                    </RadioGroup>
+
+                                    <IconButton size="small">
+                                        <MoreVertIcon />
+                                    </IconButton>
+                                </div>
+
+                                {/* Nút tiền nhanh */}
+                                <div
+                                    style={{
+                                        background: "#f5f5f5",
+                                        borderRadius: "10px",
+                                        padding: "16px",
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        gap: "12px",
+                                    }}
+                                >
+                                    {[
+                                        30000,
+                                        40000,
+                                        50000,
+                                        100000,
+                                        200000,
+                                        500000,
+                                    ].map((money) => (
+                                        <button
+                                            key={money}
+                                            style={{
+                                                padding: "10px 24px",
+                                                border: "1px solid #d9d9d9",
+                                                borderRadius: "999px",
+                                                background: "#fff",
+                                                cursor: "pointer",
+                                                fontSize: "18px",
+                                            }}
+                                        >
+                                            {money.toLocaleString()}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Footer */}
+                            <div
+                                style={{
+                                    padding: "20px 24px",
+                                    borderTop: "1px solid #eee",
+                                }}
+                            >
+                                <button
+                                    style={{
+                                        width: "100%",
+                                        height: "60px",
+                                        background: "#1677ff",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "14px",
+                                        fontSize: "22px",
+                                        fontWeight: 700,
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    THANH TOÁN
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
