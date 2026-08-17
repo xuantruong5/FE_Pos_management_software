@@ -1,7 +1,9 @@
-const ManageProductPage = ()  => {
+import Product from "@/components/admin/product/page";
+
+const ManageProductPage = () => {
     return (
-        <div>
-           ManageProductPage
+        <div className="p-6">
+            <Product />
         </div>
     )
 }
