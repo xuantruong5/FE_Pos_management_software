@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, SlidersHorizontal, Plus, ChevronDown, FileUp, FileDown, List, Settings, CircleHelp, ChevronRight, CalendarDays, } from "lucide-react";
+import { Search, SlidersHorizontal, Plus, ChevronDown, FileUp, FileDown, List, Settings, CircleHelp, ChevronRight, CalendarDays, Trash2, Copy, PencilLine, Printer, Ellipsis, FileInput, X, ChevronUp, } from "lucide-react";
 import { useState } from "react";
 
 const Product = () => {
@@ -509,7 +509,10 @@ const Product = () => {
     ];
 
     // làm món hàng yêu thích 
-    const [favorites, setFavorites] = useState<number[]>([]);
+    // const [favorites, setFavorites] = useState<number[]>([]);
+    const [bestSellerIds, setBestSellerIds] = useState<number[]>([]);
+    const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
+    const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
 
     // làm trang 
@@ -520,6 +523,12 @@ const Product = () => {
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = Math.min(startIndex + pageSize, totalItems);
     const currentProducts = products.slice(startIndex, endIndex);
+
+    // của chi tiết 
+    const [activeTab, setActiveTab] = useState("info");
+    // chỉnh sửa của chi tiết 
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [activeEditTab, setActiveEditTab] = useState<"info" | "description">("info");
 
 
     return (
@@ -578,7 +587,7 @@ const Product = () => {
 
                         {/* Tạo mới */}
                         <div className="relative group">
-                            <button className="h-[40px] px-4 rounded-lg border border-blue-500 text-blue-600  bg-white flex items-center gap-2 font-semibold hover:bg-blue-50" >
+                            <button className="h-[40px] w-auto px-4 rounded-lg border border-blue-500 text-blue-600  bg-white flex items-center gap-2 font-semibold hover:bg-blue-50" >
                                 <Plus size={21} />
                                 <span>Tạo mới</span>
                                 <ChevronDown size={17} />
@@ -785,7 +794,7 @@ const Product = () => {
                                                             {/* Nhóm cha */}
                                                             <div className="flex items-center h-[38px]">
                                                                 {/* Icon kéo */}
-                                                                <span className="text-gray-400 w-[20px] text-center">
+                                                                <span className="text-gray-400 w-[18px] text-center">
                                                                     ⋮⋮
                                                                 </span>
 
@@ -1754,7 +1763,7 @@ const Product = () => {
                                                 };
                                                 return (
                                                     <th key={column} style={{ width: widthMap[column] || "150px", minWidth: widthMap[column] || "150px", }}
-                                                        className="px-3 text-[16px] font-semibold text-gray-800 text-left whitespace-nowrap">
+                                                        className="px-3 text-[16px] font-semibold text-gray-800 text-left whitespace-nowrap ">
                                                         {column}
                                                     </th>
                                                 );
@@ -1765,258 +1774,1191 @@ const Product = () => {
 
                                     {/* ================= BODY ================= */}
                                     <tbody>
+                                        <tr><td colSpan={selectedColumns.length + 2} className="h-[45px] p-0 border-0 bg-white" ></td> </tr>
                                         {currentProducts.map((product) => (
-                                            <tr key={product.id} className="h-[60px] border-b border-gray-100 hover:bg-[#f8fbff] transition-colors">
-                                                {/* Checkbox */}
-                                                <td className="w-[42px] min-w-[42px] bg-white">
-                                                    <div className="flex items-center justify-center">
-                                                        <input type="checkbox" className="w-[16px] h-[16px] rounded border-gray-400 accent-blue-600 cursor-pointer" />
-                                                    </div>
-                                                </td>
+                                            <>
+                                                <tr key={product.id} onClick={() => setSelectedProduct(selectedProduct === product.id ? null : product.id)}
+                                                    className={`h-[60px]  border-b border-gray-100 hover:bg-[#f8fbff] transition-colors cursor-pointer  ${selectedProduct === product.id ? "bg-blue-50 !border-t-2 !border-blue-500 !border-b-0" : ""}`} >
+                                                    {/* Checkbox */}
+                                                    <td className={`w-[42px] min-w-[42px] ${selectedProduct === product.id ? "border-l-2 border-blue-500 bg-blue-50" : "bg-white"}`}>
+                                                        <div className="flex items-center justify-center">
+                                                            <input type="checkbox" checked={selectedProductIds.includes(product.id)} onClick={(e) => e.stopPropagation()} onChange={(e) => { if (e.target.checked) { setSelectedProductIds((prev) => [...prev, product.id,]); } else { setSelectedProductIds((prev) => prev.filter((id) => id !== product.id)); } }}
+                                                                className="w-[16px] h-[16px] rounded border-gray-400 accent-blue-600 cursor-pointer" />
+                                                        </div>
+                                                    </td>
 
-                                                {/* Star */}
-                                                <td className="w-[42px] min-w-[42px]">
-                                                    <button type="button"
-                                                        onClick={() => { setFavorites((prev) => prev.includes(product.id) ? prev.filter((id) => id !== product.id) : [...prev, product.id]); }}
-                                                        className={`w-full h-full flex items-center justify-center text-[23px] ${favorites.includes(product.id)
-                                                            ? "text-yellow-400"
-                                                            : "text-gray-400 hover:text-yellow-400"
-                                                            }`}
-                                                    >
-                                                        {favorites.includes(product.id) ? "★" : "☆"}
-                                                    </button>
-                                                </td>
+                                                    {/* Star */}
+                                                    <td className="w-[42px] min-w-[42px]">
+                                                        <button type="button" onClick={(e) => { e.stopPropagation(); setBestSellerIds((prev) => prev.includes(product.id) ? prev.filter((id) => id !== product.id) : [...prev, product.id]); }}
+                                                            className={`w-full h-full flex items-center justify-center text-[23px] ${bestSellerIds.includes(product.id) ? "text-yellow-400" : "text-gray-400 hover:text-yellow-400"}`}  >
+                                                            {bestSellerIds.includes(product.id) ? "★" : "☆"}
+                                                        </button>
+                                                    </td>
 
-                                                {/* Các dữ liệu */}
-                                                {selectedColumns.map((column) => {
+                                                    {/* Các dữ liệu */}
+                                                    {selectedColumns.map((column) => {
 
-                                                    /* ================= HÌNH ẢNH ================= */
-                                                    if (column === "Hình ảnh") {
-                                                        return (
-                                                            <td key={column} className="w-[55px] min-w-[55px] px-2">
-                                                                <div className="w-[50px] h-[50px] rounded-md bg-gray-100 flex items-center justify-center overflow-hidden text-[23px]">
-                                                                    <img
-                                                                        src={product.image}
-                                                                        className="w-full h-full object-cover" />
+                                                        /* ================= HÌNH ẢNH ================= */
+                                                        if (column === "Hình ảnh") {
+                                                            return (
+                                                                <td key={column} className="w-[55px] min-w-[55px] px-2">
+                                                                    <div className="w-[50px] h-[50px] rounded-md bg-gray-100 flex items-center justify-center overflow-hidden text-[23px]">
+                                                                        <img
+                                                                            src={product.image}
+                                                                            className="w-full h-full object-cover" />
+                                                                    </div>
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= MÃ HÀNG ================= */
+                                                        if (column === "Mã hàng") {
+                                                            return (
+                                                                <td key={column} className="px-3 text-[17px] text-gray-800 whitespace-nowrap" >
+                                                                    {product.code}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= MÃ VẠCH ================= */
+                                                        if (column === "Mã vạch") {
+                                                            return (
+                                                                <td key={column} className="px-3 text-[17px] text-gray-800 whitespace-nowrap" >
+                                                                    {product.barcode}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= TÊN HÀNG ================= */
+                                                        if (column === "Tên hàng") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-800"
+                                                                >
+                                                                    <div className="max-w-[280px] whitespace-normal leading-5">
+                                                                        {product.name}
+                                                                    </div>
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= NHÓM HÀNG ================= */
+                                                        if (column === "Nhóm hàng") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-700"
+                                                                >
+                                                                    <div className="max-w-[210px] whitespace-normal leading-5">
+                                                                        {product.group}
+                                                                    </div>
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= LOẠI HÀNG ================= */
+                                                        if (column === "Loại hàng") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-700 whitespace-nowrap"
+                                                                >
+                                                                    {product.type}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= LIÊN KẾT KÊNH BÁN ================= */
+                                                        if (column === "Liên kết kênh bán") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-700 whitespace-nowrap"
+                                                                >
+                                                                    -
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= GIÁ BÁN ================= */
+                                                        if (column === "Giá bán") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-800 text-right whitespace-nowrap"
+                                                                >
+                                                                    {product.salePrice.toLocaleString("vi-VN")}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= GIÁ VỐN ================= */
+                                                        if (column === "Giá vốn") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-800 text-right whitespace-nowrap"
+                                                                >
+                                                                    {product.costPrice.toLocaleString("vi-VN")}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= THƯƠNG HIỆU ================= */
+                                                        if (column === "Thương hiệu") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-700 whitespace-nowrap"
+                                                                >
+                                                                    {product.brand || "-"}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= TỒN KHO ================= */
+                                                        if (column === "Tồn kho") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-800 text-right"
+                                                                >
+                                                                    {product.stock}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= VỊ TRÍ ================= */
+                                                        if (column === "Vị trí") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-700"
+                                                                >
+                                                                    {product.location || "-"}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= KHÁCH ĐẶT ================= */
+                                                        if (column === "Khách đặt") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-800 text-right"
+                                                                >
+                                                                    {product.ordered}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= THỜI GIAN TẠO ================= */
+                                                        if (column === "Thời gian tạo") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-700 whitespace-nowrap"
+                                                                >
+                                                                    {product.createdAt}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= DỰ KIẾN HẾT HÀNG ================= */
+                                                        if (column === "Dự kiến hết hàng") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-700 whitespace-nowrap"
+                                                                >
+                                                                    {product.expectedOut || "-"}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= ĐỊNH MỨC ÍT NHẤT ================= */
+                                                        if (column === "Định mức tồn ít nhất") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-800 text-right"
+                                                                >
+                                                                    {product.minStock}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= ĐỊNH MỨC NHIỀU NHẤT ================= */
+                                                        if (column === "Định mức tồn nhiều nhất") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px] text-gray-800 text-right"
+                                                                >
+                                                                    {product.maxStock}
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        /* ================= TRẠNG THÁI ================= */
+                                                        if (column === "Trạng thái") {
+                                                            return (
+                                                                <td
+                                                                    key={column}
+                                                                    className="px-3 text-[17px]"
+                                                                >
+                                                                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-green-50 text-green-600 text-[13px] font-medium">
+                                                                        {product.status}
+                                                                    </span>
+                                                                </td>
+                                                            );
+                                                        }
+
+                                                        return null;
+                                                    })}
+                                                </tr>
+                                                {selectedProduct === product.id && (
+                                                    <tr>
+                                                        <td colSpan={selectedColumns.length + 2} className="p-0 ">
+                                                            <div className="w-[calc(100vw-639px)] max-w-full bg-white border-2 border-blue-500 flex flex-col overflow-hidden">
+                                                                <div className="h-[45px] flex-shrink-0 border-b flex items-center">
+
+                                                                    <button type="button" onClick={() => setActiveTab("info")}
+                                                                        className={`h-full px-5 ${activeTab === "info" ? "text-blue-600 border-b-2 border-blue-600 font-semibold" : "text-black-600 hover:text-blue-600"}`} >
+                                                                        Thông tin
+                                                                    </button>
+
+                                                                    <button type="button" onClick={() => setActiveTab("description")}
+                                                                        className={`h-full px-5 ${activeTab === "description" ? "text-blue-600 border-b-2 border-blue-600 font-semibold" : "text-black-600 hover:text-blue-600"}`} >
+                                                                        Mô tả, ghi chú
+                                                                    </button>
+
+                                                                    <button type="button" onClick={() => setActiveTab("stockCard")}
+                                                                        className={`h-full px-5 ${activeTab === "stockCard" ? "text-blue-600 border-b-2 border-blue-600 font-semibold" : "text-black-600 hover:text-blue-600"}`} >
+                                                                        Thẻ kho
+                                                                    </button>
+
+                                                                    <button type="button" onClick={() => setActiveTab("inventory")}
+                                                                        className={`h-full px-5 ${activeTab === "inventory" ? "text-blue-600 border-b-2 border-blue-600 font-semibold" : "text-black-600 hover:text-blue-600"}`} >
+                                                                        Tồn kho
+                                                                    </button>
                                                                 </div>
-                                                            </td>
-                                                        );
-                                                    }
+                                                                {activeTab === "description" && (
+                                                                    <div className="p-5 w-full overflow-hidden">
+                                                                        {/* Mô tả */}
+                                                                        <div className="border border-gray-200 rounded-lg p-4">
+                                                                            <p className="font-semibold text-gray-800">
+                                                                                Mô tả
+                                                                            </p>
 
-                                                    /* ================= MÃ HÀNG ================= */
-                                                    if (column === "Mã hàng") {
-                                                        return (
-                                                            <td key={column} className="px-3 text-[17px] text-gray-800 whitespace-nowrap" >
-                                                                {product.code}
-                                                            </td>
-                                                        );
-                                                    }
+                                                                            <p className="mt-3 text-gray-700">
+                                                                                bánh mỳ này rất ngon
+                                                                            </p>
+                                                                        </div>
+                                                                        {/* Ghi chú đặt hàng */}
+                                                                        <div className="border border-gray-200 rounded-lg p-4 mt-2">
+                                                                            <p className="font-semibold text-gray-800">
+                                                                                Ghi chú đặt hàng
+                                                                            </p>
 
-                                                    /* ================= MÃ VẠCH ================= */
-                                                    if (column === "Mã vạch") {
-                                                        return (
-                                                            <td key={column} className="px-3 text-[17px] text-gray-800 whitespace-nowrap" >
-                                                                {product.barcode}
-                                                            </td>
-                                                        );
-                                                    }
+                                                                            <p className="mt-3 text-gray-700">
+                                                                                hello ngon lắm ghi chú đặt hàng
+                                                                            </p>
+                                                                        </div>
+                                                                        <div className="flex justify-end mt-5">
+                                                                            <button type="button" className="px-4 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 whitespace-nowrap">
+                                                                                <PencilLine size={16} />
+                                                                                <span>Chỉnh sửa</span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
 
-                                                    /* ================= TÊN HÀNG ================= */
-                                                    if (column === "Tên hàng") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-800"
-                                                            >
-                                                                <div className="max-w-[280px] whitespace-normal leading-5">
-                                                                    {product.name}
-                                                                </div>
-                                                            </td>
-                                                        );
-                                                    }
+                                                                )}
+                                                                {activeTab === "info" && (
+                                                                    <div className="p-5 w-full overflow-hidden">
+                                                                        <div className="flex gap-5">
+                                                                            <div className="w-[130px] h-[130px] bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                                                <img src={product.image} className="w-full h-full object-contain" />
+                                                                            </div>
+                                                                            <div>
+                                                                                <h2 className="text-[20px] font-semibold text-gray-800">
+                                                                                    {product.name}
+                                                                                </h2>
+                                                                                <p className="text-gray-500 mt-3">
+                                                                                    Nhóm hàng:
+                                                                                    <span className="text-gray-800">
+                                                                                        {product.group}
+                                                                                    </span>
+                                                                                </p>
 
-                                                    /* ================= NHÓM HÀNG ================= */
-                                                    if (column === "Nhóm hàng") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-700"
-                                                            >
-                                                                <div className="max-w-[210px] whitespace-normal leading-5">
-                                                                    {product.group}
-                                                                </div>
-                                                            </td>
-                                                        );
-                                                    }
+                                                                                <div className="flex flex-wrap gap-2 mt-3">
+                                                                                    <span className="px-5 py-1 bg-gray-200 rounded-lg text-lg text-gray-700 font-semibold">
+                                                                                        {product.type}
+                                                                                    </span>
 
-                                                    /* ================= LOẠI HÀNG ================= */
-                                                    if (column === "Loại hàng") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-700 whitespace-nowrap"
-                                                            >
-                                                                {product.type}
-                                                            </td>
-                                                        );
-                                                    }
+                                                                                    <span className="px-5 py-1 bg-gray-200 rounded-lg text-lg text-gray-700 font-semibold">
+                                                                                        Bán trực tiếp
+                                                                                    </span>
 
-                                                    /* ================= LIÊN KẾT KÊNH BÁN ================= */
-                                                    if (column === "Liên kết kênh bán") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-700 whitespace-nowrap"
-                                                            >
-                                                                -
-                                                            </td>
-                                                        );
-                                                    }
+                                                                                    <span className="px-5 py-1 bg-orange-200 text-orange-500 rounded-lg text-lg font-semibold">
+                                                                                        Không tích điểm
+                                                                                    </span>
 
-                                                    /* ================= GIÁ BÁN ================= */
-                                                    if (column === "Giá bán") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-800 text-right whitespace-nowrap"
-                                                            >
-                                                                {product.salePrice.toLocaleString("vi-VN")}
-                                                            </td>
-                                                        );
-                                                    }
+                                                                                    {bestSellerIds.includes(
+                                                                                        product.id
+                                                                                    ) && (
+                                                                                            <span className="px-3 py-1 bg-yellow-50 text-yellow-600 rounded text-sm">
+                                                                                                ★ Best Seller
+                                                                                            </span>
+                                                                                        )}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        {/* ================= THÔNG TIN CHI TIẾT ================= */}
+                                                                        <div className="grid grid-cols-4 gap-x-8 gap-y-0 mt-7">
+                                                                            {/* Mã hàng */}
+                                                                            <div className="py-3 border-b border-gray-200">
+                                                                                <p className="text-[18px] text-gray-500">
+                                                                                    Mã hàng
+                                                                                </p>
+                                                                                <p className="mt-2 text-gray-800">
+                                                                                    {product.code}
+                                                                                </p>
+                                                                            </div>
+                                                                            {/* Mã vạch */}
+                                                                            <div className="py-3 border-b border-gray-200">
+                                                                                <p className="text-[18px] text-gray-500">
+                                                                                    Mã vạch
+                                                                                </p>
 
-                                                    /* ================= GIÁ VỐN ================= */
-                                                    if (column === "Giá vốn") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-800 text-right whitespace-nowrap"
-                                                            >
-                                                                {product.costPrice.toLocaleString("vi-VN")}
-                                                            </td>
-                                                        );
-                                                    }
+                                                                                <p className="mt-2 text-gray-800">
+                                                                                    {product.barcode || "Chưa có"}
+                                                                                </p>
+                                                                            </div>
 
-                                                    /* ================= THƯƠNG HIỆU ================= */
-                                                    if (column === "Thương hiệu") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-700 whitespace-nowrap"
-                                                            >
-                                                                {product.brand || "-"}
-                                                            </td>
-                                                        );
-                                                    }
 
-                                                    /* ================= TỒN KHO ================= */
-                                                    if (column === "Tồn kho") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-800 text-right"
-                                                            >
-                                                                {product.stock}
-                                                            </td>
-                                                        );
-                                                    }
+                                                                            {/* Tồn kho */}
+                                                                            <div className="py-3 border-b border-gray-200">
+                                                                                <p className="text-[18px] text-gray-500">
+                                                                                    Tồn kho
+                                                                                </p>
 
-                                                    /* ================= VỊ TRÍ ================= */
-                                                    if (column === "Vị trí") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-700"
-                                                            >
-                                                                {product.location || "-"}
-                                                            </td>
-                                                        );
-                                                    }
+                                                                                <p className="mt-2 text-gray-800">
+                                                                                    {product.stock}
+                                                                                </p>
+                                                                            </div>
 
-                                                    /* ================= KHÁCH ĐẶT ================= */
-                                                    if (column === "Khách đặt") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-800 text-right"
-                                                            >
-                                                                {product.ordered}
-                                                            </td>
-                                                        );
-                                                    }
 
-                                                    /* ================= THỜI GIAN TẠO ================= */
-                                                    if (column === "Thời gian tạo") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-700 whitespace-nowrap"
-                                                            >
-                                                                {product.createdAt}
-                                                            </td>
-                                                        );
-                                                    }
+                                                                            {/* Định mức */}
+                                                                            <div className="py-3 border-b border-gray-200">
+                                                                                <p className="text-[18px] text-gray-500">
+                                                                                    Định mức tồn
+                                                                                </p>
 
-                                                    /* ================= DỰ KIẾN HẾT HÀNG ================= */
-                                                    if (column === "Dự kiến hết hàng") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-700 whitespace-nowrap"
-                                                            >
-                                                                {product.expectedOut || "-"}
-                                                            </td>
-                                                        );
-                                                    }
+                                                                                <p className="mt-2 text-gray-800">
+                                                                                    {product.minStock} -{" "}
+                                                                                    {product.maxStock}
+                                                                                </p>
+                                                                            </div>
 
-                                                    /* ================= ĐỊNH MỨC ÍT NHẤT ================= */
-                                                    if (column === "Định mức tồn ít nhất") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-800 text-right"
-                                                            >
-                                                                {product.minStock}
-                                                            </td>
-                                                        );
-                                                    }
 
-                                                    /* ================= ĐỊNH MỨC NHIỀU NHẤT ================= */
-                                                    if (column === "Định mức tồn nhiều nhất") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px] text-gray-800 text-right"
-                                                            >
-                                                                {product.maxStock}
-                                                            </td>
-                                                        );
-                                                    }
+                                                                            {/* Giá vốn */}
+                                                                            <div className="py-3 border-b border-gray-200">
+                                                                                <p className="text-[18px] text-gray-500">
+                                                                                    Giá vốn
+                                                                                </p>
 
-                                                    /* ================= TRẠNG THÁI ================= */
-                                                    if (column === "Trạng thái") {
-                                                        return (
-                                                            <td
-                                                                key={column}
-                                                                className="px-3 text-[17px]"
-                                                            >
-                                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-green-50 text-green-600 text-[13px] font-medium">
-                                                                    {product.status}
-                                                                </span>
-                                                            </td>
-                                                        );
-                                                    }
+                                                                                <p className="mt-2 text-gray-800">
+                                                                                    {product.costPrice.toLocaleString("vi-VN")}
+                                                                                </p>
+                                                                            </div>
 
-                                                    return null;
-                                                })}
 
-                                            </tr>
+                                                                            {/* Giá bán */}
+                                                                            <div className="py-3 border-b border-gray-200">
+                                                                                <p className="text-[18px] text-gray-500">
+                                                                                    Giá bán
+                                                                                </p>
+
+                                                                                <p className="mt-2 text-gray-800">
+                                                                                    {product.salePrice.toLocaleString("vi-VN")}
+                                                                                </p>
+                                                                            </div>
+
+
+                                                                            {/* Thương hiệu */}
+                                                                            <div className="py-3 border-b border-gray-200">
+                                                                                <p className="text-[18px] text-gray-500">
+                                                                                    Thương hiệu
+                                                                                </p>
+
+                                                                                <p className="mt-2 text-gray-800">
+                                                                                    {product.brand || "Chưa có"}
+                                                                                </p>
+                                                                            </div>
+
+
+                                                                            {/* Vị trí */}
+                                                                            <div className="py-3 border-b border-gray-200">
+                                                                                <p className="text-[18px] text-gray-500">
+                                                                                    Vị trí
+                                                                                </p>
+
+                                                                                <p className="mt-2 text-gray-800">
+                                                                                    {product.location || "Chưa có"}
+                                                                                </p>
+                                                                            </div>
+
+                                                                            <div className="py-3 border-b border-gray-200">
+                                                                                <p className="text-[18px] text-gray-500">
+                                                                                    Trọng lượng
+                                                                                </p>
+
+                                                                                <p className="mt-2 text-gray-800">
+                                                                                    {product.location || "Chưa có"}
+                                                                                </p>
+                                                                            </div>
+
+
+                                                                            {/* Khách đặt */}
+                                                                            {/* <div className="py-3 border-b border-gray-200">
+                                                                            <p className="text-[13px] text-gray-500">
+                                                                                Khách đặt
+                                                                            </p>
+
+                                                                            <p className="mt-2 text-gray-800">
+                                                                                {product.ordered}
+                                                                            </p>
+                                                                        </div> */}
+
+
+                                                                            {/* Thời gian tạo */}
+                                                                            {/* <div className="py-3 border-b border-gray-200">
+                                                                            <p className="text-[13px] text-gray-500">
+                                                                                Thời gian tạo
+                                                                            </p>
+
+                                                                            <p className="mt-2 text-gray-800">
+                                                                                {product.createdAt}
+                                                                            </p>
+                                                                        </div> */}
+
+
+                                                                            {/* Dự kiến hết hàng */}
+                                                                            {/* <div className="py-3 border-b border-gray-200">
+                                                                            <p className="text-[13px] text-gray-500">
+                                                                                Dự kiến hết hàng
+                                                                            </p>
+
+                                                                            <p className="mt-2 text-gray-800">
+                                                                                {product.expectedOut || "Chưa có"}                                                                                   
+                                                                            </p>
+                                                                        </div> */}
+
+
+                                                                            {/* Trạng thái */}
+                                                                            {/* <div className="py-3 border-b border-gray-200">
+                                                                            <p className="text-[13px] text-gray-500">
+                                                                                Trạng thái
+                                                                            </p>
+
+                                                                            <p className="mt-2">
+                                                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-green-50 text-green-600 text-[13px] font-medium">
+                                                                                    {product.status}
+                                                                                </span>
+                                                                            </p>
+                                                                        </div> */}
+
+
+                                                                        </div>
+
+
+                                                                        {/* Thêm thuộc tính */}
+                                                                        <button type="button" className="mt-6 text-blue-600 hover:text-blue-700 font-semibold text-[18px]" >
+                                                                            Thêm thuộc tính
+                                                                        </button>
+                                                                        <div className="border-t px-5 py-4 flex-shrink-0 flex items-center justify-between bg-white w-full">
+
+                                                                            {/* Bên trái */}
+                                                                            <div className="flex items-center gap-7">
+
+                                                                                <button type="button" className="flex items-center gap-1 text-gray-700 hover:text-red-600" >
+                                                                                    <Trash2 size={18} /> <span>Xóa</span>
+                                                                                </button>
+
+                                                                                <button type="button" className="flex items-center gap-1 text-gray-700 hover:text-blue-600">
+                                                                                    <Copy size={16} />
+                                                                                    <span>Sao chép</span>
+                                                                                </button>
+
+                                                                            </div>
+                                                                            {/* Bên phải */}
+                                                                            <div className="flex items-center gap-2 flex-shrink-0">
+                                                                                <button type="button" onClick={() => { setActiveEditTab("info"); setShowEditModal(true); }}
+                                                                                    className="flex items-center justify-center gap-1 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium whitespace-nowrap">
+                                                                                    <PencilLine size={16} />
+                                                                                    <span>Chỉnh sửa</span>
+                                                                                </button>
+
+                                                                                <button type="button" className="flex items-center justify-center gap-1 px-5 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 whitespace-nowrap">
+                                                                                    <Printer size={16} />
+                                                                                    <span>In tem mã</span>
+                                                                                </button>
+
+                                                                                <button type="button" className="w-[42px] h-[40px] border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center flex-shrink-0">
+                                                                                    <Ellipsis size={20} />
+                                                                                </button>
+                                                                            </div>
+                                                                            {showEditModal && (
+                                                                                <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-3">
+                                                                                    <div className="bg-white w-full max-w-[1200px] max-h-[95vh] rounded-xl shadow-2xl overflow-hidden flex flex-col">
+                                                                                        {/* Header */}
+                                                                                        <div className="h-[64px] flex items-center justify-between px-6 flex-shrink-0">
+                                                                                            <h2 className="text-[20px] font-semibold text-gray-800">
+                                                                                                Sửa hàng hóa
+                                                                                            </h2>
+
+                                                                                            <button type="button" onClick={() => setShowEditModal(false)}
+                                                                                                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500">
+                                                                                                <X size={20} />
+                                                                                            </button>
+                                                                                        </div>
+
+                                                                                        {/* Tabs */}
+                                                                                        <div className="h-[43px] px-6 border-b border-gray-200 flex items-end flex-shrink-0">
+                                                                                            <button type="button" onClick={() => setActiveEditTab("info")}
+                                                                                                className={`h-[43px] px-0 mr-8 text-[14px] relative ${activeEditTab === "info" ? "text-blue-600 font-medium" : "text-gray-700"}`}>
+                                                                                                Thông tin
+                                                                                                {activeEditTab === "info" && (
+                                                                                                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600" />
+                                                                                                )}
+                                                                                            </button>
+
+                                                                                            <button type="button" onClick={() => setActiveEditTab("description")}
+                                                                                                className={`h-[43px] px-0 text-[14px] relative ${activeEditTab === "description" ? "text-blue-600 font-medium" : "text-gray-700"}`} >
+                                                                                                Mô tả
+                                                                                                {activeEditTab === "description" && (
+                                                                                                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600" />
+                                                                                                )}
+                                                                                            </button>
+                                                                                        </div>
+
+                                                                                        <div className="flex-1 overflow-y-auto">
+                                                                                            {activeEditTab === "info" && (
+                                                                                                <div className="p-6">                                                                                   
+                                                                                                    <div className="grid grid-cols-[1fr_1fr_230px] gap-6">                                                                                               
+                                                                                                        <div>
+                                                                                                            <label className="block text-[13px] text-gray-700 mb-1">
+                                                                                                                Mã hàng
+                                                                                                            </label>
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                defaultValue={product.code}
+                                                                                                                onChange={(e) => {
+                                                                                                                    // cập nhật mã hàng sau
+                                                                                                                }}
+                                                                                                                className="w-full h-[34px] px-3 border border-blue-500 rounded-lg outline-none text-[14px]"
+                                                                                                            />
+                                                                                                        </div>
+
+                                                                                                        {/* Mã vạch */}
+                                                                                                        <div>
+                                                                                                            <label className="block text-[13px] text-gray-700 mb-1">
+                                                                                                                Mã vạch
+                                                                                                            </label>
+
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                defaultValue={product.barcode}
+                                                                                                                placeholder="Nhập mã vạch"
+                                                                                                                className="w-full h-[34px] px-3 border border-gray-300 rounded-lg outline-none text-[14px] focus:border-blue-500"
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                        
+
+                                                                                                        {/* Hình ảnh */}
+                                                                                                        <div className="flex gap-2">
+
+                                                                                                            <div className="w-[180px] h-[180px] border border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
+
+                                                                                                                {product.image?.startsWith("http") ? (
+                                                                                                                    <img
+                                                                                                                        src={product.image}
+                                                                                                                        alt={product.name}
+                                                                                                                        className="w-full h-full object-contain"
+                                                                                                                    />
+                                                                                                                ) : (
+                                                                                                                    <span className="text-[70px]">
+                                                                                                                        {product.image}
+                                                                                                                    </span>
+                                                                                                                )}
+
+                                                                                                            </div>
+
+                                                                                                            <button
+                                                                                                                type="button"
+                                                                                                                className="w-[42px] h-[180px] border border-gray-300 rounded-lg flex items-start justify-center pt-3 hover:bg-gray-50"
+                                                                                                            >
+                                                                                                                <Plus size={20} />
+                                                                                                            </button>
+
+                                                                                                        </div>
+
+                                                                                                    </div>
+
+
+                                                                                                    {/* Tên hàng */}
+                                                                                                    <div className="mt-4">
+                                                                                                        <label className="block text-[13px] text-gray-700 mb-1">
+                                                                                                            Tên hàng
+                                                                                                        </label>
+
+                                                                                                        <input
+                                                                                                            type="text"
+                                                                                                            defaultValue={product.name}
+                                                                                                            className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-[14px] outline-none focus:border-blue-500"
+                                                                                                        />
+                                                                                                    </div>
+
+
+                                                                                                    {/* Nhóm hàng + thương hiệu */}
+                                                                                                    <div className="grid grid-cols-2 gap-6 mt-4">
+
+                                                                                                        {/* Nhóm hàng */}
+                                                                                                        <div>
+                                                                                                            <div className="flex justify-between mb-1">
+                                                                                                                <label className="text-[13px] text-gray-700">
+                                                                                                                    Nhóm hàng
+                                                                                                                </label>
+
+                                                                                                                <button
+                                                                                                                    type="button"
+                                                                                                                    className="text-blue-600 text-[13px]"
+                                                                                                                >
+                                                                                                                    Tạo mới
+                                                                                                                </button>
+                                                                                                            </div>
+
+                                                                                                            <select
+                                                                                                                defaultValue={product.group}
+                                                                                                                className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-[14px]"
+                                                                                                            >
+                                                                                                                <option value={product.group}>
+                                                                                                                    {product.group}
+                                                                                                                </option>
+                                                                                                            </select>
+                                                                                                        </div>
+
+
+                                                                                                        {/* Thương hiệu */}
+                                                                                                        <div>
+                                                                                                            <div className="flex justify-between mb-1">
+                                                                                                                <label className="text-[13px] text-gray-700">
+                                                                                                                    Thương hiệu
+                                                                                                                </label>
+
+                                                                                                                <button
+                                                                                                                    type="button"
+                                                                                                                    className="text-blue-600 text-[13px]"
+                                                                                                                >
+                                                                                                                    Tạo mới
+                                                                                                                </button>
+                                                                                                            </div>
+
+                                                                                                            <select
+                                                                                                                defaultValue={product.brand}
+                                                                                                                className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-[14px]"
+                                                                                                            >
+                                                                                                                <option value="">
+                                                                                                                    Chọn thương hiệu
+                                                                                                                </option>
+
+                                                                                                                {product.brand && (
+                                                                                                                    <option value={product.brand}>
+                                                                                                                        {product.brand}
+                                                                                                                    </option>
+                                                                                                                )}
+                                                                                                            </select>
+                                                                                                        </div>
+
+                                                                                                    </div>
+
+
+                                                                                                    {/* Giá vốn, giá bán */}
+                                                                                                    <div className="border border-gray-200 rounded-lg p-4 mt-5">
+
+                                                                                                        <div className="flex items-center justify-between mb-4">
+                                                                                                            <h3 className="font-semibold text-gray-800">
+                                                                                                                Giá vốn, giá bán
+                                                                                                            </h3>
+
+                                                                                                            <ChevronUp size={18} />
+                                                                                                        </div>
+
+                                                                                                        <div className="grid grid-cols-2 gap-6">
+
+                                                                                                            {/* Giá vốn */}
+                                                                                                            <div>
+                                                                                                                <label className="block text-[13px] mb-1">
+                                                                                                                    Giá vốn
+                                                                                                                </label>
+
+                                                                                                                <input
+                                                                                                                    type="text"
+                                                                                                                    defaultValue={product.costPrice.toLocaleString("vi-VN")}
+                                                                                                                    className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-right outline-none"
+                                                                                                                />
+                                                                                                            </div>
+
+
+                                                                                                            {/* Giá bán */}
+                                                                                                            <div>
+                                                                                                                <div className="flex items-center gap-2 mb-1">
+                                                                                                                    <label className="text-[13px]">
+                                                                                                                        Giá bán
+                                                                                                                    </label>
+
+                                                                                                                    <button
+                                                                                                                        type="button"
+                                                                                                                        className="text-blue-600 text-[13px]"
+                                                                                                                    >
+                                                                                                                        Thiết lập giá
+                                                                                                                    </button>
+                                                                                                                </div>
+
+                                                                                                                <input
+                                                                                                                    type="text"
+                                                                                                                    defaultValue={product.salePrice.toLocaleString("vi-VN")}
+                                                                                                                    className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-right outline-none"
+                                                                                                                />
+                                                                                                            </div>
+
+                                                                                                        </div>
+                                                                                                    </div>
+
+
+                                                                                                    {/* Tồn kho */}
+                                                                                                    <div className="border border-gray-200 rounded-lg p-4 mt-4">
+
+                                                                                                        <h3 className="font-semibold text-gray-800">
+                                                                                                            Tồn kho
+                                                                                                        </h3>
+
+                                                                                                        <p className="text-[12px] text-gray-500 mt-1 mb-4">
+                                                                                                            Quản lý số lượng tồn kho và định mức tồn.
+                                                                                                            Khi tồn kho chạm đến định mức, bạn sẽ nhận
+                                                                                                            được cảnh báo.
+                                                                                                        </p>
+
+                                                                                                        <div className="grid grid-cols-3 gap-6">
+
+                                                                                                            {/* Tồn kho */}
+                                                                                                            <div>
+                                                                                                                <label className="block text-[13px] mb-1">
+                                                                                                                    Tồn kho
+                                                                                                                </label>
+
+                                                                                                                <input
+                                                                                                                    type="text"
+                                                                                                                    defaultValue={product.stock.toLocaleString("vi-VN")}
+                                                                                                                    className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-right"
+                                                                                                                />
+                                                                                                            </div>
+
+
+                                                                                                            {/* Định mức thấp nhất */}
+                                                                                                            <div>
+                                                                                                                <label className="block text-[13px] mb-1">
+                                                                                                                    Định mức tồn thấp nhất
+                                                                                                                </label>
+
+                                                                                                                <input
+                                                                                                                    type="text"
+                                                                                                                    defaultValue={product.minStock}
+                                                                                                                    className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-right"
+                                                                                                                />
+                                                                                                            </div>
+
+
+                                                                                                            {/* Định mức cao nhất */}
+                                                                                                            <div>
+                                                                                                                <label className="block text-[13px] mb-1">
+                                                                                                                    Định mức tồn cao nhất
+                                                                                                                </label>
+
+                                                                                                                <input
+                                                                                                                    type="text"
+                                                                                                                    defaultValue={product.maxStock}
+                                                                                                                    className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-right"
+                                                                                                                />
+                                                                                                            </div>
+
+                                                                                                        </div>
+                                                                                                    </div>
+
+
+                                                                                                    {/* Vị trí, trọng lượng */}
+                                                                                                    <div className="border border-gray-200 rounded-lg p-4 mt-4">
+
+                                                                                                        <h3 className="font-semibold text-gray-800">
+                                                                                                            Vị trí, trọng lượng
+                                                                                                        </h3>
+
+                                                                                                        <p className="text-[12px] text-gray-500 mt-1 mb-4">
+                                                                                                            Quản lý việc sắp xếp kho, vị trí bán hàng
+                                                                                                            hoặc trọng lượng hàng hóa
+                                                                                                        </p>
+
+                                                                                                        <div className="grid grid-cols-2 gap-6">
+
+                                                                                                            {/* Vị trí */}
+                                                                                                            <div>
+                                                                                                                <div className="flex justify-between mb-1">
+                                                                                                                    <label className="text-[13px]">
+                                                                                                                        Vị trí
+                                                                                                                    </label>
+
+                                                                                                                    <button
+                                                                                                                        type="button"
+                                                                                                                        className="text-blue-600 text-[13px]"
+                                                                                                                    >
+                                                                                                                        Tạo mới
+                                                                                                                    </button>
+                                                                                                                </div>
+
+                                                                                                                <input
+                                                                                                                    type="text"
+                                                                                                                    defaultValue={product.location}
+                                                                                                                    placeholder="Chọn vị trí"
+                                                                                                                    className="w-full h-[34px] px-3 border border-gray-300 rounded-lg"
+                                                                                                                />
+                                                                                                            </div>
+
+
+                                                                                                            {/* Trọng lượng */}
+                                                                                                            <div>
+                                                                                                                <label className="block text-[13px] mb-1">
+                                                                                                                    Trọng lượng
+                                                                                                                </label>
+
+                                                                                                                <div className="flex">
+                                                                                                                    <input
+                                                                                                                        type="text"
+                                                                                                                        defaultValue="0"
+                                                                                                                        className="flex-1 h-[34px] px-3 border border-gray-300 rounded-l-lg text-right"
+                                                                                                                    />
+
+                                                                                                                    <select className="w-[90px] h-[34px] border border-l-0 border-gray-300 rounded-r-lg">
+                                                                                                                        <option>g</option>
+                                                                                                                        <option>kg</option>
+                                                                                                                    </select>
+                                                                                                                </div>
+                                                                                                            </div>
+
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                </div>
+                                                                                            )}
+
+                                                                                            {activeEditTab === "description" && (
+                                                                                                <div className="p-6">
+                                                                                                    <div className="border border-gray-200 rounded-lg p-4">
+                                                                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                                                            Mô tả
+                                                                                                        </label>
+
+                                                                                                        <textarea
+                                                                                                            rows={8}
+                                                                                                            placeholder="Nhập mô tả hàng hóa..."
+                                                                                                            className="w-full border border-gray-300 rounded-lg p-3 resize-none outline-none focus:border-blue-500"
+                                                                                                        />
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            )}
+
+                                                                                        </div>
+
+                                                                                        {/* Footer */}
+                                                                                        <div className="h-[64px] border-t border-gray-200 flex items-center justify-end gap-3 px-6 flex-shrink-0">
+
+                                                                                            <button
+                                                                                                type="button"
+                                                                                                onClick={() => setShowEditModal(false)}
+                                                                                                className="px-5 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                                                                                            >
+                                                                                                Bỏ qua
+                                                                                            </button>
+
+                                                                                            <button
+                                                                                                type="button"
+                                                                                                onClick={() => {
+                                                                                                    // TODO: lưu sản phẩm
+                                                                                                    setShowEditModal(false);
+                                                                                                }}
+                                                                                                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                                                                                            >
+                                                                                                Lưu
+                                                                                            </button>
+
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                                {activeTab === "stockCard" && (
+                                                                    <div className="p-5 w-full overflow-hidden">
+                                                                        <div className="w-full overflow-x-auto">
+                                                                            <table className="w-full border-collapse text-[14px]">
+                                                                                <thead>
+                                                                                    <tr className="h-[40px] bg-gray-100 text-gray-800">
+                                                                                        <th className="px-3 text-left font-semibold whitespace-nowrap">
+                                                                                            Chứng từ
+                                                                                        </th>
+                                                                                        <th className="px-3 text-left font-semibold whitespace-nowrap">
+                                                                                            Thời gian
+                                                                                        </th>
+                                                                                        <th className="px-3 text-left font-semibold whitespace-nowrap">
+                                                                                            Loại giao dịch
+                                                                                        </th>
+                                                                                        <th className="px-3 text-right font-semibold whitespace-nowrap">
+                                                                                            Giá GD
+                                                                                            <span className="ml-1 inline-flex items-center justify-center w-[17px] h-[17px] rounded-full border border-gray-500 text-[11px]">
+                                                                                                i
+                                                                                            </span>
+                                                                                        </th>
+                                                                                        <th className="px-3 text-right font-semibold whitespace-nowrap">
+                                                                                            Giá vốn
+                                                                                        </th>
+                                                                                        <th className="px-3 text-right font-semibold whitespace-nowrap">
+                                                                                            Số lượng
+                                                                                        </th>
+                                                                                        <th className="px-3 text-right font-semibold whitespace-nowrap">
+                                                                                            Tồn cuối
+                                                                                        </th>
+                                                                                        <th className="px-3 text-left font-semibold whitespace-nowrap">
+                                                                                            Đối tác
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr className="h-[45px] border-b border-gray-200">
+                                                                                        <td className="px-3 text-blue-600 whitespace-nowrap">
+                                                                                            HD000048
+                                                                                        </td>
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                            16/08/2026 15:43
+                                                                                        </td>
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                            Bán hàng
+                                                                                        </td>
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            10,000
+                                                                                        </td>
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            8,000
+                                                                                        </td>
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            -6
+                                                                                        </td>
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            1,093
+                                                                                        </td>
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                            Khách lẻ
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr className="h-[45px] border-b border-gray-200">
+
+                                                                                        <td className="px-3 text-blue-600 whitespace-nowrap">
+                                                                                            HD000047
+                                                                                        </td>
+
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                            16/08/2026 15:43
+                                                                                        </td>
+
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                            Bán hàng
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            10,000
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            8,000
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            -1
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            1,099
+                                                                                        </td>
+
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                            Khách lẻ
+                                                                                        </td>
+
+                                                                                    </tr>
+
+
+                                                                                    {/* Kiểm hàng */}
+                                                                                    <tr className="h-[45px] border-b border-gray-200">
+
+                                                                                        <td className="px-3 text-blue-600 whitespace-nowrap">
+                                                                                            KK000001
+                                                                                        </td>
+
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                            16/08/2026 15:42
+                                                                                        </td>
+
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                            Kiểm hàng
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            8,000
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            1,100
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            1,100
+                                                                                        </td>
+
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                        </td>
+
+                                                                                    </tr>
+
+
+                                                                                    {/* Cập nhật giá vốn */}
+                                                                                    <tr className="h-[45px] border-b border-gray-200">
+
+                                                                                        <td className="px-3 text-blue-600 whitespace-nowrap">
+                                                                                            CB000001
+                                                                                        </td>
+
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                            16/08/2026 15:42
+                                                                                        </td>
+
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                            Cập nhật giá vốn
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            8,000
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            0
+                                                                                        </td>
+
+                                                                                        <td className="px-3 text-right whitespace-nowrap">
+                                                                                            0
+                                                                                        </td>
+
+                                                                                        <td className="px-3 whitespace-nowrap">
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                        <div className="border-t mt-0 px-3 py-5">
+                                                                            <button type="button" className="flex items-center gap-2 px-3 py-1.5  hover:bg-gray-200 rounded-lg  font-medium transition-colors">
+                                                                                <FileInput size={18} />
+                                                                                <span>Xuất file</span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                                {activeTab === "inventory" && (
+                                                                    <div className="p-5 w-full overflow-hidden">
+                                                                        <div className="w-full overflow-x-auto">
+                                                                            <table className="w-full border-collapse text-[14px]">
+                                                                                <thead>
+                                                                                    <tr className="h-[40px] bg-gray-100 text-gray-800">
+                                                                                        <th className="px-3 text-left font-semibold whitespace-nowrap">
+                                                                                            Chi nhánh
+                                                                                        </th>
+                                                                                        <th className="px-3 text-right font-semibold whitespace-nowrap">
+                                                                                            Tồn kho
+                                                                                        </th>
+                                                                                        <th className="px-3 text-right font-semibold whitespace-nowrap">
+                                                                                            KH đặt
+                                                                                        </th>
+                                                                                        <th className="px-3 text-left font-semibold whitespace-nowrap">
+                                                                                            Dự kiến hết hàng
+                                                                                        </th>
+                                                                                        <th className="px-3 text-left font-semibold whitespace-nowrap">
+                                                                                            Trạng thái
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr className="h-[45px] border-b border-gray-200">
+                                                                                        <td className="px-3">
+                                                                                        </td>
+                                                                                        <td className="px-3 text-right">
+                                                                                            1,093
+                                                                                        </td>
+                                                                                        <td className="px-3 text-right">
+                                                                                            0
+                                                                                        </td>
+                                                                                        <td className="px-3">
+                                                                                        </td>
+                                                                                        <td className="px-3">
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr className="h-[55px]">
+                                                                                        <td className="px-3 text-gray-700">
+                                                                                            Chi nhánh trung tâm
+                                                                                        </td>
+                                                                                        <td className="px-3 text-right">
+                                                                                            1,093
+                                                                                        </td>
+                                                                                        <td className="px-3 text-right">
+                                                                                            0
+                                                                                        </td>
+                                                                                        <td className="px-3">
+                                                                                            1735 ngày
+                                                                                        </td>
+                                                                                        <td className="px-3">
+                                                                                            <span className="inline-flex items-center px-2 py-1 rounded bg-green-50 text-green-700 text-[13px]">
+                                                                                                Đang kinh doanh
+                                                                                            </span>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </>
                                         ))}
-
                                     </tbody>
-
                                 </table>
-
                             </div>
 
                             {/* ================= FOOTER ================= */}
@@ -2046,8 +2988,8 @@ const Product = () => {
                                         disabled={currentPage === 1}
                                         onClick={() => setCurrentPage(1)}
                                         className={`text-[18px] ${currentPage === 1
-                                                ? "text-gray-300 cursor-not-allowed"
-                                                : "text-gray-700 hover:text-blue-600"
+                                            ? "text-gray-300 cursor-not-allowed"
+                                            : "text-gray-700 hover:text-blue-600"
                                             }`}
                                     >
                                         |◀
@@ -2059,8 +3001,8 @@ const Product = () => {
                                         disabled={currentPage === 1}
                                         onClick={() => setCurrentPage(prev => prev - 1)}
                                         className={`text-[22px] ${currentPage === 1
-                                                ? "text-gray-300 cursor-not-allowed"
-                                                : "text-gray-700 hover:text-blue-600"
+                                            ? "text-gray-300 cursor-not-allowed"
+                                            : "text-gray-700 hover:text-blue-600"
                                             }`}
                                     >
                                         ‹
@@ -2080,8 +3022,8 @@ const Product = () => {
                                         disabled={currentPage === totalPages}
                                         onClick={() => setCurrentPage(prev => prev + 1)}
                                         className={`text-[22px] ${currentPage === totalPages
-                                                ? "text-gray-300 cursor-not-allowed"
-                                                : "text-gray-700 hover:text-blue-600"
+                                            ? "text-gray-300 cursor-not-allowed"
+                                            : "text-gray-700 hover:text-blue-600"
                                             }`}
                                     >
                                         ›
@@ -2093,8 +3035,8 @@ const Product = () => {
                                         disabled={currentPage === totalPages}
                                         onClick={() => setCurrentPage(totalPages)}
                                         className={`text-[18px] ${currentPage === totalPages
-                                                ? "text-gray-300 cursor-not-allowed"
-                                                : "text-gray-700 hover:text-blue-600"
+                                            ? "text-gray-300 cursor-not-allowed"
+                                            : "text-gray-700 hover:text-blue-600"
                                             }`}
                                     >
                                         ▶|
