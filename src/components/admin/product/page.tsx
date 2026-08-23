@@ -1,7 +1,8 @@
 "use client";
 
-import { Search, SlidersHorizontal, Plus, ChevronDown, FileUp, FileDown, List, Settings, CircleHelp, ChevronRight, CalendarDays, Trash2, Copy, PencilLine, Printer, Ellipsis, FileInput, X, ChevronUp, } from "lucide-react";
-import { useState } from "react";
+import { Search, SlidersHorizontal, Plus, ChevronDown, FileUp, FileDown, List, Settings, CircleHelp, ChevronRight, CalendarDays, Trash2, Copy, PencilLine, Printer, Ellipsis, FileInput, X, ChevronUp, Info, Image as ImageIcon, Check, } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import * as XLSX from "xlsx";
 
 const Product = () => {
     const columns = [
@@ -109,6 +110,9 @@ const Product = () => {
         {
             id: 1,
             image: "https://ann.com.vn/image/combo-5-hop-tam-chi-nha-khoa-ve-sinh-rang-mieng-dental-flossers-hop-50-2.png",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10223908180",
             barcode: "",
             name: "Tăm chỉ Amita (gói 50 que)",
@@ -129,6 +133,9 @@ const Product = () => {
         {
             id: 2,
             image: "🥩",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10223525751",
             barcode: "",
             name: "Thịt dê nạc",
@@ -149,6 +156,9 @@ const Product = () => {
         {
             id: 3,
             image: "🧴",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "1021024676802",
             barcode: "",
             name: "Xịt chống muỗi trẻ em",
@@ -169,6 +179,9 @@ const Product = () => {
         {
             id: 4,
             image: "🐟",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "1021023987836",
             barcode: "",
             name: "Khô cá lóc non sông Đốc Cà Mau hút chân không 500gram",
@@ -189,6 +202,9 @@ const Product = () => {
         {
             id: 5,
             image: "🌱",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "1021023976409",
             barcode: "",
             name: "Sen đá trung",
@@ -209,6 +225,9 @@ const Product = () => {
         {
             id: 6,
             image: "🍬",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "1021023769752",
             barcode: "",
             name: "Kẹo dẻo cốt trái cây xoài xanh 300g x 24gói",
@@ -229,6 +248,9 @@ const Product = () => {
         {
             id: 7,
             image: "🥛",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "1021022915952",
             barcode: "",
             name: "Sữa đặc có đường Ông Thọ trắng nhãn vàng lon 380g",
@@ -249,6 +271,9 @@ const Product = () => {
         {
             id: 8,
             image: "🥝",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "1021022832795",
             barcode: "",
             name: "Kiwi vàng New Zealand khay 3,5kg",
@@ -269,6 +294,9 @@ const Product = () => {
         {
             id: 9,
             image: "🥟",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "101381421291",
             barcode: "8934637514987",
             name: "Sủi cảo tôm thịt Cholimex 300g",
@@ -289,6 +317,9 @@ const Product = () => {
         {
             id: 10,
             image: "🍱",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10138153516",
             barcode: "",
             name: "Khay đá silicon có nắp 14 viên 213",
@@ -309,6 +340,9 @@ const Product = () => {
         {
             id: 11,
             image: "🍞",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10137863505",
             barcode: "8938502525641",
             name: "Bánh bao Thọ Phát trái đào 240g",
@@ -329,6 +363,9 @@ const Product = () => {
         {
             id: 12,
             image: "🎨",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10137406670",
             barcode: "",
             name: "Màu dạ acrylic 60 màu",
@@ -349,6 +386,9 @@ const Product = () => {
         {
             id: 13,
             image: "🐟",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10137340627",
             barcode: "",
             name: "Sealect cá ngừ xắt lát ngâm dầu đậu nành 165g",
@@ -369,6 +409,9 @@ const Product = () => {
         {
             id: 14,
             image: "🍋",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10136999639",
             barcode: "",
             name: "Sả tươi 500gr",
@@ -389,6 +432,9 @@ const Product = () => {
         {
             id: 15,
             image: "🍮",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10136761804",
             barcode: "",
             name: "Kẹo thạch Zai Zai Đức Hạnh 1 túi 700g loại cây dài",
@@ -409,6 +455,9 @@ const Product = () => {
         {
             id: 16,
             image: "🧃",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10136747981",
             barcode: "",
             name: "Nước nghệ Hàn Quốc Curcumin",
@@ -429,6 +478,9 @@ const Product = () => {
         {
             id: 17,
             image: "🍪",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10136747982",
             barcode: "",
             name: "Bánh quy bơ hộp thiếc",
@@ -449,6 +501,9 @@ const Product = () => {
         {
             id: 18,
             image: "🧼",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10136747983",
             barcode: "",
             name: "Nước rửa tay diệt khuẩn",
@@ -469,6 +524,9 @@ const Product = () => {
         {
             id: 19,
             image: "🧽",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10136747984",
             barcode: "",
             name: "Miếng rửa chén đa năng",
@@ -489,6 +547,9 @@ const Product = () => {
         {
             id: 20,
             image: "🐶",
+            images: [
+                "https://ann.com.vn/image/staff.png",
+            ],
             code: "10136747985",
             barcode: "",
             name: "Thức ăn cho chó trưởng thành",
@@ -529,6 +590,125 @@ const Product = () => {
     // chỉnh sửa của chi tiết 
     const [showEditModal, setShowEditModal] = useState(false);
     const [activeEditTab, setActiveEditTab] = useState<"info" | "description">("info");
+
+
+
+
+
+
+
+    // thẻ kho xuất file Excel
+    const stockCardData = [
+        {
+            code: "HD000048",
+            time: "16/08/2026 15:43",
+            type: "Bán hàng",
+            transactionPrice: 10000,
+            costPrice: 8000,
+            quantity: -6,
+            endingStock: 1093,
+            partner: "Khách lẻ",
+        },
+        {
+            code: "HD000047",
+            time: "16/08/2026 15:43",
+            type: "Bán hàng",
+            transactionPrice: 10000,
+            costPrice: 8000,
+            quantity: -1,
+            endingStock: 1099,
+            partner: "Khách lẻ",
+        },
+        {
+            code: "KK000001",
+            time: "16/08/2026 15:42",
+            type: "Kiểm hàng",
+            transactionPrice: "",
+            costPrice: 8000,
+            quantity: 1100,
+            endingStock: 1100,
+            partner: "",
+        },
+        {
+            code: "CB000001",
+            time: "16/08/2026 15:42",
+            type: "Cập nhật giá vốn",
+            transactionPrice: "",
+            costPrice: 8000,
+            quantity: 0,
+            endingStock: 0,
+            partner: "",
+        },
+    ];
+    const handleExportExcel = () => {
+        const data = stockCardData.map((item) => ({
+            "Chứng từ": item.code,
+            "Thời gian": item.time,
+            "Loại giao dịch": item.type,
+            "Giá GD": item.transactionPrice,
+            "Giá vốn": item.costPrice,
+            "Số lượng": item.quantity,
+            "Tồn cuối": item.endingStock,
+            "Đối tác": item.partner,
+        }));
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            "Thẻ kho"
+        );
+        XLSX.writeFile(
+            workbook,
+            "the-kho.xlsx"
+        );
+    };
+
+    // model chỉnh sửa chi tiết
+    const [showDescriptionModal, setShowDescriptionModal] = useState(false);
+
+    // tải ảnh lên 
+    const [productImages, setProductImages] = useState<string[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    useEffect(() => {
+        const product = products.find(
+            (item) => item.id === selectedProduct
+        );
+        if (product) {
+            setProductImages(product.images || []);
+        } else {
+            setProductImages([]);
+        }
+    }, [selectedProduct]);
+
+    // đơn vị tính 
+    // const [baseUnit, setBaseUnit] = useState("");
+    // const [basePrice, setBasePrice] = useState("");
+    // const [additionalUnits, setAdditionalUnits] = useState<any[]>([]);
+
+    const [productUnits, setProductUnits] = useState<Record<number, {
+        baseUnit: string;
+        basePrice: string;
+        additionalUnits: {
+            id: number;
+            name: string;
+            conversion: string;
+            price: string;
+            directSale: boolean;
+        }[];
+    }>>({});
+
+
+    // tạo thuộc tính 
+    const [showAttribute, setShowAttribute] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [attribute, setAttribute] = useState("");
+    const [attributes, setAttributes] = useState<string[]>([]);
+    const [productAttributes, setProductAttributes] = useState<Record<string | number, string>>({});
+    
+
+
+
 
 
     return (
@@ -1774,7 +1954,7 @@ const Product = () => {
 
                                     {/* ================= BODY ================= */}
                                     <tbody>
-                                        <tr><td colSpan={selectedColumns.length + 2} className="h-[45px] p-0 border-0 bg-white" ></td> </tr>
+                                        <tr><td colSpan={selectedColumns.length + 2} className="h-[45px] p-0 border-0 bg-white"></td></tr>
                                         {currentProducts.map((product) => (
                                             <>
                                                 <tr key={product.id} onClick={() => setSelectedProduct(selectedProduct === product.id ? null : product.id)}
@@ -2046,33 +2226,30 @@ const Product = () => {
                                                                 </div>
                                                                 {activeTab === "description" && (
                                                                     <div className="p-5 w-full overflow-hidden">
-                                                                        {/* Mô tả */}
                                                                         <div className="border border-gray-200 rounded-lg p-4">
                                                                             <p className="font-semibold text-gray-800">
                                                                                 Mô tả
                                                                             </p>
-
                                                                             <p className="mt-3 text-gray-700">
                                                                                 bánh mỳ này rất ngon
                                                                             </p>
                                                                         </div>
-                                                                        {/* Ghi chú đặt hàng */}
                                                                         <div className="border border-gray-200 rounded-lg p-4 mt-2">
                                                                             <p className="font-semibold text-gray-800">
                                                                                 Ghi chú đặt hàng
                                                                             </p>
-
                                                                             <p className="mt-3 text-gray-700">
                                                                                 hello ngon lắm ghi chú đặt hàng
                                                                             </p>
                                                                         </div>
                                                                         <div className="flex justify-end mt-5">
-                                                                            <button type="button" className="px-4 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 whitespace-nowrap">
+                                                                            <button type="button" onClick={() => setShowDescriptionModal(true)} className="px-4 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 whitespace-nowrap">
                                                                                 <PencilLine size={16} />
                                                                                 <span>Chỉnh sửa</span>
                                                                             </button>
                                                                         </div>
                                                                     </div>
+
 
                                                                 )}
                                                                 {activeTab === "info" && (
@@ -2136,8 +2313,6 @@ const Product = () => {
                                                                                     {product.barcode || "Chưa có"}
                                                                                 </p>
                                                                             </div>
-
-
                                                                             {/* Tồn kho */}
                                                                             <div className="py-3 border-b border-gray-200">
                                                                                 <p className="text-[18px] text-gray-500">
@@ -2148,8 +2323,6 @@ const Product = () => {
                                                                                     {product.stock}
                                                                                 </p>
                                                                             </div>
-
-
                                                                             {/* Định mức */}
                                                                             <div className="py-3 border-b border-gray-200">
                                                                                 <p className="text-[18px] text-gray-500">
@@ -2161,8 +2334,6 @@ const Product = () => {
                                                                                     {product.maxStock}
                                                                                 </p>
                                                                             </div>
-
-
                                                                             {/* Giá vốn */}
                                                                             <div className="py-3 border-b border-gray-200">
                                                                                 <p className="text-[18px] text-gray-500">
@@ -2173,8 +2344,6 @@ const Product = () => {
                                                                                     {product.costPrice.toLocaleString("vi-VN")}
                                                                                 </p>
                                                                             </div>
-
-
                                                                             {/* Giá bán */}
                                                                             <div className="py-3 border-b border-gray-200">
                                                                                 <p className="text-[18px] text-gray-500">
@@ -2185,8 +2354,6 @@ const Product = () => {
                                                                                     {product.salePrice.toLocaleString("vi-VN")}
                                                                                 </p>
                                                                             </div>
-
-
                                                                             {/* Thương hiệu */}
                                                                             <div className="py-3 border-b border-gray-200">
                                                                                 <p className="text-[18px] text-gray-500">
@@ -2197,8 +2364,6 @@ const Product = () => {
                                                                                     {product.brand || "Chưa có"}
                                                                                 </p>
                                                                             </div>
-
-
                                                                             {/* Vị trí */}
                                                                             <div className="py-3 border-b border-gray-200">
                                                                                 <p className="text-[18px] text-gray-500">
@@ -2279,19 +2444,15 @@ const Product = () => {
                                                                             Thêm thuộc tính
                                                                         </button>
                                                                         <div className="border-t px-5 py-4 flex-shrink-0 flex items-center justify-between bg-white w-full">
-
                                                                             {/* Bên trái */}
                                                                             <div className="flex items-center gap-7">
-
                                                                                 <button type="button" className="flex items-center gap-1 text-gray-700 hover:text-red-600" >
                                                                                     <Trash2 size={18} /> <span>Xóa</span>
                                                                                 </button>
-
                                                                                 <button type="button" className="flex items-center gap-1 text-gray-700 hover:text-blue-600">
                                                                                     <Copy size={16} />
                                                                                     <span>Sao chép</span>
                                                                                 </button>
-
                                                                             </div>
                                                                             {/* Bên phải */}
                                                                             <div className="flex items-center gap-2 flex-shrink-0">
@@ -2300,12 +2461,14 @@ const Product = () => {
                                                                                     <PencilLine size={16} />
                                                                                     <span>Chỉnh sửa</span>
                                                                                 </button>
-
                                                                                 <button type="button" className="flex items-center justify-center gap-1 px-5 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 whitespace-nowrap">
                                                                                     <Printer size={16} />
                                                                                     <span>In tem mã</span>
                                                                                 </button>
-
+                                                                                <button type="button" className="flex items-center justify-center gap-1 px-5 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 whitespace-nowrap">
+                                                                                    <Printer size={16} />
+                                                                                    <span>Thêm hàng hóa cùng loại</span>
+                                                                                </button>
                                                                                 <button type="button" className="w-[42px] h-[40px] border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center flex-shrink-0">
                                                                                     <Ellipsis size={20} />
                                                                                 </button>
@@ -2346,8 +2509,8 @@ const Product = () => {
 
                                                                                         <div className="flex-1 overflow-y-auto">
                                                                                             {activeEditTab === "info" && (
-                                                                                                <div className="p-6">                                                                                   
-                                                                                                    <div className="grid grid-cols-[1fr_1fr_230px] gap-6">                                                                                               
+                                                                                                <div className="p-6">
+                                                                                                    <div className="grid grid-cols-[1fr_1fr_230px] gap-6">
                                                                                                         <div>
                                                                                                             <label className="block text-[13px] text-gray-700 mb-1">
                                                                                                                 Mã hàng
@@ -2375,39 +2538,175 @@ const Product = () => {
                                                                                                                 className="w-full h-[34px] px-3 border border-gray-300 rounded-lg outline-none text-[14px] focus:border-blue-500"
                                                                                                             />
                                                                                                         </div>
-                                                                                                        
+
 
                                                                                                         {/* Hình ảnh */}
                                                                                                         <div className="flex gap-2">
-
-                                                                                                            <div className="w-[180px] h-[180px] border border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
-
-                                                                                                                {product.image?.startsWith("http") ? (
-                                                                                                                    <img
-                                                                                                                        src={product.image}
-                                                                                                                        alt={product.name}
-                                                                                                                        className="w-full h-full object-contain"
-                                                                                                                    />
+                                                                                                            <div className="relative w-[180px] h-[180px] border border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 group">
+                                                                                                                {productImages[0] ? (
+                                                                                                                    productImages[0].startsWith("http") ||
+                                                                                                                        productImages[0].startsWith("blob:") ? (
+                                                                                                                        <img
+                                                                                                                            src={productImages[0]}
+                                                                                                                            alt={product.image}
+                                                                                                                            className="w-full h-full object-contain"
+                                                                                                                        />
+                                                                                                                    ) : (
+                                                                                                                        <span className="text-[70px]">
+                                                                                                                            {productImages[0]}
+                                                                                                                        </span>
+                                                                                                                    )
                                                                                                                 ) : (
-                                                                                                                    <span className="text-[70px]">
-                                                                                                                        {product.image}
-                                                                                                                    </span>
+                                                                                                                    <ImageIcon size={40} className="text-gray-300" />
+                                                                                                                )}
+                                                                                                                {/* Xóa ảnh chính */}
+                                                                                                                {productImages[0] && (
+                                                                                                                    <button
+                                                                                                                        type="button"
+                                                                                                                        onClick={() => {
+                                                                                                                            setProductImages((prev) =>
+                                                                                                                                prev.filter((_, index) => index !== 0)
+                                                                                                                            );
+                                                                                                                        }}
+                                                                                                                        title="Xóa ảnh" className=" absolute top-[-1px] right-[-1px]  w-[20px] h-[20px] rounded-full bg-white border border-gray-400 flex items-center  justify-center text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-100 hover:text-black z-10 " >
+                                                                                                                        <X size={14} strokeWidth={2} />
+                                                                                                                    </button>
+                                                                                                                )}
+                                                                                                            </div>
+                                                                                                            {/* ================= ẢNH PHỤ ================= */}
+                                                                                                            <div className="flex flex-col gap-2">
+                                                                                                                {/* Input chọn file - ẩn */}
+                                                                                                                <input
+                                                                                                                    ref={fileInputRef}
+                                                                                                                    type="file"
+                                                                                                                    accept="image/*"
+                                                                                                                    className="hidden"
+                                                                                                                    onChange={(e) => {
+                                                                                                                        const file = e.target.files?.[0];
+                                                                                                                        if (!file) return;
+                                                                                                                        // Tạo URL tạm để hiển thị ảnh
+                                                                                                                        const imageUrl = URL.createObjectURL(file);
+                                                                                                                        setProductImages((prev) => {
+                                                                                                                            // Tối đa 4 ảnh
+                                                                                                                            if (prev.length >= 5) {
+                                                                                                                                return prev;
+                                                                                                                            }
+                                                                                                                            return [...prev, imageUrl];
+                                                                                                                        });
+                                                                                                                        // Cho phép chọn lại cùng file
+                                                                                                                        e.target.value = "";
+                                                                                                                    }}
+                                                                                                                />
+
+
+                                                                                                                {/* ================= ẢNH 2 ================= */}
+                                                                                                                {productImages[1] ? (
+                                                                                                                    <div className="relative w-[42px] h-[42px] group cursor-pointer"
+                                                                                                                        onClick={() => {
+                                                                                                                            setProductImages((prev) => {
+                                                                                                                                const newImages = [...prev];
+                                                                                                                                [newImages[0], newImages[1]] = [newImages[1], newImages[0],];
+                                                                                                                                return newImages;
+                                                                                                                            });
+                                                                                                                        }}>
+                                                                                                                        <div className="w-full h-full border border-gray-300 rounded-lg overflow-hidden bg-gray-50">
+                                                                                                                            <img src={productImages[1]} alt="Ảnh 2" className="w-full h-full object-cover" />
+                                                                                                                        </div>
+                                                                                                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                                                                                                            Ảnh đại diện hàng hóa
+                                                                                                                        </div>
+
+                                                                                                                        {/* Xóa */}
+                                                                                                                        <button
+                                                                                                                            type="button"
+                                                                                                                            onClick={() => {
+                                                                                                                                setProductImages((prev) =>
+                                                                                                                                    prev.filter((_, index) => index !== 1)
+                                                                                                                                );
+                                                                                                                            }}
+                                                                                                                            title="Xóa ảnh" className=" absolute -top-2 -right-2 w-[18px] h-[18px] rounded-full bg-white border border-gray-400 flex items-center justify-center text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-100 hover:text-black z-10 ">
+                                                                                                                            <X size={11} />
+                                                                                                                        </button>
+                                                                                                                    </div>
+                                                                                                                ) : (
+
+                                                                                                                    /* Chưa có ảnh 2 => hiện + */
+                                                                                                                    <button type="button" onClick={() => fileInputRef.current?.click()}
+                                                                                                                        className=" w-[42px] h-[42px] border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50 ">
+                                                                                                                        <Plus size={20} />
+                                                                                                                    </button>
+                                                                                                                )}
+                                                                                                                {productImages[2] ? (
+                                                                                                                    <div className="relative w-[42px] h-[42px] group"
+                                                                                                                        onClick={() => {
+                                                                                                                            setProductImages((prev) => {
+                                                                                                                                const newImages = [...prev];
+                                                                                                                                [newImages[0], newImages[2]] = [newImages[2], newImages[0],];
+                                                                                                                                return newImages;
+                                                                                                                            });
+                                                                                                                        }}>
+                                                                                                                        <div className="w-full h-full border border-gray-300 rounded-lg overflow-hidden bg-gray-50">
+                                                                                                                            <img src={productImages[2]} alt="Ảnh 3" className="w-full h-full object-cover" />
+                                                                                                                        </div>
+                                                                                                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                                                                                                            Ảnh đại diện hàng hóa
+                                                                                                                        </div>
+                                                                                                                        <button type="button" onClick={() => { setProductImages((prev) => prev.filter((_, index) => index !== 2)); }}
+                                                                                                                            title="Xóa ảnh" className=" absolute -top-2 -right-2 w-[18px] h-[18px] rounded-full bg-white border  border-gray-400 flex items-center justify-center  text-gray-600 opacity-0 group-hover:opacity-100  transition-opacity hover:bg-gray-100 hover:text-black  z-10 ">
+                                                                                                                            <X size={11} />
+                                                                                                                        </button>
+                                                                                                                    </div>
+                                                                                                                ) : productImages.length === 2 ? (
+                                                                                                                    <button type="button" onClick={() => fileInputRef.current?.click()}
+                                                                                                                        className=" w-[42px]  h-[42px] border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50 " >
+                                                                                                                        <Plus size={20} />
+                                                                                                                    </button>
+                                                                                                                ) : (
+                                                                                                                    <div className="w-[42px] h-[42px] border border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
+                                                                                                                        <ImageIcon
+                                                                                                                            size={22}
+                                                                                                                            className="text-gray-300"
+                                                                                                                        />
+                                                                                                                    </div>
                                                                                                                 )}
 
+                                                                                                                {/* ================= ẢNH 4 ================= */}
+                                                                                                                {productImages[3] ? (
+                                                                                                                    <div className="relative w-[42px] h-[42px] group"
+                                                                                                                        onClick={() => {
+                                                                                                                            setProductImages((prev) => {
+                                                                                                                                const newImages = [...prev];
+                                                                                                                                [newImages[0], newImages[3]] = [newImages[3], newImages[0],];
+                                                                                                                                return newImages;
+                                                                                                                            });
+                                                                                                                        }}>
+                                                                                                                        <div className="w-full h-full border border-gray-300 rounded-lg overflow-hidden bg-gray-50">
+                                                                                                                            <img src={productImages[3]} alt="Ảnh 4" className="w-full h-full object-cover" />
+                                                                                                                        </div>
+                                                                                                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                                                                                                            Ảnh đại diện hàng hóa
+                                                                                                                        </div>
+                                                                                                                        <button type="button" onClick={() => { setProductImages((prev) => prev.filter((_, index) => index !== 3)); }}
+                                                                                                                            title="Xóa ảnh" className=" absolute -top-2 -right-2 w-[18px] h-[18px] rounded-full bg-white  border border-gray-400 flex items-center justify-center text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-100 hover:text-black z-10 " >
+                                                                                                                            <X size={11} />
+                                                                                                                        </button>
+                                                                                                                    </div>
+                                                                                                                ) : productImages.length === 3 ? (
+                                                                                                                    <button type="button" onClick={() => fileInputRef.current?.click()}
+                                                                                                                        className="  w-[42px] h-[42px]  border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50" >
+                                                                                                                        <Plus size={20} />
+                                                                                                                    </button>
+                                                                                                                ) : (
+                                                                                                                    <div className="w-[42px] h-[42px] border border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
+                                                                                                                        <ImageIcon
+                                                                                                                            size={22}
+                                                                                                                            className="text-gray-300"
+                                                                                                                        />
+                                                                                                                    </div>
+                                                                                                                )}
                                                                                                             </div>
-
-                                                                                                            <button
-                                                                                                                type="button"
-                                                                                                                className="w-[42px] h-[180px] border border-gray-300 rounded-lg flex items-start justify-center pt-3 hover:bg-gray-50"
-                                                                                                            >
-                                                                                                                <Plus size={20} />
-                                                                                                            </button>
-
                                                                                                         </div>
-
                                                                                                     </div>
-
-
                                                                                                     {/* Tên hàng */}
                                                                                                     <div className="mt-4">
                                                                                                         <label className="block text-[13px] text-gray-700 mb-1">
@@ -2533,18 +2832,15 @@ const Product = () => {
                                                                                                                     className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-right outline-none"
                                                                                                                 />
                                                                                                             </div>
-
                                                                                                         </div>
                                                                                                     </div>
 
 
                                                                                                     {/* Tồn kho */}
                                                                                                     <div className="border border-gray-200 rounded-lg p-4 mt-4">
-
                                                                                                         <h3 className="font-semibold text-gray-800">
                                                                                                             Tồn kho
                                                                                                         </h3>
-
                                                                                                         <p className="text-[12px] text-gray-500 mt-1 mb-4">
                                                                                                             Quản lý số lượng tồn kho và định mức tồn.
                                                                                                             Khi tồn kho chạm đến định mức, bạn sẽ nhận
@@ -2648,19 +2944,509 @@ const Product = () => {
                                                                                                                         defaultValue="0"
                                                                                                                         className="flex-1 h-[34px] px-3 border border-gray-300 rounded-l-lg text-right"
                                                                                                                     />
-
                                                                                                                     <select className="w-[90px] h-[34px] border border-l-0 border-gray-300 rounded-r-lg">
                                                                                                                         <option>g</option>
                                                                                                                         <option>kg</option>
                                                                                                                     </select>
                                                                                                                 </div>
                                                                                                             </div>
-
                                                                                                         </div>
                                                                                                     </div>
 
+                                                                                                    {/* Quản lý theo đơn vị tính và thuộc tính */}
+                                                                                                    <div className="border border-gray-200 rounded-lg p-4 mt-4">
+                                                                                                        <div className="flex items-center justify-between">
+                                                                                                            <h3 className="font-semibold text-gray-800 text-[17px]">
+                                                                                                                Quản lý theo đơn vị tính và thuộc tính
+                                                                                                            </h3>
+                                                                                                            <button type="button" className="text-gray-700 hover:text-blue-600" >
+                                                                                                                <ChevronUp size={16} />
+                                                                                                            </button>
+                                                                                                        </div>
+                                                                                                        {/* Đơn vị tính */}
+                                                                                                        <div className="mt-5">
+                                                                                                            <h4 className="text-[13px] font-semibold text-gray-800 text-[15px]">
+                                                                                                                Đơn vị tính
+                                                                                                            </h4>
+
+                                                                                                            <p className="text-[13px] text-gray-500 mt-1">
+                                                                                                                Thêm đơn vị bán hoặc nhập như chai, lọc, thùng. Đặt công thức quy đổi
+                                                                                                                để tính nhanh giá và tồn kho. Ví dụ: 1 lốc = 4 chai, 1 thùng = 20 lốc.
+                                                                                                            </p>
+
+                                                                                                            {/* Đơn vị cơ bản */}
+                                                                                                            <div className="flex items-end gap-6 mt-5">
+
+                                                                                                                {/* Tên đơn vị cơ bản */}
+                                                                                                                <div className="w-[210px]">
+                                                                                                                    <label className="block text-[13px] mb-1">
+                                                                                                                        Tên đơn vị cơ bản
+                                                                                                                    </label>
+
+                                                                                                                    <input
+                                                                                                                        type="text"
+                                                                                                                        value={productUnits[product.id]?.baseUnit || ""}
+                                                                                                                        onChange={(e) => {
+                                                                                                                            setProductUnits((prev) => ({
+                                                                                                                                ...prev,
+                                                                                                                                [product.id]: {
+                                                                                                                                    ...(prev[product.id] || {
+                                                                                                                                        baseUnit: "",
+                                                                                                                                        basePrice: "",
+                                                                                                                                        additionalUnits: [],
+                                                                                                                                    }),
+                                                                                                                                    baseUnit: e.target.value,
+                                                                                                                                },
+                                                                                                                            }));
+                                                                                                                        }}
+                                                                                                                        placeholder="Nhập tên đơn vị cơ bản"
+                                                                                                                        className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-[13px] outline-none focus:border-blue-500"
+                                                                                                                    />
+                                                                                                                </div>
+
+                                                                                                                {/* Giá bán */}
+                                                                                                                <div className="w-[120px]">
+                                                                                                                    <label className="block text-[13px] mb-1">
+                                                                                                                        Giá bán
+                                                                                                                    </label>
+
+                                                                                                                    <input
+                                                                                                                        type="text"
+                                                                                                                        value={productUnits[product.id]?.basePrice || ""}
+                                                                                                                        onChange={(e) => {
+                                                                                                                            setProductUnits((prev) => ({
+                                                                                                                                ...prev,
+                                                                                                                                [product.id]: {
+                                                                                                                                    ...(prev[product.id] || {
+                                                                                                                                        baseUnit: "",
+                                                                                                                                        basePrice: "",
+                                                                                                                                        additionalUnits: [],
+                                                                                                                                    }),
+                                                                                                                                    basePrice: e.target.value,
+                                                                                                                                },
+                                                                                                                            }));
+                                                                                                                        }}
+                                                                                                                        placeholder="0"
+                                                                                                                        className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-[13px] text-right outline-none focus:border-blue-500"
+                                                                                                                    />
+                                                                                                                </div>
+
+                                                                                                                {/* Bán trực tiếp */}
+                                                                                                                <label className="flex items-center gap-2 h-[34px] cursor-pointer">
+                                                                                                                    <input
+                                                                                                                        type="checkbox"
+                                                                                                                        defaultChecked
+                                                                                                                        className="w-[15px] h-[15px] accent-blue-600"
+                                                                                                                    />
+
+                                                                                                                    <span className="text-[13px]">
+                                                                                                                        Bán trực tiếp
+                                                                                                                    </span>
+                                                                                                                </label>
+                                                                                                            </div>
+
+                                                                                                            {/* Các đơn vị thêm */}
+                                                                                                            {productUnits[product.id]?.additionalUnits?.map((unit, index) => (
+                                                                                                                <div
+                                                                                                                    key={unit.id}
+                                                                                                                    className="flex items-end gap-6 mt-4"
+                                                                                                                >
+
+                                                                                                                    {/* Tên đơn vị */}
+                                                                                                                    <div className="w-[210px]">
+                                                                                                                        <label className="block text-[13px] mb-1">
+                                                                                                                            Tên đơn vị
+                                                                                                                        </label>
+
+                                                                                                                        <input
+                                                                                                                            type="text"
+                                                                                                                            value={unit.name}
+                                                                                                                            onChange={(e) => {
+                                                                                                                                const newUnits = [
+                                                                                                                                    ...(productUnits[product.id]?.additionalUnits || [])
+                                                                                                                                ];
+
+                                                                                                                                newUnits[index] = {
+                                                                                                                                    ...newUnits[index],
+                                                                                                                                    name: e.target.value,
+                                                                                                                                };
+
+                                                                                                                                setProductUnits((prev) => ({
+                                                                                                                                    ...prev,
+                                                                                                                                    [product.id]: {
+                                                                                                                                        ...(prev[product.id] || {
+                                                                                                                                            baseUnit: "",
+                                                                                                                                            basePrice: "",
+                                                                                                                                            additionalUnits: [],
+                                                                                                                                        }),
+                                                                                                                                        additionalUnits: newUnits,
+                                                                                                                                    },
+                                                                                                                                }));
+                                                                                                                            }}
+                                                                                                                            placeholder="Nhập tên đơn vị"
+                                                                                                                            className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-[13px] outline-none focus:border-blue-500"
+                                                                                                                        />
+                                                                                                                    </div>
+
+                                                                                                                    {/* Dấu = */}
+                                                                                                                    <div className="flex items-center justify-center w-[15px] h-[34px]">
+                                                                                                                        <span className="text-[15px]">
+                                                                                                                            =
+                                                                                                                        </span>
+                                                                                                                    </div>
+
+                                                                                                                    {/* Quy đổi */}
+                                                                                                                    <div className="w-[140px]">
+                                                                                                                        <label className="block text-[13px] mb-1">
+                                                                                                                            Quy đổi
+                                                                                                                        </label>
+
+                                                                                                                        <div className="flex h-[34px]">
+
+                                                                                                                            <input
+                                                                                                                                type="text"
+                                                                                                                                value={unit.conversion}
+                                                                                                                                onChange={(e) => {
+                                                                                                                                    const newUnits = [
+                                                                                                                                        ...(productUnits[product.id]?.additionalUnits || [])
+                                                                                                                                    ];
+
+                                                                                                                                    newUnits[index] = {
+                                                                                                                                        ...newUnits[index],
+                                                                                                                                        conversion: e.target.value,
+                                                                                                                                    };
+
+                                                                                                                                    setProductUnits((prev) => ({
+                                                                                                                                        ...prev,
+                                                                                                                                        [product.id]: {
+                                                                                                                                            ...(prev[product.id] || {
+                                                                                                                                                baseUnit: "",
+                                                                                                                                                basePrice: "",
+                                                                                                                                                additionalUnits: [],
+                                                                                                                                            }),
+                                                                                                                                            additionalUnits: newUnits,
+                                                                                                                                        },
+                                                                                                                                    }));
+                                                                                                                                }}
+                                                                                                                                className="w-[70px] px-3 border border-gray-300 rounded-l-lg text-[13px] text-right outline-none focus:border-blue-500"
+                                                                                                                            />
+
+                                                                                                                            <div className="flex items-center justify-center px-2 min-w-[70px] border border-l-0 border-gray-300 rounded-r-lg bg-gray-50 text-[13px]">
+                                                                                                                                {productUnits[product.id]?.baseUnit || "đơn vị"}
+                                                                                                                            </div>
+
+                                                                                                                        </div>
+                                                                                                                    </div>
+
+                                                                                                                    {/* Giá bán */}
+                                                                                                                    <div className="w-[120px]">
+                                                                                                                        <label className="block text-[13px] mb-1">
+                                                                                                                            Giá bán
+                                                                                                                        </label>
+
+                                                                                                                        <input
+                                                                                                                            type="text"
+                                                                                                                            value={unit.price}
+                                                                                                                            onChange={(e) => {
+                                                                                                                                const newUnits = [
+                                                                                                                                    ...(productUnits[product.id]?.additionalUnits || [])
+                                                                                                                                ];
+
+                                                                                                                                newUnits[index] = {
+                                                                                                                                    ...newUnits[index],
+                                                                                                                                    price: e.target.value,
+                                                                                                                                };
+
+                                                                                                                                setProductUnits((prev) => ({
+                                                                                                                                    ...prev,
+                                                                                                                                    [product.id]: {
+                                                                                                                                        ...(prev[product.id] || {
+                                                                                                                                            baseUnit: "",
+                                                                                                                                            basePrice: "",
+                                                                                                                                            additionalUnits: [],
+                                                                                                                                        }),
+                                                                                                                                        additionalUnits: newUnits,
+                                                                                                                                    },
+                                                                                                                                }));
+                                                                                                                            }}
+                                                                                                                            className="w-full h-[34px] px-3 border border-gray-300 rounded-lg text-[13px] text-right outline-none focus:border-blue-500"
+                                                                                                                        />
+                                                                                                                    </div>
+
+                                                                                                                    {/* Bán trực tiếp */}
+                                                                                                                    <label className="flex items-center gap-2 h-[34px] cursor-pointer">
+
+                                                                                                                        <input
+                                                                                                                            type="checkbox"
+                                                                                                                            checked={unit.directSale}
+                                                                                                                            onChange={(e) => {
+                                                                                                                                const newUnits = [
+                                                                                                                                    ...(productUnits[product.id]?.additionalUnits || [])
+                                                                                                                                ];
+
+                                                                                                                                newUnits[index] = {
+                                                                                                                                    ...newUnits[index],
+                                                                                                                                    directSale: e.target.checked,
+                                                                                                                                };
+
+                                                                                                                                setProductUnits((prev) => ({
+                                                                                                                                    ...prev,
+                                                                                                                                    [product.id]: {
+                                                                                                                                        ...(prev[product.id] || {
+                                                                                                                                            baseUnit: "",
+                                                                                                                                            basePrice: "",
+                                                                                                                                            additionalUnits: [],
+                                                                                                                                        }),
+                                                                                                                                        additionalUnits: newUnits,
+                                                                                                                                    },
+                                                                                                                                }));
+                                                                                                                            }}
+                                                                                                                            className="w-[15px] h-[15px] accent-blue-600"
+                                                                                                                        />
+
+                                                                                                                        <span className="text-[13px]">
+                                                                                                                            Bán trực tiếp
+                                                                                                                        </span>
+
+                                                                                                                    </label>
+
+                                                                                                                    {/* Xóa */}
+                                                                                                                    <button
+                                                                                                                        type="button"
+                                                                                                                        onClick={() => {
+                                                                                                                            setProductUnits((prev) => ({
+                                                                                                                                ...prev,
+                                                                                                                                [product.id]: {
+                                                                                                                                    ...(prev[product.id] || {
+                                                                                                                                        baseUnit: "",
+                                                                                                                                        basePrice: "",
+                                                                                                                                        additionalUnits: [],
+                                                                                                                                    }),
+                                                                                                                                    additionalUnits:
+                                                                                                                                        prev[product.id]?.additionalUnits.filter(
+                                                                                                                                            (item) => item.id !== unit.id
+                                                                                                                                        ) || [],
+                                                                                                                                },
+                                                                                                                            }));
+                                                                                                                        }}
+                                                                                                                        className="w-[34px] h-[34px] flex items-center justify-center text-gray-500 hover:text-red-500"
+                                                                                                                    >
+                                                                                                                        <Trash2 />
+                                                                                                                    </button>
+
+                                                                                                                </div>
+                                                                                                            ))}
+
+                                                                                                            {/* Thêm đơn vị */}
+                                                                                                            <button
+                                                                                                                type="button"
+                                                                                                                onClick={() => {
+                                                                                                                    const currentProduct = productUnits[product.id];
+                                                                                                                    // Chưa nhập đơn vị cơ bản
+                                                                                                                    if (!currentProduct?.baseUnit?.trim()) {
+                                                                                                                        alert("Bạn chưa nhập đơn vị cơ bản");
+                                                                                                                        return;
+                                                                                                                    }
+                                                                                                                    setProductUnits((prev) => ({
+                                                                                                                        ...prev,
+                                                                                                                        [product.id]: {
+                                                                                                                            ...(prev[product.id] || {
+                                                                                                                                baseUnit: "",
+                                                                                                                                basePrice: "",
+                                                                                                                                additionalUnits: [],
+                                                                                                                            }),
+                                                                                                                            additionalUnits: [
+                                                                                                                                ...(prev[product.id]?.additionalUnits || []),
+                                                                                                                                {
+                                                                                                                                    id: Date.now(),
+                                                                                                                                    name: "",
+                                                                                                                                    conversion: "1",
+                                                                                                                                    price: prev[product.id]?.basePrice || "",
+                                                                                                                                    directSale: true,
+                                                                                                                                },
+                                                                                                                            ],
+                                                                                                                        },
+                                                                                                                    }));
+                                                                                                                }}
+                                                                                                                className="flex items-center gap-1 mt-4 text-blue-600 text-[13px] hover:text-blue-700">
+                                                                                                                <span className="text-[20px] leading-none">
+                                                                                                                    +
+                                                                                                                </span>
+                                                                                                                <span className="text-[16px] font-semibold">
+                                                                                                                    Thêm đơn vị
+                                                                                                                </span>
+                                                                                                            </button>
+                                                                                                        </div>
+
+                                                                                                        {/* Đường kẻ */}
+                                                                                                        <div className="border-t border-gray-200 mt-8 pt-7">
+                                                                                                            <h4 className="text-[15px] font-semibold text-gray-800">
+                                                                                                                Thuộc tính
+                                                                                                            </h4>
+                                                                                                            <p className="text-[13px] text-gray-500 mt-1">
+                                                                                                                Thêm đặc điểm như hương vị, dung tích, màu sắc
+                                                                                                            </p>
+                                                                                                            <div className="mt-5">
+                                                                                                                <div className="flex items-center gap-2">
+                                                                                                                    {/* Chọn thuộc tính */}
+                                                                                                                    <div className="relative w-[210px]">
+                                                                                                                        <button
+                                                                                                                            type="button"
+                                                                                                                            onClick={() => setShowAttribute(!showAttribute)}
+                                                                                                                            className="w-full h-[34px] px-3 border border-blue-500 rounded-lg text-[13px] outline-none bg-white flex items-center justify-between" >
+                                                                                                                            <span className={attribute ? "text-gray-800" : "text-gray-400"}>
+                                                                                                                                {productAttributes[product.id] || "Chọn thuộc tính"}
+                                                                                                                            </span>
+                                                                                                                            <span className="text-gray-500">
+                                                                                                                                {showAttribute ? (
+                                                                                                                                    <ChevronUp className="w-4 h-4" />
+                                                                                                                                ) : (
+                                                                                                                                    <ChevronDown className="w-4 h-4" />
+                                                                                                                                )}
+                                                                                                                            </span>
+                                                                                                                        </button>
+                                                                                                                        {/* Danh sách thuộc tính */}
+                                                                                                                        {showAttribute && (
+                                                                                                                            <div className="absolute z-[100] top-[38px] left-0 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                                                                                                                {/* Các thuộc tính đã tạo */}
+                                                                                                                                {attributes.map((item) => (
+                                                                                                                                    <button
+                                                                                                                                        key={item}
+                                                                                                                                        type="button"
+                                                                                                                                        onClick={() => { setProductAttributes((prev) => ({ ...prev, [product.id]: item })); setShowAttribute(false); }}
+                                                                                                                                        className="w-full h-[38px] px-3 text-left text-[13px] hover:bg-blue-50 flex items-center justify-between" >
+                                                                                                                                        <span>{item}</span>
+                                                                                                                                        {attribute === item && (
+                                                                                                                                            <Check className="w-4 h-4 text-blue-600" />
+                                                                                                                                        )}
+                                                                                                                                    </button>
+                                                                                                                                ))}
+
+
+                                                                                                                                {/* Chưa có thuộc tính */}
+                                                                                                                                {attributes.length === 0 && (
+                                                                                                                                    <div className="px-3 py-3 text-[13px] text-gray-400">
+                                                                                                                                        Chưa có thuộc tính
+                                                                                                                                    </div>
+                                                                                                                                )}
+                                                                                                                                {/* Tạo thuộc tính mới */}
+                                                                                                                                <button
+                                                                                                                                    type="button"
+                                                                                                                                    onClick={() => {
+                                                                                                                                        setShowAttribute(false);
+                                                                                                                                        setShowModal(true);
+                                                                                                                                    }}
+                                                                                                                                    className="w-full h-[40px] px-3 text-left text-[13px] text-blue-600 border-t border-gray-200 hover:bg-blue-50">
+                                                                                                                                    + Tạo thuộc tính mới
+                                                                                                                                </button>
+                                                                                                                            </div>
+                                                                                                                        )}
+                                                                                                                    </div>
+                                                                                                                    {/* Giá trị thuộc tính */}
+                                                                                                                    <input
+                                                                                                                        type="text"
+                                                                                                                        placeholder="Nhập giá trị"
+                                                                                                                        className="flex-1 h-[34px] px-3 border border-gray-300 rounded-lg text-[13px] outline-none focus:border-blue-500"
+                                                                                                                    />
+                                                                                                                    {/* Xóa */}
+                                                                                                                    <button
+                                                                                                                        type="button"
+                                                                                                                        className="w-[34px] h-[34px] flex items-center justify-center border border-gray-300 rounded-lg text-gray-500 hover:text-red-500 hover:border-red-300">
+                                                                                                                        <Trash2 className="w-4 h-4" />
+                                                                                                                    </button>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            {/* Thêm thuộc tính */}
+                                                                                                            <button type="button" className="flex items-center gap-1 mt-4 text-blue-600 text-[13px] hover:text-blue-700" >
+                                                                                                                <span className="text-[20px] leading-none">+</span>
+                                                                                                                <span className="text-[16px] font-semibold">Thêm thuộc tính</span>
+                                                                                                            </button>
+                                                                                                        </div>
+                                                                                                    </div>
                                                                                                 </div>
                                                                                             )}
+                                                                                            {showModal && (
+                                                                                                <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+
+                                                                                                    {/* nền tối */}
+                                                                                                    <div
+                                                                                                        className="absolute inset-0 bg-black/40"
+                                                                                                        onClick={() => setShowModal(false)}
+                                                                                                    />
+
+                                                                                                    {/* modal */}
+                                                                                                    <div className="relative w-[500px] bg-white rounded-lg shadow-xl">
+
+                                                                                                        {/* Header */}
+                                                                                                        <div className="flex items-center justify-between px-5 py-4 border-b">
+                                                                                                            <h3 className="text-[16px] font-semibold">
+                                                                                                                Tạo thuộc tính
+                                                                                                            </h3>
+
+                                                                                                            <button
+                                                                                                                type="button"
+                                                                                                                onClick={() => setShowModal(false)}
+                                                                                                                className="text-gray-500 hover:text-gray-800 text-xl"
+                                                                                                            >
+                                                                                                                ×
+                                                                                                            </button>
+                                                                                                        </div>
+
+
+                                                                                                        {/* Nội dung */}
+                                                                                                        <div className="p-5">
+
+                                                                                                            <label className="block text-[13px] mb-1">
+                                                                                                                Tên thuộc tính
+                                                                                                            </label>
+
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                id="newAttribute"
+                                                                                                                placeholder="Nhập tên thuộc tính"
+                                                                                                                className="w-full h-[36px] px-3 border border-gray-300 rounded-lg text-[13px] outline-none focus:border-blue-500"
+                                                                                                            />
+
+                                                                                                        </div>
+
+
+                                                                                                        {/* Footer */}
+                                                                                                        <div className="flex justify-end gap-2 px-5 py-4 border-t">
+
+                                                                                                            <button
+                                                                                                                type="button"
+                                                                                                                onClick={() => setShowModal(false)}
+                                                                                                                className="h-[36px] px-4 border border-gray-300 rounded-lg text-[13px]"
+                                                                                                            >
+                                                                                                                Bỏ qua
+                                                                                                            </button>
+                                                                                                            <button type="button"
+                                                                                                                onClick={() => {
+                                                                                                                    const input = document.getElementById(
+                                                                                                                        "newAttribute"
+                                                                                                                    ) as HTMLInputElement;
+                                                                                                                    const name = input.value.trim();
+                                                                                                                    if (!name) {
+                                                                                                                        alert("Vui lòng nhập tên thuộc tính");
+                                                                                                                        return;
+                                                                                                                    }
+                                                                                                                    setAttributes([
+                                                                                                                        ...attributes,
+                                                                                                                        name
+                                                                                                                    ]);
+                                                                                                                    setAttribute(name);
+                                                                                                                    setShowModal(false);
+                                                                                                                }}
+                                                                                                                className="h-[36px] px-5 bg-blue-600 text-white rounded-lg text-[13px]">
+                                                                                                                Xong
+                                                                                                            </button>
+
+                                                                                                        </div>
+
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            )}
+
 
                                                                                             {activeEditTab === "description" && (
                                                                                                 <div className="p-6">
@@ -2683,27 +3469,20 @@ const Product = () => {
                                                                                         {/* Footer */}
                                                                                         <div className="h-[64px] border-t border-gray-200 flex items-center justify-end gap-3 px-6 flex-shrink-0">
 
-                                                                                            <button
-                                                                                                type="button"
-                                                                                                onClick={() => setShowEditModal(false)}
-                                                                                                className="px-5 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                                                                                            >
+                                                                                            <button type="button" onClick={() => setShowEditModal(false)}
+                                                                                                className="px-5 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
                                                                                                 Bỏ qua
                                                                                             </button>
 
-                                                                                            <button
-                                                                                                type="button"
+                                                                                            <button type="button"
                                                                                                 onClick={() => {
                                                                                                     // TODO: lưu sản phẩm
                                                                                                     setShowEditModal(false);
                                                                                                 }}
-                                                                                                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
-                                                                                            >
+                                                                                                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
                                                                                                 Lưu
                                                                                             </button>
-
                                                                                         </div>
-
                                                                                     </div>
                                                                                 </div>
                                                                             )}
@@ -2746,143 +3525,46 @@ const Product = () => {
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                    <tr className="h-[45px] border-b border-gray-200">
-                                                                                        <td className="px-3 text-blue-600 whitespace-nowrap">
-                                                                                            HD000048
-                                                                                        </td>
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                            16/08/2026 15:43
-                                                                                        </td>
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                            Bán hàng
-                                                                                        </td>
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            10,000
-                                                                                        </td>
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            8,000
-                                                                                        </td>
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            -6
-                                                                                        </td>
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            1,093
-                                                                                        </td>
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                            Khách lẻ
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr className="h-[45px] border-b border-gray-200">
-
-                                                                                        <td className="px-3 text-blue-600 whitespace-nowrap">
-                                                                                            HD000047
-                                                                                        </td>
-
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                            16/08/2026 15:43
-                                                                                        </td>
-
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                            Bán hàng
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            10,000
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            8,000
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            -1
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            1,099
-                                                                                        </td>
-
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                            Khách lẻ
-                                                                                        </td>
-
-                                                                                    </tr>
-
-
-                                                                                    {/* Kiểm hàng */}
-                                                                                    <tr className="h-[45px] border-b border-gray-200">
-
-                                                                                        <td className="px-3 text-blue-600 whitespace-nowrap">
-                                                                                            KK000001
-                                                                                        </td>
-
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                            16/08/2026 15:42
-                                                                                        </td>
-
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                            Kiểm hàng
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            8,000
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            1,100
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            1,100
-                                                                                        </td>
-
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                        </td>
-
-                                                                                    </tr>
-
-
-                                                                                    {/* Cập nhật giá vốn */}
-                                                                                    <tr className="h-[45px] border-b border-gray-200">
-
-                                                                                        <td className="px-3 text-blue-600 whitespace-nowrap">
-                                                                                            CB000001
-                                                                                        </td>
-
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                            16/08/2026 15:42
-                                                                                        </td>
-
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                            Cập nhật giá vốn
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            8,000
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            0
-                                                                                        </td>
-
-                                                                                        <td className="px-3 text-right whitespace-nowrap">
-                                                                                            0
-                                                                                        </td>
-
-                                                                                        <td className="px-3 whitespace-nowrap">
-                                                                                        </td>
-                                                                                    </tr>
+                                                                                    {stockCardData.map((item) => (
+                                                                                        <tr key={item.code} className="h-[45px] border-b border-gray-200">
+                                                                                            <td className="px-3 text-blue-600 whitespace-nowrap">
+                                                                                                {item.code}
+                                                                                            </td>
+                                                                                            <td className="px-3 whitespace-nowrap">
+                                                                                                {item.time}
+                                                                                            </td>
+                                                                                            <td className="px-3 whitespace-nowrap">
+                                                                                                {item.type}
+                                                                                            </td>
+                                                                                            <td className="px-3 text-right whitespace-nowrap">
+                                                                                                {item.transactionPrice !== ""
+                                                                                                    ? item.transactionPrice.toLocaleString()
+                                                                                                    : ""}
+                                                                                            </td>
+                                                                                            <td className="px-3 text-right whitespace-nowrap">
+                                                                                                {item.costPrice.toLocaleString()}
+                                                                                            </td>
+                                                                                            <td className="px-3 text-right whitespace-nowrap">
+                                                                                                {item.quantity.toLocaleString()}
+                                                                                            </td>
+                                                                                            <td className="px-3 text-right whitespace-nowrap">
+                                                                                                {item.endingStock.toLocaleString()}
+                                                                                            </td>
+                                                                                            <td className="px-3 whitespace-nowrap">
+                                                                                                {item.partner}
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    ))}
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>
+
                                                                         <div className="border-t mt-0 px-3 py-5">
-                                                                            <button type="button" className="flex items-center gap-2 px-3 py-1.5  hover:bg-gray-200 rounded-lg  font-medium transition-colors">
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={handleExportExcel}
+                                                                                className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                                                                            >
                                                                                 <FileInput size={18} />
                                                                                 <span>Xuất file</span>
                                                                             </button>
@@ -2948,6 +3630,65 @@ const Product = () => {
                                                                                     </tr>
                                                                                 </tbody>
                                                                             </table>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                                {showDescriptionModal && (
+                                                                    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50">
+                                                                        <div className="w-[900px] max-w-[95%] bg-white rounded-xl shadow-xl">
+                                                                            <div className="flex items-center justify-between px-6 py-4 border-b">
+                                                                                <h2 className="text-lg font-semibold">
+                                                                                    Chỉnh sửa mô tả
+                                                                                </h2>
+                                                                                <button type="button" onClick={() => setShowDescriptionModal(false)}
+                                                                                    className="text-gray-500 hover:text-gray-800" >
+                                                                                    <X size={20} />
+                                                                                </button>
+                                                                            </div>
+                                                                            <div className="p-6">
+                                                                                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                                                                                    <div className="bg-gray-100 px-4 py-2 font-semibold">
+                                                                                        Mô tả
+                                                                                    </div>
+                                                                                    <textarea defaultValue="bánh mỳ này rất ngon" className="w-full h-[150px] p-4 outline-none resize-none" placeholder="Nhập mô tả..." />
+                                                                                </div>
+                                                                                <div className="border border-gray-200 rounded-lg overflow-hidden mt-4">
+                                                                                    <div className="bg-gray-100 px-4 py-2 font-semibold">
+                                                                                        Mẫu ghi chú (hóa đơn, đặt hàng)
+                                                                                    </div>
+                                                                                    <textarea defaultValue="hello ngon lắm ghi chú đặt hàng" className="w-full h-[120px] p-4 outline-none resize-none" placeholder="Nhập ghi chú đặt hàng..." />
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <div className="flex items-center justify-between px-6 py-4 border-t">
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <input type="checkbox" id="sellDirectly" className="w-4 h-4 accent-blue-600 cursor-pointer" />
+                                                                                    <label htmlFor="sellDirectly" className="text-sm text-gray-700 cursor-pointer" >
+                                                                                        Bán trực tiếp
+                                                                                    </label>
+                                                                                    <div className="relative group">
+                                                                                        <Info size={16} className="text-gray-500 cursor-help" />
+                                                                                        <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-[220px] px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-50">
+                                                                                            Cho phép sản phẩm được bán trực tiếp.
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="flex justify-end gap-2">
+                                                                                    <button type="button" onClick={() => setShowDescriptionModal(false)}
+                                                                                        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50" >
+                                                                                        Bỏ qua
+                                                                                    </button>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={() => {
+                                                                                            // Sau này gọi API cập nhật ở đây
+                                                                                            setShowDescriptionModal(false);
+                                                                                        }}
+                                                                                        className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                                                                        Lưu
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 )}
