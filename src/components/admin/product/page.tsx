@@ -1,7 +1,7 @@
 "use client";
 
-import { Search, SlidersHorizontal, Plus, ChevronDown, FileUp, FileDown, List, Settings, CircleHelp, ChevronRight, CalendarDays, Trash2, Copy, PencilLine, Printer, Ellipsis, FileInput, X, ChevronUp, Info, Image as ImageIcon, Check, } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Search, SlidersHorizontal, Plus, ChevronDown, FileUp, FileDown, List, Settings, CircleHelp, ChevronRight, CalendarDays, Trash2, Copy, PencilLine, Printer, Ellipsis, FileInput, X, ChevronUp, Info, Image as ImageIcon, Check, Tag, } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 
 const Product = () => {
@@ -132,7 +132,7 @@ const Product = () => {
         },
         {
             id: 2,
-            image: "🥩",
+            image: "https://dehanoi.vn/wp-content/uploads/2024/03/bd122252-5a7c-400e-a17b-d6132ffcaa52.jpg",
             images: [
                 "https://ann.com.vn/image/staff.png",
             ],
@@ -699,13 +699,22 @@ const Product = () => {
     }>>({});
 
 
+
     // tạo thuộc tính 
     const [showAttribute, setShowAttribute] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [attribute, setAttribute] = useState("");
     const [attributes, setAttributes] = useState<string[]>([]);
+    // Tên thuộc tính của từng sản phẩm
     const [productAttributes, setProductAttributes] = useState<Record<string | number, string>>({});
-    
+    // Giá trị thuộc tính của từng sản phẩm
+    const [productAttributeValues, setProductAttributeValues] = useState<Record<string | number, string>>({});
+
+
+    // đơn vị ngoài 
+    const [openProductUnit, setOpenProductUnit] = useState<number | null>(null);
+
+
 
 
 
@@ -1395,22 +1404,12 @@ const Product = () => {
                                 </h2>
 
                                 <div className="space-y-3">
-
                                     {/* Toàn thời gian */}
                                     <div className="relative flex items-center gap-3">
 
                                         {/* Radio */}
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setCreatedTime("all");
-                                                setShowCreatedPicker(true);
-                                            }}
-                                            className={`w-[24px] h-[24px] rounded-full border-2 flex items-center justify-center shrink-0 ${createdTime !== "custom"
-                                                ? "border-blue-500"
-                                                : "border-gray-400"
-                                                }`}
-                                        >
+                                        <button type="button" onClick={() => { setCreatedTime("all"); setShowCreatedPicker(true); }}
+                                            className={`w-[24px] h-[24px] rounded-full border-2 flex items-center justify-center shrink-0 ${createdTime !== "custom" ? "border-blue-500" : "border-gray-400" }`} >
                                             {createdTime !== "custom" && (
                                                 <span className="w-[12px] h-[12px] rounded-full bg-blue-500" />
                                             )}
@@ -1761,15 +1760,10 @@ const Product = () => {
                                                     </div>
                                                 </div>
                                             )}
-
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
-
-
-
 
 
                             {/* Nhà cung cấp */}
@@ -1956,7 +1950,7 @@ const Product = () => {
                                     <tbody>
                                         <tr><td colSpan={selectedColumns.length + 2} className="h-[45px] p-0 border-0 bg-white"></td></tr>
                                         {currentProducts.map((product) => (
-                                            <>
+                                            <React.Fragment key={product.id}>
                                                 <tr key={product.id} onClick={() => setSelectedProduct(selectedProduct === product.id ? null : product.id)}
                                                     className={`h-[60px]  border-b border-gray-100 hover:bg-[#f8fbff] transition-colors cursor-pointer  ${selectedProduct === product.id ? "bg-blue-50 !border-t-2 !border-blue-500 !border-b-0" : ""}`} >
                                                     {/* Checkbox */}
@@ -2016,13 +2010,71 @@ const Product = () => {
                                                                     key={column}
                                                                     className="px-3 text-[17px] text-gray-800"
                                                                 >
-                                                                    <div className="max-w-[280px] whitespace-normal leading-5">
-                                                                        {product.name}
+                                                                    <div className="max-w-[320px] whitespace-normal leading-5">
+
+                                                                        <div className="flex items-center gap-1">
+
+                                                                            <span>
+                                                                                {product.name}
+                                                                            </span>
+
+                                                                            {/* Đơn vị tính */}
+                                                                            {productUnits[product.id]?.baseUnit && (
+                                                                                <div className="relative">
+
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={() => {
+                                                                                            setOpenProductUnit(
+                                                                                                openProductUnit === product.id
+                                                                                                    ? null
+                                                                                                    : product.id
+                                                                                            );
+                                                                                        }}
+                                                                                        className="px-2 py-0.5 bg-gray-100 rounded-md text-[16px] flex items-center gap-1"
+                                                                                    >
+                                                                                        {productUnits[product.id]?.baseUnit}
+
+                                                                                        <ChevronDown className="w-3.5 h-3.5" />
+                                                                                    </button>
+
+                                                                                    {/* Dropdown */}
+                                                                                    {openProductUnit === product.id && (
+                                                                                        <div className="absolute z-[999] top-[32px] left-0 w-[150px] bg-white border border-gray-200 rounded-lg shadow-lg">
+
+                                                                                            {/* Đơn vị cơ bản */}
+                                                                                            <button
+                                                                                                type="button"
+                                                                                                className="w-full px-3 py-2 text-left text-[14px] hover:bg-blue-50"
+                                                                                            >
+                                                                                                {productUnits[product.id].baseUnit}
+                                                                                            </button>
+
+                                                                                            {/* Đơn vị thêm */}
+                                                                                            {productUnits[product.id].additionalUnits.map(
+                                                                                                (unit) => (
+                                                                                                    <button
+                                                                                                        key={unit.id}
+                                                                                                        type="button"
+                                                                                                        className="w-full px-3 py-2 text-left text-[14px] hover:bg-blue-50"
+                                                                                                    >
+                                                                                                        {unit.name}
+                                                                                                    </button>
+                                                                                                )
+                                                                                            )}
+
+                                                                                        </div>
+                                                                                    )}
+
+                                                                                </div>
+                                                                            )}
+
+                                                                        </div>
+
                                                                     </div>
                                                                 </td>
                                                             );
                                                         }
-
                                                         /* ================= NHÓM HÀNG ================= */
                                                         if (column === "Nhóm hàng") {
                                                             return (
@@ -3322,7 +3374,6 @@ const Product = () => {
                                                                                                                                     </button>
                                                                                                                                 ))}
 
-
                                                                                                                                 {/* Chưa có thuộc tính */}
                                                                                                                                 {attributes.length === 0 && (
                                                                                                                                     <div className="px-3 py-3 text-[13px] text-gray-400">
@@ -3343,11 +3394,9 @@ const Product = () => {
                                                                                                                         )}
                                                                                                                     </div>
                                                                                                                     {/* Giá trị thuộc tính */}
-                                                                                                                    <input
-                                                                                                                        type="text"
-                                                                                                                        placeholder="Nhập giá trị"
-                                                                                                                        className="flex-1 h-[34px] px-3 border border-gray-300 rounded-lg text-[13px] outline-none focus:border-blue-500"
-                                                                                                                    />
+                                                                                                                    <input type="text" placeholder="Nhập giá trị"
+                                                                                                                        value={productAttributeValues[product.id] || ""} onChange={(e) => { setProductAttributeValues((prev) => ({ ...prev, [product.id]: e.target.value, })); }}
+                                                                                                                        className="flex-1 h-[34px] px-3 border border-gray-300 rounded-lg text-[13px] outline-none focus:border-blue-500" />
                                                                                                                     {/* Xóa */}
                                                                                                                     <button
                                                                                                                         type="button"
@@ -3363,16 +3412,218 @@ const Product = () => {
                                                                                                             </button>
                                                                                                         </div>
                                                                                                     </div>
+                                                                                                    {/* Hàng cùng loại */}
+                                                                                                    {productUnits[product.id]?.baseUnit?.trim() &&
+                                                                                                        productAttributes[product.id] &&
+                                                                                                        productAttributeValues[product.id]?.trim() && (
+                                                                                                            <div className="border-t border-gray-200 mt-8 pt-7">
+                                                                                                                <div className="flex items-center justify-between mb-4">
+                                                                                                                    <h4 className="text-[15px] font-semibold text-gray-800">
+                                                                                                                        Hàng cùng loại
+                                                                                                                    </h4>
+                                                                                                                    <button type="button" className="text-blue-600 text-[13px] flex items-center gap-1">
+                                                                                                                        <Tag className="w-4 h-4" />
+                                                                                                                        Thiết lập giá
+                                                                                                                    </button>
+                                                                                                                </div>
+                                                                                                                <div className="overflow-x-auto">
+                                                                                                                    <table className="w-full min-w-[1100px] border-collapse">
+                                                                                                                        <thead>
+                                                                                                                            <tr className="bg-gray-100 h-[42px]">
+                                                                                                                                <th className="px-3 text-left text-[13px] font-semibold">
+                                                                                                                                    Giá trị thuộc tính
+                                                                                                                                </th>
+                                                                                                                                <th className="px-3 text-left text-[13px] font-semibold">
+                                                                                                                                    Đơn vị
+                                                                                                                                </th>
+                                                                                                                                <th className="px-3 text-left text-[13px] font-semibold">
+                                                                                                                                    Quy đổi
+                                                                                                                                </th>
+                                                                                                                                <th className="px-3 text-left text-[13px] font-semibold">
+                                                                                                                                    Mã hàng
+                                                                                                                                </th>
+                                                                                                                                <th className="px-3 text-left text-[13px] font-semibold">
+                                                                                                                                    Mã vạch
+                                                                                                                                </th>
+                                                                                                                                <th className="px-3 text-left text-[13px] font-semibold">
+                                                                                                                                    Giá vốn
+                                                                                                                                </th>
+                                                                                                                                <th className="px-3 text-left text-[13px] font-semibold">
+                                                                                                                                    Giá bán
+                                                                                                                                </th>
+                                                                                                                                <th></th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody>
+
+                                                                                                                            {/* Đơn vị cơ bản */}
+                                                                                                                            <tr className="border-b border-gray-200">
+                                                                                                                                <td className="px-3 py-2 text-[13px]">
+                                                                                                                                    {productAttributeValues[product.id]}
+                                                                                                                                </td>
+                                                                                                                                <td className="px-3 py-2 text-[13px]">
+                                                                                                                                    {productUnits[product.id]?.baseUnit}
+                                                                                                                                </td>
+                                                                                                                                <td className="px-3 py-2">
+                                                                                                                                    <div className="w-[140px] h-[36px] bg-gray-100 rounded-lg flex items-center justify-end px-3 text-[13px]">
+                                                                                                                                        1
+                                                                                                                                    </div>
+                                                                                                                                </td>
+                                                                                                                                {/* Mã hàng */}
+                                                                                                                                <td className="px-3 py-2">
+                                                                                                                                    <input type="text" className="w-[175px] h-[36px] px-3 border border-gray-300 rounded-lg text-[13px]" />
+                                                                                                                                </td>
+                                                                                                                                {/* Mã vạch */}
+                                                                                                                                <td className="px-3 py-2">
+                                                                                                                                    <input type="text" className="w-[175px] h-[36px] px-3 border border-gray-300 rounded-lg text-[13px]" />
+                                                                                                                                </td>
+
+                                                                                                                                {/* Giá vốn */}
+                                                                                                                                <td className="px-3 py-2">
+                                                                                                                                    <input type="text" className="w-[130px] h-[36px] px-3 border border-gray-300 rounded-lg text-[13px] text-right" />
+                                                                                                                                </td>
+
+                                                                                                                                {/* Giá bán */}
+                                                                                                                                <td className="px-3 py-2">
+                                                                                                                                    <input
+                                                                                                                                        type="text"
+                                                                                                                                        value={productUnits[product.id]?.basePrice || ""}
+                                                                                                                                        onChange={(e) => {
+                                                                                                                                            setProductUnits((prev) => ({
+                                                                                                                                                ...prev,
+                                                                                                                                                [product.id]: {
+                                                                                                                                                    ...(prev[product.id] || {
+                                                                                                                                                        baseUnit: "",
+                                                                                                                                                        basePrice: "",
+                                                                                                                                                        additionalUnits: [],
+                                                                                                                                                    }),
+                                                                                                                                                    basePrice: e.target.value,
+                                                                                                                                                },
+                                                                                                                                            }));
+                                                                                                                                        }}
+                                                                                                                                        className="w-[140px] h-[36px] px-3 border border-gray-300 rounded-lg text-[13px] text-right"
+                                                                                                                                    />
+                                                                                                                                </td>
+                                                                                                                                <td></td>
+                                                                                                                            </tr>
+                                                                                                                            {/* Các đơn vị thêm */}
+                                                                                                                            {productUnits[product.id]?.additionalUnits?.map(
+                                                                                                                                (unit) => (
+                                                                                                                                    <tr key={unit.id} className="border-b border-gray-200"  >
+                                                                                                                                        {/* Giá trị thuộc tính */}
+                                                                                                                                        <td className="px-3 py-2 text-[13px]">
+                                                                                                                                            {productAttributeValues[product.id]}
+                                                                                                                                        </td>
+                                                                                                                                        {/* Đơn vị */}
+                                                                                                                                        <td className="px-3 py-2 text-[13px]">
+                                                                                                                                            {unit.name}
+                                                                                                                                        </td>
+                                                                                                                                        {/* Quy đổi */}
+                                                                                                                                        <td className="px-3 py-2">
+                                                                                                                                            <div className="w-[140px] h-[36px] bg-gray-100 rounded-lg flex items-center justify-end px-3 text-[13px]">
+                                                                                                                                                {unit.conversion}
+                                                                                                                                            </div>
+                                                                                                                                        </td>
+                                                                                                                                        {/* Mã hàng */}
+                                                                                                                                        <td className="px-3 py-2">
+                                                                                                                                            <input type="text" className="w-[175px] h-[36px] px-3 border border-gray-300 rounded-lg text-[13px]" />
+                                                                                                                                        </td>
+
+                                                                                                                                        {/* Mã vạch */}
+                                                                                                                                        <td className="px-3 py-2">
+                                                                                                                                            <input type="text" className="w-[175px] h-[36px] px-3 border border-gray-300 rounded-lg text-[13px]" />
+                                                                                                                                        </td>
+
+                                                                                                                                        {/* Giá vốn */}
+                                                                                                                                        <td className="px-3 py-2">
+                                                                                                                                            <input type="text" className="w-[130px] h-[36px] px-3 border border-gray-300 rounded-lg text-[13px] text-right" />
+                                                                                                                                        </td>
+                                                                                                                                        {/* Giá bán */}
+                                                                                                                                        <td className="px-3 py-2">
+                                                                                                                                            <input
+                                                                                                                                                type="text"
+                                                                                                                                                value={unit.price}
+                                                                                                                                                onChange={(e) => {
+
+                                                                                                                                                    const newUnits = [
+                                                                                                                                                        ...(productUnits[product.id]
+                                                                                                                                                            ?.additionalUnits || [])
+                                                                                                                                                    ];
+
+                                                                                                                                                    const index =
+                                                                                                                                                        newUnits.findIndex(
+                                                                                                                                                            (item) =>
+                                                                                                                                                                item.id === unit.id
+                                                                                                                                                        );
+
+                                                                                                                                                    if (index === -1) return;
+
+                                                                                                                                                    newUnits[index] = {
+                                                                                                                                                        ...newUnits[index],
+                                                                                                                                                        price: e.target.value,
+                                                                                                                                                    };
+
+                                                                                                                                                    setProductUnits((prev) => ({
+                                                                                                                                                        ...prev,
+                                                                                                                                                        [product.id]: {
+                                                                                                                                                            ...(prev[product.id] || {
+                                                                                                                                                                baseUnit: "",
+                                                                                                                                                                basePrice: "",
+                                                                                                                                                                additionalUnits: [],
+                                                                                                                                                            }),
+                                                                                                                                                            additionalUnits:
+                                                                                                                                                                newUnits,
+                                                                                                                                                        },
+                                                                                                                                                    }));
+                                                                                                                                                }}
+                                                                                                                                                className="w-[140px] h-[36px] px-3 border border-gray-300 rounded-lg text-[13px] text-right"
+                                                                                                                                            />
+                                                                                                                                        </td>
+
+                                                                                                                                        {/* Xóa */}
+                                                                                                                                        <td className="px-2">
+                                                                                                                                            <button
+                                                                                                                                                type="button"
+                                                                                                                                                onClick={() => {
+
+                                                                                                                                                    setProductUnits((prev) => ({
+                                                                                                                                                        ...prev,
+                                                                                                                                                        [product.id]: {
+                                                                                                                                                            ...(prev[product.id] || {
+                                                                                                                                                                baseUnit: "",
+                                                                                                                                                                basePrice: "",
+                                                                                                                                                                additionalUnits: [],
+                                                                                                                                                            }),
+
+                                                                                                                                                            additionalUnits:
+                                                                                                                                                                prev[
+                                                                                                                                                                    product.id
+                                                                                                                                                                ]?.additionalUnits.filter(
+                                                                                                                                                                    (item) =>
+                                                                                                                                                                        item.id !==
+                                                                                                                                                                        unit.id
+                                                                                                                                                                ) || [],
+                                                                                                                                                        },
+                                                                                                                                                    }));
+                                                                                                                                                }}
+                                                                                                                                                className="w-[34px] h-[34px] flex items-center justify-center text-gray-500 hover:text-red-500"
+                                                                                                                                            >
+                                                                                                                                                <Trash2 className="w-4 h-4" />
+                                                                                                                                            </button>
+                                                                                                                                        </td>
+                                                                                                                                    </tr>
+                                                                                                                                ))}
+                                                                                                                        </tbody>
+                                                                                                                    </table>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        )}
                                                                                                 </div>
                                                                                             )}
                                                                                             {showModal && (
                                                                                                 <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-
                                                                                                     {/* nền tối */}
-                                                                                                    <div
-                                                                                                        className="absolute inset-0 bg-black/40"
-                                                                                                        onClick={() => setShowModal(false)}
-                                                                                                    />
+                                                                                                    <div className="absolute inset-0 bg-black/40" onClick={() => setShowModal(false)} />
 
                                                                                                     {/* modal */}
                                                                                                     <div className="relative w-[500px] bg-white rounded-lg shadow-xl">
@@ -3440,9 +3691,7 @@ const Product = () => {
                                                                                                                 className="h-[36px] px-5 bg-blue-600 text-white rounded-lg text-[13px]">
                                                                                                                 Xong
                                                                                                             </button>
-
                                                                                                         </div>
-
                                                                                                     </div>
                                                                                                 </div>
                                                                                             )}
@@ -3696,7 +3945,7 @@ const Product = () => {
                                                         </td>
                                                     </tr>
                                                 )}
-                                            </>
+                                            </React.Fragment>
                                         ))}
                                     </tbody>
                                 </table>
