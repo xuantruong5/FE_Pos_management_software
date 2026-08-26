@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, SlidersHorizontal, Plus, ChevronDown, FileUp, FileDown, List, Settings, CircleHelp, ChevronRight, CalendarDays, Trash2, Copy, PencilLine, Printer, Ellipsis, FileInput, X, ChevronUp, Info, Image as ImageIcon, Check, Tag, } from "lucide-react";
+import { Search, SlidersHorizontal, Plus, ChevronDown, FileUp, FileDown, List, Settings, CircleHelp, ChevronRight, CalendarDays, Trash2, Copy, PencilLine, Printer, Ellipsis, FileInput, X, ChevronUp, Info, Image as ImageIcon, Check, Tag, FileSymlink, PrinterCheck, Download, MoreHorizontal, } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 
@@ -713,13 +713,7 @@ const Product = () => {
 
     // đơn vị ngoài 
     const [openProductUnit, setOpenProductUnit] = useState<number | null>(null);
-
-
-
-
-
-
-
+    
     return (
         <div className="min-h-screen ">
             <div className="px-30">
@@ -772,97 +766,142 @@ const Product = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="w-[auto] flex items-center justify-end gap-2">
+                    {selectedProductIds.length > 0 ? (
+                        // ================= ĐANG CHỌN PRODUCT =================
+                        <div className="w-auto flex items-center justify-end gap-3">
+                            <span className="text-[14px] font-medium text-blue-600">
+                                Đã chọn {selectedProductIds.length}
+                            </span>
 
-                        {/* Tạo mới */}
-                        <div className="relative group">
-                            <button className="h-[40px] w-auto px-4 rounded-lg border border-blue-500 text-blue-600  bg-white flex items-center gap-2 font-semibold hover:bg-blue-50" >
-                                <Plus size={21} />
-                                <span>Tạo mới</span>
-                                <ChevronDown size={17} />
+                            {/* Bỏ chọn */}
+                            <button  type="button"  onClick={() => setSelectedProductIds([])} className="w-[32px] h-[32px] flex items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100">
+                                <X size={18} />
                             </button>
 
-                            {/* Dropdown */}
-                            <div className="absolute top-[46px] right-0 w-[250px] bg-white text-gray-800  rounded-lg shadow-xl hidden group-hover:block z-50 overflow-hidden" >
-                                <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer mt-2">
-                                    Hàng hóa
-                                </div>
+                            {/* Xuất file */}
+                            <button type="button" className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white flex items-center gap-2 text-gray-700 font-semibold hover:bg-gray-50">
+                                <FileSymlink  size={20} />
+                                <span>Xuất file</span>
+                            </button>
 
-                                <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
-                                    Dịch vụ
-                                </div>
+                            {/* In tem mã */}
+                            <button type="button" className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white flex items-center gap-2 text-gray-700 font-semibold hover:bg-gray-50">
+                                <PrinterCheck size={20} />
+                                <span>In tem mã</span>
+                            </button>
 
-                                <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
-                                    Combo - đóng gói
+                            {/* Nhập hàng */}
+                            <button  type="button"  className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white flex items-center gap-2 text-gray-700 font-semibold hover:bg-gray-50">
+                                <Download size={20} />
+                                <span>Nhập hàng</span>
+                            </button>
+
+                            {/* More */}
+                            <div className="relative group">
+                                <button type="button" className="w-[40px] h-[40px] rounded-lg border border-gray-300 bg-white flex items-center justify-center text-gray-700 hover:bg-gray-50" >
+                                    <MoreHorizontal size={20} />
+                                </button>
+                                {/* Menu */}
+                                <div className="absolute right-0 top-[44px] w-[232px] bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50 hidden group-hover:block">
+                                    <button type="button" className="w-full text-left px-4 py-3 text-[16px] text-gray-700 hover:bg-gray-50" >
+                                        Đặt hàng nhập
+                                    </button>
+                                    <button type="button" className="w-full text-left px-4 py-3 text-[16px] text-gray-700 hover:bg-gray-50" >
+                                        Đổi nhóm hàng
+                                    </button>
+                                    <div className="border-t border-gray-200 my-1" />
+                                    <button type="button" className="w-full text-left px-4 py-3 text-[16px] text-red-500 hover:bg-red-50" >
+                                        Ngừng kinh doanh
+                                    </button>
+
+                                    <button type="button" className="w-full text-left px-4 py-3 text-[16px] text-red-500 hover:bg-red-50">
+                                        Xóa
+                                    </button>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Import */}
-                        <button className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white flex items-center gap-2  text-gray-700 font-semibold hover:bg-gray-50">
-                            <FileUp size={20} />
-                            <span>Import file</span>
-                        </button>
-                        {/* Export */}
-                        <button className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white flex items-center gap-2  text-gray-700 font-semibold hover:bg-gray-50" >
-                            <FileDown size={20} />
-                            <span>Xuất file</span>
-                        </button>
-
-                        {/* List */}
-                        <div className="relative">
-
-                            <button type="button" onClick={() => setShowColumns(!showColumns)}
-                                className="w-[40px] h-[40px] rounded-lg border border-gray-300 bg-white flex items-center justify-center text-gray-700 hover:bg-gray-50" >
-                                <List size={21} />
-                            </button>
-
-                            {showColumns && (
-                                <div className="absolute top-[46px] right-0 w-[425px] bg-white rounded-lg shadow-xl border border-gray-200 z-[9999] p-3" >
-                                    <div className="grid grid-cols-2 gap-x-6">
-
-                                        {columns.map((column) => (
-                                            <label key={column}
-                                                className="flex items-center gap-2 h-[36px] cursor-pointer text-[15px] text-gray-700" >
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedColumns.includes(column)}
-                                                    onChange={(e) => {
-                                                        if (e.target.checked) {
-                                                            setSelectedColumns([
-                                                                ...selectedColumns,
-                                                                column,
-                                                            ]);
-                                                        } else {
-                                                            setSelectedColumns(
-                                                                selectedColumns.filter(
-                                                                    (item) => item !== column
-                                                                )
-                                                            );
-                                                        }
-                                                    }}
-                                                    className="w-[16px] h-[16px] accent-blue-600 cursor-pointer" />
-                                                <span>{column}</span>
-                                            </label>
-                                        ))}
-
+                    ) : (
+                        // ================= BÌNH THƯỜNG =================
+                        <div className="w-auto flex items-center justify-end gap-2">
+                            {/* Tạo mới */}
+                            <div className="relative group">
+                                <button className="h-[40px] w-auto px-4 rounded-lg border border-blue-500 text-blue-600 bg-white flex items-center gap-2 font-semibold hover:bg-blue-50">
+                                    <Plus size={21} />
+                                    <span>Tạo mới</span>
+                                    <ChevronDown size={17} />
+                                </button>
+                                {/* Dropdown */}
+                                <div className="absolute top-[46px] right-0 w-[250px] bg-white text-gray-800 rounded-lg shadow-xl hidden group-hover:block z-50 overflow-hidden">
+                                    <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer mt-2">
+                                        Hàng hóa
+                                    </div>
+                                    <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
+                                        Dịch vụ
+                                    </div>
+                                    <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
+                                        Combo - đóng gói
                                     </div>
                                 </div>
-                            )}
+                            </div>
 
+                            {/* Import */}
+                            <button
+                                className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white flex items-center gap-2 text-gray-700 font-semibold hover:bg-gray-50" >
+                                <FileUp size={20} />
+                                <span>Import file</span>
+                            </button>
+
+                            {/* Export */}
+                            <button className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white flex items-center gap-2 text-gray-700 font-semibold hover:bg-gray-50" >
+                                <FileDown size={20} />
+                                <span>Xuất file</span>
+                            </button>
+
+                            {/* List */}
+                            <div className="relative">
+                                <button type="button" onClick={() => setShowColumns(!showColumns)} className="w-[40px] h-[40px] rounded-lg border border-gray-300 bg-white flex items-center justify-center text-gray-700 hover:bg-gray-50" >
+                                    <List size={21} />
+                                </button>
+                                {showColumns && (
+                                    <div className="absolute top-[46px] right-0 w-[425px] bg-white rounded-lg shadow-xl border border-gray-200 z-[9999] p-3">
+                                        <div className="grid grid-cols-2 gap-x-6">
+                                            {columns.map((column) => (
+                                                <label key={column} className="flex items-center gap-2 h-[36px] cursor-pointer text-[15px] text-gray-700"  >
+                                                    <input type="checkbox"  checked={selectedColumns.includes(column)}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setSelectedColumns([
+                                                                    ...selectedColumns,
+                                                                    column,
+                                                                ]);
+                                                            } else {
+                                                                setSelectedColumns(
+                                                                    selectedColumns.filter(
+                                                                        (item) =>
+                                                                            item !== column
+                                                                    )
+                                                                );
+                                                            }
+                                                        }}
+                                                        className="w-[16px] h-[16px] accent-blue-600 cursor-pointer"/>
+                                                    <span>{column}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            {/* Settings */}
+                            <button className="w-[40px] h-[40px] rounded-lg border border-gray-300 bg-white flex items-center justify-center text-gray-700 hover:bg-gray-50">
+                                <Settings size={20} />
+                            </button>
+
+                            {/* Help */}
+                            <button className="w-[40px] h-[40px] rounded-lg border border-gray-300 bg-white flex items-center justify-center text-gray-700 hover:bg-gray-50" >
+                                <CircleHelp size={20} />
+                            </button>
                         </div>
-
-                        {/* Settings */}
-                        <button className="w-[40px] h-[40px] rounded-lg border border-gray-300 bg-white flex items-center justify-center text-gray-700 hover:bg-gray-50" >
-                            <Settings size={20} />
-                        </button>
-
-                        {/* Help */}
-                        <button className="w-[40px] h-[40px] rounded-lg border border-gray-300 bg-white flex items-center justify-center text-gray-700 hover:bg-gray-50" >
-                            <CircleHelp size={20} />
-                        </button>
-
-                    </div>
+                    )}
                 </header>
                 <div className="flex gap-4 mt-4">
                     {/* ================= CỘT FILTER BÊN TRÁI ================= */}
@@ -1409,7 +1448,7 @@ const Product = () => {
 
                                         {/* Radio */}
                                         <button type="button" onClick={() => { setCreatedTime("all"); setShowCreatedPicker(true); }}
-                                            className={`w-[24px] h-[24px] rounded-full border-2 flex items-center justify-center shrink-0 ${createdTime !== "custom" ? "border-blue-500" : "border-gray-400" }`} >
+                                            className={`w-[24px] h-[24px] rounded-full border-2 flex items-center justify-center shrink-0 ${createdTime !== "custom" ? "border-blue-500" : "border-gray-400"}`} >
                                             {createdTime !== "custom" && (
                                                 <span className="w-[12px] h-[12px] rounded-full bg-blue-500" />
                                             )}
@@ -1898,7 +1937,17 @@ const Product = () => {
                                             {/* Checkbox tổng */}
                                             <th className="w-[42px] min-w-[42px] sticky left-0 z-20 bg-[#e7f2ff]">
                                                 <div className="flex items-center justify-center">
-                                                    <input type="checkbox" className="w-[16px] h-[16px] rounded border-gray-400 accent-blue-600 cursor-pointer" />
+                                                    <input type="checkbox"
+                                                        checked={products.length > 0 && selectedProductIds.length === products.length}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setSelectedProductIds(
+                                                                    products.map((product) => product.id)
+                                                                );
+                                                            } else {
+                                                                setSelectedProductIds([]);
+                                                            }
+                                                        }} className="w-[16px] h-[16px] rounded border-gray-400 accent-blue-600 cursor-pointer" />
                                                 </div>
                                             </th>
                                             {/* Star */}

@@ -1,6 +1,7 @@
 "use client";
-import { CalendarDays, ChevronDown, ChevronRight, ChevronUp, CircleHelp, FileDown, FileUp, List, Plus, Search, Settings, SlidersHorizontal, Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { CalendarDays, ChevronDown, ChevronRight, ChevronUp, CircleDollarSign, CircleHelp, FileDown, FileInput, FileSymlink, FileUp, List, Lock, LockKeyhole, PencilLine, Plus, Search, Settings, SlidersHorizontal, SquarePen, Trash2, X } from "lucide-react";
+import React, { useState } from "react";
+
 import * as XLSX from "xlsx";
 
 const SupplierPage = () => {
@@ -334,6 +335,178 @@ const SupplierPage = () => {
         );
     };
 
+    // Nhà cung cấp đang được mở chi tiết
+    const [expandedSupplierId, setExpandedSupplierId] = useState<number | null>(null);
+    // Tab chi tiết
+    const [supplierDetailTab, setSupplierDetailTab] = useState<"info" | "history" | "debt">("info");
+
+    // chỉnh sửa 
+    const [showEditSupplierModal, setShowEditSupplierModal] = useState(false);
+    const [editSupplier, setEditSupplier] = useState<any>(null);
+
+    const [editForm, setEditForm] = useState({
+        name: "",
+        code: "",
+        phone: "",
+        email: "",
+        address: "",
+        province: "",
+        ward: "",
+        supplierGroup: "",
+        note: "",
+        companyName: "",
+        taxCode: "",
+        citizenId: "",
+    })
+    // lịch sử nhập xuất 
+    const historyData = [
+        {
+            code: "PN000045",
+            time: "23/08/2026 13:03",
+            creator: "tramy",
+            total: "0",
+            status: "Đã nhập hàng",
+        },
+        {
+            code: "PN000044",
+            time: "22/08/2026 13:03",
+            creator: "Hương - Kế Toán",
+            total: "0",
+            status: "Đã nhập hàng",
+        },
+        {
+            code: "PN000040",
+            time: "18/08/2026 12:58",
+            creator: "Hoàng - Kinh Doanh",
+            total: "0",
+            status: "Đã nhập hàng",
+        },
+        {
+            code: "PN000021",
+            time: "30/07/2026 12:38",
+            creator: "tramy",
+            total: "0",
+            status: "Đã nhập hàng",
+        },
+        {
+            code: "PN000011",
+            time: "20/07/2026 12:27",
+            creator: "Hương - Kế Toán",
+            total: "0",
+            status: "Đã nhập hàng",
+        },
+        {
+            code: "PN00009",
+            time: "18/07/2026 12:26",
+            creator: "Hoàng - Kinh Doanh",
+            total: "0",
+            status: "Đã nhập hàng",
+        },
+        {
+            code: "PN00008",
+            time: "17/07/2026 12:24",
+            creator: "tramy",
+            total: "0",
+            status: "Đã nhập hàng",
+        },
+        {
+            code: "PN00005",
+            time: "14/07/2026 12:21",
+            creator: "tramy",
+            total: "0",
+            status: "Đã nhập hàng",
+        },
+        {
+            code: "PN00004",
+            time: "13/07/2026 12:20",
+            creator: "Hoàng - Kinh Doanh",
+            total: "0",
+            status: "Đã nhập hàng",
+        },
+        {
+            code: "PN00003",
+            time: "12/07/2026 12:19",
+            creator: "Hoàng - Kinh Doanh",
+            total: "0",
+            status: "Đã nhập hàng",
+        },
+    ];
+
+    const debtData = [
+        {
+            code: "PN000045",
+            time: "23/08/2026 13:05",
+            type: "Nhập hàng",
+            value: "0",
+            debt: "0",
+        },
+        {
+            code: "PN000044",
+            time: "22/08/2026 13:03",
+            type: "Nhập hàng",
+            value: "0",
+            debt: "0",
+        },
+        {
+            code: "PN000040",
+            time: "18/08/2026 12:59",
+            type: "Nhập hàng",
+            value: "0",
+            debt: "0",
+        },
+        {
+            code: "PN000021",
+            time: "30/07/2026 12:38",
+            type: "Nhập hàng",
+            value: "0",
+            debt: "0",
+        },
+        {
+            code: "PN000011",
+            time: "20/07/2026 12:28",
+            type: "Nhập hàng",
+            value: "0",
+            debt: "0",
+        },
+        {
+            code: "PN00009",
+            time: "18/07/2026 12:27",
+            type: "Nhập hàng",
+            value: "0",
+            debt: "0",
+        },
+        {
+            code: "PN00008",
+            time: "17/07/2026 12:26",
+            type: "Nhập hàng",
+            value: "0",
+            debt: "0",
+        },
+        {
+            code: "PN00005",
+            time: "14/07/2026 12:22",
+            type: "Nhập hàng",
+            value: "0",
+            debt: "0",
+        },
+        {
+            code: "PN00004",
+            time: "13/07/2026 12:21",
+            type: "Nhập hàng",
+            value: "0",
+            debt: "0",
+        },
+        {
+            code: "PN00003",
+            time: "12/07/2026 12:20",
+            type: "Nhập hàng",
+            value: "0",
+            debt: "0",
+        },
+    ];
+
+
+
 
 
     return (
@@ -418,7 +591,7 @@ const SupplierPage = () => {
                             </button>
 
                             <button type="button" onClick={handleExportExcel} className="h-[40px] px-3.5 rounded-lg border border-gray-300 bg-white flex items-center gap-1.5 text-[17px] text-gray-700 font-semibold hover:bg-gray-200" >
-                                <FileDown size={17} />
+                                <FileInput size={17} />
                                 Xuất file
                             </button>
                             <div className="relative">
@@ -1097,63 +1270,811 @@ const SupplierPage = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-
-                                        {/* Dòng tổng */}
+                                        {/* ================= DÒNG TỔNG ================= */}
                                         <tr className="h-[42px] border-b border-gray-200">
                                             <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
+
+                                            {/* Tổng nợ */}
                                             <td className="px-3 text-right text-[15px] font-semibold">
-                                                {suppliers.reduce((sum, item) => sum + item.debt, 0).toLocaleString("vi-VN")}
+                                                {suppliers
+                                                    .reduce((sum, item) => sum + item.debt, 0)
+                                                    .toLocaleString("vi-VN")}
                                             </td>
 
+                                            {/* Tổng mua */}
                                             <td className="px-3 text-right text-[15px] font-semibold">
-                                                {suppliers.reduce((sum, item) => sum + item.totalBuy, 0).toLocaleString("vi-VN")}
+                                                {suppliers
+                                                    .reduce((sum, item) => sum + item.totalBuy, 0)
+                                                    .toLocaleString("vi-VN")}
                                             </td>
                                         </tr>
 
-                                        {/* Danh sách nhà cung cấp */}
-                                        {currentSuppliers.map((supplier) => (
-                                            <tr key={supplier.id} className="h-[46px] border-b border-gray-200 hover:bg-gray-50" >
-                                                <td className="px-3">
-                                                    <input type="checkbox" checked={selectedSuppliers.includes(supplier.id)}
-                                                        onChange={(e) => {
-                                                            if (e.target.checked) {
-                                                                setSelectedSuppliers((prev) => [
-                                                                    ...prev,
-                                                                    supplier.id,
-                                                                ]);
-                                                            } else {
-                                                                setSelectedSuppliers((prev) =>
-                                                                    prev.filter((id) => id !== supplier.id)
-                                                                );
-                                                            }
+                                        {/* ================= DANH SÁCH NHÀ CUNG CẤP ================= */}
+                                        {currentSuppliers.map((supplier) => {
+                                            const isExpanded = expandedSupplierId === supplier.id;
+                                            return (
+                                                <React.Fragment key={supplier.id}>
+                                                    {/* ===================================================== DÒNG NHÀ CUNG CẤP ====================================================== */}
+                                                    <tr
+                                                        onClick={() => {
+                                                            setExpandedSupplierId(
+                                                                isExpanded ? null : supplier.id
+                                                            );
+                                                            setSupplierDetailTab("info");
                                                         }}
-                                                        className="w-4 h-4 accent-blue-600 cursor-pointer" />
-                                                </td>
-                                                <td className="px-3 text-[14px]">
-                                                    {supplier.code}
-                                                </td>
-                                                <td className="px-3 text-[14px]">
-                                                    {supplier.name}
-                                                </td>
-                                                <td className="px-3 text-[14px]">
-                                                    {supplier.phone}
-                                                </td>
-                                                <td className="px-3 text-[14px]">
-                                                    {supplier.email}
-                                                </td>
-                                                <td className="px-3 text-right text-[14px]">
-                                                    {supplier.debt.toLocaleString("vi-VN")}
-                                                </td>
-                                                <td className="px-3 text-right text-[14px]">
-                                                    {supplier.totalBuy.toLocaleString("vi-VN")}
-                                                </td>
+                                                        className={`h-[46px]  cursor-pointer transition-colors ${isExpanded ? "bg-[#f5faff]" : "border-b border-gray-200 hover:bg-gray-50"}`} >
+                                                        {/* Checkbox */}
+                                                        <td className={`px-3 ${isExpanded ? "border-t-3 border-l-3 border-blue-600" : ""}`} onClick={(e) => e.stopPropagation()} >
+                                                            <input type="checkbox"
+                                                                checked={selectedSuppliers.includes(
+                                                                    supplier.id
+                                                                )}
+                                                                onChange={(e) => {
+                                                                    if (e.target.checked) {
+                                                                        setSelectedSuppliers((prev) => [
+                                                                            ...prev,
+                                                                            supplier.id,
+                                                                        ]);
+                                                                    } else {
+                                                                        setSelectedSuppliers((prev) =>
+                                                                            prev.filter(
+                                                                                (id) =>
+                                                                                    id !== supplier.id
+                                                                            )
+                                                                        );
+                                                                    }
+                                                                }}
+                                                                className="w-4 h-4 accent-blue-600 cursor-pointer" />
+                                                        </td>
+                                                        {/* Mã nhà cung cấp */}
+                                                        <td className={`px-3 text-[14px] text-gray-900 ${isExpanded ? "border-t-3 border-blue-600" : ""}`}>
+                                                            {supplier.code}
+                                                        </td>
+                                                        {/* Tên nhà cung cấp */}
+                                                        <td className={`px-3 text-[14px] text-gray-900 ${isExpanded ? "border-t-3 border-blue-600" : ""}`}>
+                                                            {supplier.name}
+                                                        </td>
+                                                        {/* Điện thoại */}
+                                                        <td className={`px-3 text-[14px] text-gray-900 ${isExpanded ? "border-t-3 border-blue-600" : ""}`}>
+                                                            {supplier.phone || ""}
+                                                        </td>
+                                                        {/* Email */}
+                                                        <td className={`px-3 text-[14px] text-gray-900 ${isExpanded ? "border-t-3 border-blue-600" : ""}`}>
+                                                            {supplier.email || ""}
+                                                        </td>
+                                                        {/* Nợ cần trả */}
+                                                        <td className={`px-3 text-right text-[14px] text-gray-900 ${isExpanded ? "border-t-3 border-blue-600" : ""}`}>
+                                                            {supplier.debt.toLocaleString("vi-VN")}
+                                                        </td>
+                                                        {/* Tổng mua */}
+                                                        <td className={`px-3 text-right text-[14px] text-gray-900 ${isExpanded ? "border-t-3 border-r-3 border-blue-600" : ""}`}>
+                                                            {supplier.totalBuy.toLocaleString("vi-VN")}
+                                                        </td>
+                                                    </tr>
+                                                    {/* ===================================================== CHI TIẾT NHÀ CUNG CẤP ====================================================== */}
+                                                    {isExpanded && (
+                                                        <tr>
+                                                            <td colSpan={7} className="p-0" >
+                                                                <div className="w-full bg-white border-l-3 border-r-3 border-b-3 border-blue-600">
+                                                                    {/* ================================================= TABS ================================================== */}
+                                                                    <div className="h-[54px] border-b border-gray-200 flex items-end px-5 gap-8">
+                                                                        {/* Thông tin */}
+                                                                        <button type="button" onClick={(e) => { e.stopPropagation(); setSupplierDetailTab("info"); }}
+                                                                            className={`relative h-[54px] px-0 text-[14px] font-medium ${supplierDetailTab === "info" ? "text-blue-600" : "text-gray-700"}`} >
+                                                                            Thông tin
+                                                                            {supplierDetailTab === "info" && (
+                                                                                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600" />
+                                                                            )}
+                                                                        </button>
+                                                                        {/* Lịch sử */}
+                                                                        <button type="button" onClick={(e) => { e.stopPropagation(); setSupplierDetailTab("history"); }}
+                                                                            className={`relative h-[54px] px-0 text-[14px] font-medium ${supplierDetailTab === "history" ? "text-blue-600" : "text-gray-700"}`} >
+                                                                            Lịch sử nhập/trả hàng
+                                                                            {supplierDetailTab === "history" && (
+                                                                                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600" />
+                                                                            )}
+                                                                        </button>
+                                                                        {/* Công nợ */}
+                                                                        <button type="button" onClick={(e) => { e.stopPropagation(); setSupplierDetailTab("debt"); }}
+                                                                            className={`relative h-[54px] px-0 text-[14px] font-medium ${supplierDetailTab === "debt" ? "text-blue-600" : "text-gray-700"}`} >
+                                                                            Nợ cần trả nhà cung cấp
 
-                                            </tr>
-                                        ))}
+                                                                            {supplierDetailTab === "debt" && (
+                                                                                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600" />
+                                                                            )}
+                                                                        </button>
+                                                                    </div>
+                                                                    {/* ================================================= TAB THÔNG TIN  ================================================== */}
+                                                                    {supplierDetailTab === "info" && (
+                                                                        <div className="px-5 py-4">
+                                                                            {/* =========================================================  THÔNG TIN NHÀ CUNG CẤP ========================================================= */}
+
+                                                                            {/* Tên + mã + chi nhánh */}
+                                                                            <div className="flex items-center justify-between">
+                                                                                <div className="flex items-center gap-3">
+                                                                                    <h2 className="text-[18px] font-semibold text-gray-900">
+                                                                                        {supplier.name}
+                                                                                    </h2>
+                                                                                    <span className="text-[14px] text-gray-600">
+                                                                                        {supplier.code}
+                                                                                    </span>
+                                                                                </div>
+                                                                                <span className="text-[14px] text-gray-700">
+                                                                                    Chi nhánh trung tâm
+                                                                                </span>
+                                                                            </div>
+                                                                            {/* Thông tin tạo */}
+                                                                            <div className="flex items-center gap-3 mt-4 text-[14px]">
+                                                                                <span className="text-gray-700">
+                                                                                    Người tạo:
+                                                                                </span>
+                                                                                <span className="text-gray-900">
+                                                                                    tramy
+                                                                                </span>
+                                                                                <span className="text-gray-300">
+                                                                                    |
+                                                                                </span>
+                                                                                <span className="text-gray-700">
+                                                                                    Ngày tạo:
+                                                                                </span>
+                                                                                <span className="text-gray-900">
+                                                                                    24/08/2026
+                                                                                </span>
+                                                                                <span className="text-gray-300">
+                                                                                    |
+                                                                                </span>
+                                                                                <span className="text-gray-700">
+                                                                                    Nhóm nhà cung cấp:
+                                                                                </span>
+                                                                                <span className="text-gray-500">
+                                                                                    Chưa có
+                                                                                </span>
+                                                                            </div>
+                                                                            {/* ========================================================= PHONE + EMAIL  ========================================================= */}
+                                                                            <div className="grid grid-cols-2 gap-6 mt-8">
+                                                                                {/* Điện thoại */}
+                                                                                <div>
+                                                                                    <div className="text-[14px] text-gray-700 mb-2">
+                                                                                        Điện thoại
+                                                                                    </div>
+                                                                                    <div className="h-[40px] border-b border-gray-200 flex items-center text-[14px] text-gray-500">
+                                                                                        {supplier.phone || "Chưa có"}
+                                                                                    </div>
+                                                                                </div>
+                                                                                {/* Email */}
+                                                                                <div>
+                                                                                    <div className="text-[14px] text-gray-700 mb-2">
+                                                                                        Email
+                                                                                    </div>
+                                                                                    <div className="h-[40px] border-b border-gray-200 flex items-center text-[14px] text-gray-500">
+                                                                                        {supplier.email || "Chưa có"}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            {/* =========================================================  ĐỊA CHỈ ========================================================= */}
+                                                                            <div className="mt-4">
+                                                                                <div className="text-[14px] text-gray-700 mb-2">
+                                                                                    Địa chỉ
+                                                                                </div>
+                                                                                <div className="h-[40px] border-b border-gray-200 flex items-center text-[14px] text-gray-500">
+                                                                                    Chưa có
+                                                                                </div>
+                                                                            </div>
+                                                                            {/* ========================================================= THÔNG TIN XUẤT HÓA ĐƠN ========================================================= */}
+                                                                            <button type="button" onClick={(e) => e.stopPropagation()} className="mt-6 text-[14px] text-blue-600 hover:text-blue-700">
+                                                                                Thêm thông tin xuất hóa đơn
+                                                                            </button>
+                                                                            {/* ========================================================= GHI CHÚ ========================================================= */}
+                                                                            <div className="mt-5 flex items-center gap-2 text-[14px] text-gray-700">
+                                                                                <span className="text-gray-500 text-[18px]">
+                                                                                    <SquarePen size={18} />
+                                                                                </span>
+                                                                                <span>
+                                                                                    Chưa có ghi chú
+                                                                                </span>
+                                                                            </div>
+                                                                            {/* ========================================================= FOOTER ACTION ========================================================= */}
+                                                                            <div className="h-[66px] border-t border-gray-200 flex items-center justify-between px-0 mt-6">
+                                                                                {/* ===================================================== XÓA ===================================================== */}
+                                                                                <button type="button"
+                                                                                    onClick={(e) => {
+                                                                                        e.stopPropagation();
+                                                                                        console.log(
+                                                                                            "Xóa nhà cung cấp:",
+                                                                                            supplier.id
+                                                                                        );
+                                                                                    }}
+                                                                                    className="flex items-center gap-2 text-[14px] text-blue-600 hover:text-blue-700" >
+                                                                                    <Trash2 size={18} />
+                                                                                    <span>
+                                                                                        Xóa
+                                                                                    </span>
+                                                                                </button>
+                                                                                {/* =====================================================  BÊN PHẢI ===================================================== */}
+                                                                                <div className="flex items-center gap-2">
+                                                                                    {/* ================================================= CHỈNH SỬA ================================================= */}
+                                                                                    <button type="button"
+                                                                                        onClick={(e) => {
+                                                                                            e.stopPropagation();
+                                                                                            setEditSupplier(supplier);
+                                                                                            setEditForm({
+                                                                                                name: supplier.name || "",
+                                                                                                code: supplier.code || "",
+                                                                                                phone: supplier.phone || "",
+                                                                                                email: supplier.email || "",
+                                                                                                address: "",
+                                                                                                province: "",
+                                                                                                ward: "",
+                                                                                                supplierGroup: "",
+                                                                                                note: "",
+                                                                                                companyName: "",
+                                                                                                taxCode: "",
+                                                                                                citizenId: "",
+                                                                                            });
+                                                                                            setShowEditSupplierModal(true);
+                                                                                        }}
+                                                                                        className="h-[40px] px-4 rounded-lg bg-blue-600 text-white flex items-center gap-2 text-[14px] font-semibold hover:bg-blue-700" >
+                                                                                        <PencilLine size={18} />
+                                                                                        Chỉnh sửa
+                                                                                    </button>
+                                                                                    {/* ================================================= NGỪNG HOẠT ĐỘNG ================================================= */}
+                                                                                    <button type="button"
+                                                                                        onClick={(e) => {
+                                                                                            e.stopPropagation();
+                                                                                            console.log(
+                                                                                                "Ngừng hoạt động:",
+                                                                                                supplier.id
+                                                                                            );
+                                                                                        }}
+                                                                                        className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white text-gray-700 flex items-center gap-2 text-[14px] font-semibold hover:bg-gray-50" >
+                                                                                        <LockKeyhole size={18} />
+                                                                                        Ngừng hoạt động
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                            {/* ========================================================= MODAL SỬA NHÀ CUNG CẤP ========================================================= */}
+
+                                                                            {showEditSupplierModal && editSupplier && (
+                                                                                <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4" onClick={() => setShowEditSupplierModal(false)} >
+                                                                                    <div className="w-full max-w-[960px] max-h-[92vh] bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()} >
+                                                                                        {/* HEADER */}
+                                                                                        <div className="h-[64px] px-6 flex items-center justify-between border-b border-gray-200 shrink-0">
+                                                                                            <h2 className="text-[20px] font-semibold text-gray-900">
+                                                                                                Sửa nhà cung cấp
+                                                                                            </h2>
+                                                                                            <button type="button" onClick={() => setShowEditSupplierModal(false)}
+                                                                                                className="w-[36px] h-[36px] rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-gray-900" >
+                                                                                                <X size={22} />
+                                                                                            </button>
+                                                                                        </div>
+                                                                                        {/* BODY */}
+                                                                                        <div className="flex-1 overflow-y-auto px-6 py-5">
+                                                                                            {/* Tên + mã */}
+                                                                                            <div className="grid grid-cols-2 gap-6">
+                                                                                                {/* Tên nhà cung cấp */}
+                                                                                                <div>
+                                                                                                    <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                        Tên nhà cung cấp
+                                                                                                    </label>
+                                                                                                    <input type="text" value={editForm.name}
+                                                                                                        onChange={(e) =>
+                                                                                                            setEditForm({
+                                                                                                                ...editForm,
+                                                                                                                name: e.target.value,
+                                                                                                            })
+                                                                                                        }
+                                                                                                        className="w-full h-[40px] px-3 rounded-lg border border-blue-600 outline-none text-[14px] text-gray-900 focus:ring-1 focus:ring-blue-500" />
+                                                                                                </div>
+                                                                                                {/* Mã nhà cung cấp */}
+                                                                                                <div>
+                                                                                                    <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                        Mã nhà cung cấp
+                                                                                                    </label>
+                                                                                                    <input type="text" value={editForm.code}
+                                                                                                        onChange={(e) =>
+                                                                                                            setEditForm({
+                                                                                                                ...editForm,
+                                                                                                                code: e.target.value,
+                                                                                                            })
+                                                                                                        }
+                                                                                                        className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none text-[14px] text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                                                                </div>
+                                                                                                {/* Điện thoại */}
+                                                                                                <div>
+                                                                                                    <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                        Điện thoại
+                                                                                                    </label>
+                                                                                                    <input type="text" value={editForm.phone}
+                                                                                                        onChange={(e) =>
+                                                                                                            setEditForm({
+                                                                                                                ...editForm,
+                                                                                                                phone: e.target.value,
+                                                                                                            })
+                                                                                                        }
+                                                                                                        className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none text-[14px] text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                                                                </div>
+                                                                                                {/* Email */}
+                                                                                                <div>
+                                                                                                    <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                        Email
+                                                                                                    </label>
+                                                                                                    <input type="email" placeholder="email@gmail.com" value={editForm.email}
+                                                                                                        onChange={(e) =>
+                                                                                                            setEditForm({
+                                                                                                                ...editForm,
+                                                                                                                email: e.target.value,
+                                                                                                            })
+                                                                                                        }
+                                                                                                        className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none text-[14px] text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            {/* ================================================= ĐỊA CHỈ  ================================================= */}
+                                                                                            <div className="mt-4 border border-gray-200 rounded-lg">
+                                                                                                <button type="button" onClick={() => setOpenAddress(!openAddress)}
+                                                                                                    className="w-full h-[52px] px-3 flex items-center justify-between" >
+                                                                                                    <h3 className="text-[15px] font-semibold text-gray-800">
+                                                                                                        Địa chỉ
+                                                                                                    </h3>
+                                                                                                    {openAddress ? (
+                                                                                                        <ChevronUp size={18} className="text-gray-700" />
+                                                                                                    ) : (
+                                                                                                        <ChevronDown size={18} className="text-gray-700" />
+                                                                                                    )}
+                                                                                                </button>
+                                                                                                {openAddress && (
+                                                                                                    <div className="px-3 pb-5">
+                                                                                                        <div>
+                                                                                                            <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                                Địa chỉ
+                                                                                                            </label>
+                                                                                                            <input type="text" placeholder="Nhập địa chỉ" value={editForm.address}
+                                                                                                                onChange={(e) =>
+                                                                                                                    setEditForm({
+                                                                                                                        ...editForm,
+                                                                                                                        address: e.target.value,
+                                                                                                                    })
+                                                                                                                }
+                                                                                                                className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none text-[14px] placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                                                                        </div>
+                                                                                                        <div className="grid grid-cols-2 gap-6 mt-4">
+                                                                                                            <div>
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                                    Khu vực
+                                                                                                                </label>
+                                                                                                                <select value={editForm.province}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setEditForm({
+                                                                                                                            ...editForm,
+                                                                                                                            province: e.target.value,
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none text-[14px]" >
+                                                                                                                    <option value="">
+                                                                                                                        Chọn Tỉnh/Thành phố
+                                                                                                                    </option>
+
+                                                                                                                    <option value="Hồ Chí Minh">
+                                                                                                                        Hồ Chí Minh
+                                                                                                                    </option>
+
+                                                                                                                    <option value="Hà Nội">
+                                                                                                                        Hà Nội
+                                                                                                                    </option>
+                                                                                                                </select>
+                                                                                                            </div>
+                                                                                                            <div>
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                                    Phường/Xã
+                                                                                                                </label>
+                                                                                                                <select value={editForm.ward}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setEditForm({
+                                                                                                                            ...editForm,
+                                                                                                                            ward: e.target.value,
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none text-[14px]" >
+                                                                                                                    <option value="">
+                                                                                                                        Chọn Phường/Xã
+                                                                                                                    </option>
+                                                                                                                </select>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                )}
+                                                                                            </div>
+                                                                                            {/* =================================================  NHÓM NHÀ CUNG CẤP + GHI CHÚ ================================================= */}
+                                                                                            <div className="mt-4 border border-gray-200 rounded-lg">
+                                                                                                <button type="button" onClick={() => setOpenSupplierGroup(!openSupplierGroup)}
+                                                                                                    className="w-full h-[52px] px-3 flex items-center justify-between">
+                                                                                                    <h3 className="text-[15px] font-semibold text-gray-800">
+                                                                                                        Nhóm nhà cung cấp, ghi chú
+                                                                                                    </h3>
+                                                                                                    {openSupplierGroup ? (
+                                                                                                        <ChevronUp size={18} className="text-gray-700" />
+                                                                                                    ) : (
+                                                                                                        <ChevronDown size={18} className="text-gray-700" />
+                                                                                                    )}
+                                                                                                </button>
+                                                                                                {openSupplierGroup && (
+                                                                                                    <div className="px-3 pb-5">
+                                                                                                        <div>
+                                                                                                            <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                                Nhóm nhà cung cấp
+                                                                                                            </label>
+                                                                                                            <select value={editForm.supplierGroup}
+                                                                                                                onChange={(e) =>
+                                                                                                                    setEditForm({
+                                                                                                                        ...editForm,
+                                                                                                                        supplierGroup: e.target.value,
+                                                                                                                    })
+                                                                                                                }
+                                                                                                                className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none text-[14px]"  >
+                                                                                                                <option value="">
+                                                                                                                    Chọn nhóm nhà cung cấp
+                                                                                                                </option>
+                                                                                                            </select>
+                                                                                                        </div>
+                                                                                                        <div className="mt-4">
+                                                                                                            <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                                Ghi chú
+                                                                                                            </label>
+                                                                                                            <textarea rows={3} placeholder="Nhập ghi chú" value={editForm.note}
+                                                                                                                onChange={(e) =>
+                                                                                                                    setEditForm({
+                                                                                                                        ...editForm,
+                                                                                                                        note: e.target.value,
+                                                                                                                    })
+                                                                                                                }
+                                                                                                                className="w-full px-3 py-2 rounded-lg border border-gray-300 outline-none text-[14px] resize-none placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                )}
+                                                                                            </div>
+                                                                                            {/* ================================================= THÔNG TIN XUẤT HÓA ĐƠN================================================= */}
+                                                                                            <div className="mt-4 border border-gray-200 rounded-lg">
+                                                                                                <button type="button" onClick={() => setOpenInvoice(!openInvoice)}
+                                                                                                    className="w-full h-[52px] px-3 flex items-center justify-between"  >
+                                                                                                    <h3 className="text-[15px] font-semibold text-gray-800">
+                                                                                                        Thông tin xuất hóa đơn
+                                                                                                    </h3>
+                                                                                                    {openInvoice ? (
+                                                                                                        <ChevronUp size={18} className="text-gray-700" />
+                                                                                                    ) : (
+                                                                                                        <ChevronDown size={18} className="text-gray-700" />
+                                                                                                    )}
+                                                                                                </button>
+                                                                                                {openInvoice && (
+                                                                                                    <div className="px-3 pb-5">
+                                                                                                        <div className="grid grid-cols-2 gap-6">
+                                                                                                            <div>
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                                    Tên công ty
+                                                                                                                </label>
+                                                                                                                <input type="text" placeholder="Nhập tên công ty" value={editForm.companyName}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setEditForm({
+                                                                                                                            ...editForm,
+                                                                                                                            companyName: e.target.value,
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none text-[14px] placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                                                                            </div>
+                                                                                                            <div>
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                                    Mã số thuế
+                                                                                                                </label>
+                                                                                                                <input type="text" placeholder="Nhập mã số thuế" value={editForm.taxCode}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setEditForm({
+                                                                                                                            ...editForm,
+                                                                                                                            taxCode: e.target.value,
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none text-[14px] placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                                                                            </div>
+                                                                                                            <div>
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-2">
+                                                                                                                    Số CCCD/CMND
+                                                                                                                </label>
+                                                                                                                <input type="text" placeholder="Nhập số CCCD/CMND" value={editForm.citizenId}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setEditForm({
+                                                                                                                            ...editForm,
+                                                                                                                            citizenId: e.target.value,
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none text-[14px] placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                )}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        {/* =====================================================  FOOTER MODAL ===================================================== */}
+                                                                                        <div className="h-[64px] border-t border-gray-200 px-6 flex items-center justify-end gap-2 shrink-0 bg-white">
+                                                                                            <button type="button" onClick={() => setShowEditSupplierModal(false)}
+                                                                                                className="h-[40px] px-5 rounded-lg border border-gray-300 bg-white text-gray-700 text-[14px] font-semibold hover:bg-gray-50" >
+                                                                                                Bỏ qua
+                                                                                            </button>
+                                                                                            <button type="button"
+                                                                                                onClick={() => {
+                                                                                                    console.log(
+                                                                                                        "Dữ liệu cập nhật:",
+                                                                                                        editForm
+                                                                                                    );
+                                                                                                    setShowEditSupplierModal(false);
+                                                                                                }}
+                                                                                                className="h-[40px] px-5 rounded-lg bg-blue-600 text-white text-[14px] font-semibold hover:bg-blue-700">
+                                                                                                Lưu
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            )}
+
+                                                                        </div>
+                                                                    )}
+                                                                    {supplierDetailTab === "history" && (
+                                                                        <>
+                                                                            {historyData.length === 0 ? (
+                                                                                // CHƯA CÓ LỊCH SỬ                                                                              
+                                                                                <div className="px-5 py-6 min-h-[250px]">
+                                                                                    <div className="text-[14px] text-gray-500 text-center py-10">
+                                                                                        Chưa có lịch sử nhập/trả hàng
+                                                                                    </div>
+                                                                                </div>
+                                                                            ) : (
+                                                                                // CÓ LỊCH SỬ                                                                             
+                                                                                <div className="px-3">
+                                                                                    {/* Header bảng */}
+                                                                                    <div className="h-[38px] bg-gray-100 grid grid-cols-[2fr_2fr_3fr_1fr_1.5fr] items-center text-[13px] font-semibold text-gray-700">
+                                                                                        <div className="px-2">
+                                                                                            Mã phiếu
+                                                                                        </div>
+                                                                                        <div className="px-2">
+                                                                                            Thời gian
+                                                                                        </div>
+                                                                                        <div className="px-2">
+                                                                                            Người tạo
+                                                                                        </div>
+                                                                                        <div className="px-2 text-right">
+                                                                                            Tổng cộng
+                                                                                        </div>
+                                                                                        <div className="px-2">
+                                                                                            Trạng thái
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    {/* Danh sách lịch sử */}
+                                                                                    {historyData.map((item) => (
+                                                                                        <div key={item.code} className="h-[45px] grid grid-cols-[2fr_2fr_3fr_1fr_1.5fr] items-center border-b border-gray-200 text-[14px]"  >
+                                                                                            {/* Mã phiếu */}
+                                                                                            <div className="px-2">
+                                                                                                <button type="button" className="text-blue-600 hover:underline" >
+                                                                                                    {item.code}
+                                                                                                </button>
+                                                                                            </div>
+                                                                                            {/* Thời gian */}
+                                                                                            <div className="px-2">
+                                                                                                {item.time}
+                                                                                            </div>
+                                                                                            {/* Người tạo */}
+                                                                                            <div className="px-2">
+                                                                                                {item.creator}
+                                                                                            </div>
+                                                                                            {/* Tổng cộng */}
+                                                                                            <div className="px-2 text-right">
+                                                                                                {item.total}
+                                                                                            </div>
+                                                                                            {/* Trạng thái */}
+                                                                                            <div className="px-2">
+                                                                                                <span className="inline-flex px-2 py-1 rounded-md bg-green-100 text-green-600 text-[12px]">
+                                                                                                    {item.status}
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    ))}
+
+                                                                                    {/* Xuất file */}
+                                                                                    <div className="h-[64px] flex items-center border-t border-gray-200">
+                                                                                        <button type="button" className="flex items-center gap-2 text-[14px] text-gray-700 hover:text-blue-600" >
+                                                                                            <FileSymlink size={18} />
+                                                                                            Xuất file
+                                                                                        </button>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            )}
+                                                                        </>
+                                                                    )}
+
+                                                                    {/* ================================================= TAB CÔNG NỢ================================================== */}
+
+                                                                    {supplierDetailTab === "debt" && (
+                                                                        <div className="px-5 py-4">
+                                                                            {debtData.length === 0 ? (
+                                                                                <div className="px-5 py-6 min-h-[250px]">
+                                                                                    <div className="text-[14px] text-gray-500 text-center py-10">
+                                                                                        Chưa có công nợ
+                                                                                    </div>
+                                                                                </div>
+                                                                            ) : (
+                                                                                <div>
+                                                                                    {/* ================================================= BỘ LỌC================================================= */}
+                                                                                    <div className="flex items-center justify-end mb-5">
+                                                                                        <select
+                                                                                            className="w-[186px] h-[34px] px-3 rounded-lg border border-gray-300 bg-white text-[14px] text-gray-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" >
+                                                                                            <option value="all">
+                                                                                                Tất cả giao dịch
+                                                                                            </option>
+                                                                                            <option value="purchase">
+                                                                                                Nhập hàng
+                                                                                            </option>
+                                                                                            <option value="payment">
+                                                                                                Thanh toán
+                                                                                            </option>
+                                                                                            <option value="adjustment">
+                                                                                                Điều chỉnh
+                                                                                            </option>
+                                                                                            <option value="discount">
+                                                                                                Chiết khấu thanh toán
+                                                                                            </option>
+                                                                                        </select>
+
+                                                                                    </div>
+
+
+                                                                                    {/* ================================================= BẢNG CÔNG NỢ ================================================= */}
+                                                                                    <div className="w-full overflow-hidden">
+                                                                                        {/* Header bảng */}
+                                                                                        <div className="h-[38px] bg-gray-100 border-b border-gray-200 grid grid-cols-[1.1fr_1fr_1fr_1fr_1.2fr] items-center text-[13px] font-semibold text-gray-800">
+                                                                                            {/* Mã phiếu */}
+                                                                                            <div className="px-3">
+                                                                                                Mã phiếu
+                                                                                            </div>
+                                                                                            {/* Thời gian */}
+                                                                                            <div className="px-3">
+                                                                                                Thời gian
+                                                                                            </div>
+                                                                                            {/* Loại */}
+                                                                                            <div className="px-3">
+                                                                                                Loại
+                                                                                            </div>
+                                                                                            {/* Giá trị */}
+                                                                                            <div className="px-3 text-right">
+                                                                                                Giá trị
+                                                                                            </div>
+                                                                                            {/* Nợ */}
+                                                                                            <div className="px-3 text-right">
+                                                                                                Nợ cần trả nhà cung cấp
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        {/* ================================================= DATA  ================================================= */}
+                                                                                        {debtData.map((item, index) => (
+                                                                                            <div key={index} className="h-[45px] border-b border-gray-200 grid grid-cols-[1.1fr_1fr_1fr_1fr_1.2fr] items-center text-[14px] text-gray-800 hover:bg-gray-50" >
+                                                                                                {/* Mã phiếu */}
+                                                                                                <div className="px-3">
+                                                                                                    <button type="button" onClick={(e) => {
+                                                                                                        e.stopPropagation();
+                                                                                                        console.log(
+                                                                                                            "Xem phiếu công nợ:",
+                                                                                                            item.code
+                                                                                                        );
+                                                                                                    }}
+                                                                                                        className="text-blue-600 hover:text-blue-700 hover:underline" >
+                                                                                                        {item.code}
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                                {/* Thời gian */}
+                                                                                                <div className="px-3">
+                                                                                                    {item.time}
+                                                                                                </div>
+                                                                                                {/* Loại */}
+                                                                                                <div className="px-3">
+                                                                                                    {item.type}
+                                                                                                </div>
+                                                                                                {/* Giá trị */}
+                                                                                                <div className="px-3 text-right">
+                                                                                                    {Number(item.value).toLocaleString("vi-VN")}
+                                                                                                </div>
+                                                                                                {/* Nợ cần trả */}
+                                                                                                <div className="px-3 text-right">
+                                                                                                    {Number(item.debt).toLocaleString("vi-VN")}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        ))}
+                                                                                    </div>
+                                                                                    {/* =================================================  FOOTER ================================================= */}
+                                                                                    <div className="h-[66px] border-t border-gray-200 flex items-center justify-between">
+                                                                                        {/* ================================================= BÊN TRÁI ================================================= */}
+                                                                                        <div className="flex items-center gap-6">
+                                                                                            {/* Xuất file công nợ */}
+                                                                                            <button type="button" onClick={(e) => {
+                                                                                                e.stopPropagation();
+                                                                                                console.log(
+                                                                                                    "Xuất file công nợ:",
+                                                                                                    supplier.id
+                                                                                                );
+                                                                                            }}
+                                                                                                className="h-[34px] px-3 rounded-lg flex items-center gap-2 text-[14px] text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors">
+                                                                                                <FileInput size={18} />
+                                                                                                <span>
+                                                                                                    Xuất file công nợ
+                                                                                                </span>
+                                                                                            </button>
+                                                                                            {/* Xuất file */}
+                                                                                            <button type="button" onClick={(e) => {
+                                                                                                e.stopPropagation();
+                                                                                                console.log(
+                                                                                                    "Xuất file:",
+                                                                                                    supplier.id
+                                                                                                );
+                                                                                            }}
+                                                                                                className="h-[34px] px-3 rounded-lg flex items-center gap-2 text-[14px] text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors">
+                                                                                                <FileInput size={18} />
+                                                                                                <span>
+                                                                                                    Xuất file
+                                                                                                </span>
+                                                                                            </button>
+
+                                                                                        </div>
+
+                                                                                        {/* ================================================= BÊN PHẢI ================================================= */}
+                                                                                        <div className="flex items-center gap-2">
+                                                                                            {/* Thanh toán */}
+                                                                                            <button type="button" onClick={(e) => {
+                                                                                                e.stopPropagation();
+                                                                                                console.log(
+                                                                                                    "Thanh toán:",
+                                                                                                    supplier.id
+                                                                                                );
+                                                                                            }}
+                                                                                                className="h-[40px] px-4 rounded-lg bg-blue-600 text-white flex items-center gap-2 text-[14px] font-semibold hover:bg-blue-700" >
+                                                                                                <CircleDollarSign size={18} />
+                                                                                                Thanh toán
+                                                                                            </button>
+                                                                                            {/* Điều chỉnh */}
+                                                                                            <button
+                                                                                                type="button" onClick={(e) => {
+                                                                                                    e.stopPropagation();
+                                                                                                    console.log(
+                                                                                                        "Điều chỉnh:",
+                                                                                                        supplier.id
+                                                                                                    );
+                                                                                                }}
+                                                                                                className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white text-gray-700 flex items-center gap-2 text-[14px] font-semibold hover:bg-gray-50" >
+                                                                                                <PencilLine size={17} />
+                                                                                                Điều chỉnh
+                                                                                            </button>
+                                                                                            {/* Chiết khấu thanh toán */}
+                                                                                            <button type="button" onClick={(e) => {
+                                                                                                e.stopPropagation();
+                                                                                                console.log(
+                                                                                                    "Chiết khấu thanh toán:",
+                                                                                                    supplier.id
+                                                                                                );
+                                                                                            }}
+                                                                                                className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white text-gray-700 flex items-center gap-2 text-[14px] font-semibold hover:bg-gray-50">
+                                                                                                <CircleDollarSign size={17} />
+                                                                                                Chiết khấu thanh toán
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </React.Fragment>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             </div>
@@ -1164,6 +2085,7 @@ const SupplierPage = () => {
                                 <span>Hiển thị</span>
                                 <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
                                     className="h-[32px] px-3 border border-gray-300 rounded-lg bg-white outline-none cursor-pointer" >
+                                    <option value="10">10 dòng</option>
                                     <option value="15">15 dòng</option>
                                     <option value="20">20 dòng</option>
                                     <option value="40">40 dòng</option>
