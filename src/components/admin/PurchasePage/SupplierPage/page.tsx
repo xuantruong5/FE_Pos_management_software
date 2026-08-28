@@ -1,5 +1,5 @@
 "use client";
-import { CalendarDays, ChevronDown, ChevronRight, ChevronUp, CircleDollarSign, CircleHelp, FileDown, FileInput, FileSymlink, FileUp, List, Lock, LockKeyhole, PencilLine, Plus, Search, Settings, SlidersHorizontal, SquarePen, Trash2, X } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ChevronUp, CircleDollarSign, CircleHelp, FileDown, FileInput, FileSymlink, FileUp, List, Lock, LockKeyhole, PencilLine, Plus, Search, Settings, SlidersHorizontal, SquarePen, Trash2, X } from "lucide-react";
 import React, { useState } from "react";
 
 import * as XLSX from "xlsx";
@@ -290,6 +290,10 @@ const SupplierPage = () => {
     const endIndex = Math.min(startIndex + pageSize, totalItems);
     const currentSuppliers = suppliers.slice(startIndex, endIndex);
 
+
+
+
+
     // thêm nhà cung cấp 
     const [showSupplierModal, setShowSupplierModal] = useState(false);
     const [openAddress, setOpenAddress] = useState(true);
@@ -503,7 +507,132 @@ const SupplierPage = () => {
             value: "0",
             debt: "0",
         },
+        {
+            code: "PN00002",
+            time: "11/07/2026 11:45",
+            type: "Nhập hàng",
+            value: "12500000",
+            debt: "2500000",
+        },
+        {
+            code: "PN00001",
+            time: "10/07/2026 10:30",
+            type: "Nhập hàng",
+            value: "8750000",
+            debt: "0",
+        },
+        {
+            code: "PN00046",
+            time: "24/08/2026 14:15",
+            type: "Nhập hàng",
+            value: "15600000",
+            debt: "5600000",
+        },
+        {
+            code: "PN00047",
+            time: "25/08/2026 09:20",
+            type: "Nhập hàng",
+            value: "6300000",
+            debt: "1300000",
+        },
+        {
+            code: "PN00048",
+            time: "26/08/2026 15:40",
+            type: "Nhập hàng",
+            value: "9800000",
+            debt: "0",
+        },
     ];
+    // phân trang công nợ 
+    const [debtPage, setDebtPage] = useState(1);
+    const debtPageSize = 10;
+    const debtTotalItems = debtData.length;
+    const debtTotalPages = Math.max(1, Math.ceil(debtTotalItems / debtPageSize));
+    const debtStartIndex = (debtPage - 1) * debtPageSize;
+    const debtEndIndex = Math.min(debtStartIndex + debtPageSize, debtTotalItems);
+    const currentDebtData = debtData.slice(debtStartIndex, debtEndIndex);
+
+
+
+    // điều chỉnh 
+    const [showAdjustModal, setShowAdjustModal] = useState(false);
+    const [selectedSupplier, setSelectedSupplier] = useState(null);
+    const [adjustForm, setAdjustForm] = useState({
+        date: "",
+        value: "",
+        description: "",
+    });
+
+    // xuất file công nợ
+    const [showExportModal, setShowExportModal] = useState(false);
+    const [exportTime, setExportTime] = useState("today");
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
+    const [exportOptions, setExportOptions] = useState({
+        detail: true,
+        unit: true,
+        quantity: true,
+        price: true,
+        discount: true,
+        vat: true,
+        importPrice: true,
+        total: true,
+        note: true,
+    });
+
+    // model thanh toán 
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [selectedDebt, setSelectedDebt] = useState(null);
+    const [paymentForm, setPaymentForm] = useState({
+        time: new Date().toISOString().slice(0, 16),
+        payer: "tramy",
+        paymentMethod: "cash",
+        account: "",
+        amount: "",
+        note: "",
+        distribute: true,
+    });
+    const paymentAccounts = [
+        {
+            id: 1,
+            name: "Ngân hàng Vietcombank",
+            number: "0123456789",
+            owner: "CÔNG TY TNHH CITIGO",
+        },
+        {
+            id: 2,
+            name: "Ngân hàng BIDV",
+            number: "1234567890",
+            owner: "CÔNG TY TNHH CITIGO",
+        },
+        {
+            id: 3,
+            name: "Ngân hàng Techcombank",
+            number: "19031234567890",
+            owner: "CÔNG TY TNHH CITIGO",
+        },
+        {
+            id: 4,
+            name: "Thẻ Visa",
+            number: "**** **** **** 1234",
+            owner: "CÔNG TY TNHH CITIGO",
+        },
+    ];
+
+    // ================= MODAL CHIẾT KHẤU THANH TOÁN =================
+    const [showDiscountModal, setShowDiscountModal] = useState(false);
+    const [selectedDiscount, setSelectedDiscount] = useState(null);
+    const [discountForm, setDiscountForm] = useState({
+        time: new Date().toISOString().slice(0, 16),
+        performer: "tramy",
+        discount: "",
+        note: "",
+        distribute: false,
+        allocatedDiscount: "",
+    });
+
+
+
 
 
 
@@ -1954,7 +2083,7 @@ const SupplierPage = () => {
                                                                                             </div>
                                                                                         </div>
                                                                                         {/* ================================================= DATA  ================================================= */}
-                                                                                        {debtData.map((item, index) => (
+                                                                                        {currentDebtData.map((item, index) => (
                                                                                             <div key={index} className="h-[45px] border-b border-gray-200 grid grid-cols-[1.1fr_1fr_1fr_1fr_1.2fr] items-center text-[14px] text-gray-800 hover:bg-gray-50" >
                                                                                                 {/* Mã phiếu */}
                                                                                                 <div className="px-3">
@@ -1987,21 +2116,50 @@ const SupplierPage = () => {
                                                                                                 </div>
                                                                                             </div>
                                                                                         ))}
+                                                                                        <div className="flex items-center gap-3 text-[19px] text-gray-600 mt-4 mb-4">
+                                                                                            {/* Trang đầu */}
+                                                                                            <button type="button" disabled={debtPage === 1} onClick={() => setDebtPage(1)} className="disabled:text-gray-300" >
+                                                                                                <ChevronsLeft size={18} />
+                                                                                            </button>
+
+                                                                                            {/* Trang trước */}
+                                                                                            <button type="button" disabled={debtPage === 1} onClick={() => setDebtPage(debtPage - 1)} className="disabled:text-gray-300" >
+                                                                                                <ChevronLeft size={18} />
+                                                                                            </button>
+
+                                                                                            {/* Số trang hiện tại */}
+                                                                                            <div className="w-[40px] h-[26px] border border-gray-300 rounded-lg flex items-center justify-center bg-white">
+                                                                                                {debtPage}
+                                                                                            </div>
+
+                                                                                            {/* Trang sau */}
+                                                                                            <button type="button" disabled={debtPage === debtTotalPages} onClick={() => setDebtPage(debtPage + 1)} className="disabled:text-gray-300" >
+                                                                                                <ChevronRight size={18} />
+                                                                                            </button>
+
+                                                                                            {/* Trang cuối */}
+                                                                                            <button type="button" disabled={debtPage === debtTotalPages} onClick={() => setDebtPage(debtTotalPages)} className="disabled:text-gray-300">
+                                                                                                <ChevronsRight size={18} />
+                                                                                            </button>
+
+                                                                                            {/* Hiển thị số dòng */}
+                                                                                            <span className="ml-2 font-semibold text-[14px] ">
+                                                                                                {debtTotalItems === 0
+                                                                                                    ? "0 - 0 trong 0 dòng"
+                                                                                                    : `${debtStartIndex + 1} - ${debtEndIndex} trong ${debtTotalItems} dòng`
+                                                                                                }
+                                                                                            </span>
+                                                                                        </div>
+
                                                                                     </div>
                                                                                     {/* =================================================  FOOTER ================================================= */}
                                                                                     <div className="h-[66px] border-t border-gray-200 flex items-center justify-between">
                                                                                         {/* ================================================= BÊN TRÁI ================================================= */}
                                                                                         <div className="flex items-center gap-6">
                                                                                             {/* Xuất file công nợ */}
-                                                                                            <button type="button" onClick={(e) => {
-                                                                                                e.stopPropagation();
-                                                                                                console.log(
-                                                                                                    "Xuất file công nợ:",
-                                                                                                    supplier.id
-                                                                                                );
-                                                                                            }}
-                                                                                                className="h-[34px] px-3 rounded-lg flex items-center gap-2 text-[14px] text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors">
-                                                                                                <FileInput size={18} />
+                                                                                            <button type="button" onClick={(e) => { e.stopPropagation(); setShowExportModal(true); }}
+                                                                                                className="h-[34px] px-3 rounded-lg flex items-center gap-2 text-[18px] text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors font-semibold">
+                                                                                                <FileInput size={19} />
                                                                                                 <span>
                                                                                                     Xuất file công nợ
                                                                                                 </span>
@@ -2014,8 +2172,8 @@ const SupplierPage = () => {
                                                                                                     supplier.id
                                                                                                 );
                                                                                             }}
-                                                                                                className="h-[34px] px-3 rounded-lg flex items-center gap-2 text-[14px] text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors">
-                                                                                                <FileInput size={18} />
+                                                                                                className="h-[34px] px-3 rounded-lg flex items-center gap-2 text-[18px] text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors font-semibold">
+                                                                                                <FileInput size={19} />
                                                                                                 <span>
                                                                                                     Xuất file
                                                                                                 </span>
@@ -2028,24 +2186,30 @@ const SupplierPage = () => {
                                                                                             {/* Thanh toán */}
                                                                                             <button type="button" onClick={(e) => {
                                                                                                 e.stopPropagation();
-                                                                                                console.log(
-                                                                                                    "Thanh toán:",
-                                                                                                    supplier.id
-                                                                                                );
+                                                                                                setSelectedDebt(supplier);
+                                                                                                setPaymentForm({
+                                                                                                    time: new Date().toISOString().slice(0, 16),
+                                                                                                    payer: "tramy",
+                                                                                                    paymentMethod: "cash",
+                                                                                                    account: "",
+                                                                                                    amount: "",
+                                                                                                    note: "",
+                                                                                                    distribute: true,
+                                                                                                });
+                                                                                                setShowPaymentModal(true);
                                                                                             }}
                                                                                                 className="h-[40px] px-4 rounded-lg bg-blue-600 text-white flex items-center gap-2 text-[14px] font-semibold hover:bg-blue-700" >
                                                                                                 <CircleDollarSign size={18} />
                                                                                                 Thanh toán
                                                                                             </button>
+
+
                                                                                             {/* Điều chỉnh */}
-                                                                                            <button
-                                                                                                type="button" onClick={(e) => {
-                                                                                                    e.stopPropagation();
-                                                                                                    console.log(
-                                                                                                        "Điều chỉnh:",
-                                                                                                        supplier.id
-                                                                                                    );
-                                                                                                }}
+                                                                                            <button type="button" onClick={(e) => {
+                                                                                                e.stopPropagation(); setSelectedSupplier(supplier);
+                                                                                                setAdjustForm({ date: new Date().toISOString().slice(0, 16), value: "", description: "", });
+                                                                                                setShowAdjustModal(true);
+                                                                                            }}
                                                                                                 className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white text-gray-700 flex items-center gap-2 text-[14px] font-semibold hover:bg-gray-50" >
                                                                                                 <PencilLine size={17} />
                                                                                                 Điều chỉnh
@@ -2053,16 +2217,988 @@ const SupplierPage = () => {
                                                                                             {/* Chiết khấu thanh toán */}
                                                                                             <button type="button" onClick={(e) => {
                                                                                                 e.stopPropagation();
-                                                                                                console.log(
-                                                                                                    "Chiết khấu thanh toán:",
-                                                                                                    supplier.id
-                                                                                                );
+                                                                                                setSelectedDiscount(supplier);
+                                                                                                setDiscountForm({
+                                                                                                    time: new Date().toISOString().slice(0, 16),
+                                                                                                    performer: "tramy",
+                                                                                                    discount: "",
+                                                                                                    note: "",
+                                                                                                    distribute: false,
+                                                                                                    allocatedDiscount: "",
+                                                                                                });
+                                                                                                setShowDiscountModal(true);
                                                                                             }}
                                                                                                 className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white text-gray-700 flex items-center gap-2 text-[14px] font-semibold hover:bg-gray-50">
                                                                                                 <CircleDollarSign size={17} />
                                                                                                 Chiết khấu thanh toán
                                                                                             </button>
                                                                                         </div>
+
+                                                                                        {showAdjustModal && (
+                                                                                            <div className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/50 pt-[80px]" onClick={() => setShowAdjustModal(false)} >
+                                                                                                <div className="w-[560px] bg-white rounded-xl shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()} >
+                                                                                                    {/* Header */}
+                                                                                                    <div className="h-[64px] px-6 flex items-center justify-between border-b border-gray-200">
+                                                                                                        <h2 className="text-[18px] font-semibold text-gray-800">
+                                                                                                            Điều chỉnh
+                                                                                                        </h2>
+                                                                                                        <button type="button" onClick={() => setShowAdjustModal(false)} className="text-gray-500 hover:text-gray-700" >
+                                                                                                            <X size={22} />
+                                                                                                        </button>
+                                                                                                    </div>
+
+                                                                                                    {/* Body */}
+                                                                                                    <div className="px-6 py-5 space-y-4">
+                                                                                                        {/* Nợ cần trả hiện tại */}
+                                                                                                        <div className="grid grid-cols-[150px_1fr] items-center">
+                                                                                                            <label className="text-[14px] font-medium text-gray-700">
+                                                                                                                Nợ cần trả hiện tại:
+                                                                                                            </label>
+                                                                                                            <span className="text-[14px] text-gray-800">
+                                                                                                                {Number(selectedSupplier?.debt || 0).toLocaleString("vi-VN")}
+                                                                                                            </span>
+                                                                                                        </div>
+
+                                                                                                        {/* Ngày điều chỉnh */}
+                                                                                                        <div className="grid grid-cols-[150px_1fr] items-center">
+                                                                                                            <label className="text-[14px] font-medium text-gray-700">
+                                                                                                                Ngày điều chỉnh:
+                                                                                                            </label>
+                                                                                                            <input type="datetime-local" value={adjustForm.date}
+                                                                                                                onChange={(e) =>
+                                                                                                                    setAdjustForm({
+                                                                                                                        ...adjustForm,
+                                                                                                                        date: e.target.value,
+                                                                                                                    })
+                                                                                                                }
+                                                                                                                className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px]" />
+                                                                                                        </div>
+
+                                                                                                        {/* Giá trị nợ điều chỉnh */}
+                                                                                                        <div className="grid grid-cols-[150px_1fr] items-center">
+                                                                                                            <label className="text-[14px] font-medium text-gray-700">
+                                                                                                                Giá trị nợ điều chỉnh:
+                                                                                                            </label>
+                                                                                                            <input type="number" value={adjustForm.value}
+                                                                                                                onChange={(e) =>
+                                                                                                                    setAdjustForm({
+                                                                                                                        ...adjustForm,
+                                                                                                                        value: e.target.value,
+                                                                                                                    })
+                                                                                                                }
+                                                                                                                placeholder=""
+                                                                                                                autoFocus
+                                                                                                                className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px]" />
+                                                                                                        </div>
+                                                                                                        {/* Mô tả */}
+                                                                                                        <div className="grid grid-cols-[150px_1fr]">
+                                                                                                            <label className="text-[14px] font-medium text-gray-700 pt-2">
+                                                                                                                Mô tả:
+                                                                                                            </label>
+                                                                                                            <div className="relative">
+                                                                                                                <textarea value={adjustForm.description}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setAdjustForm({
+                                                                                                                            ...adjustForm,
+                                                                                                                            description: e.target.value,
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    rows={2}
+                                                                                                                    className="w-full px-10 py-2 rounded-lg border border-gray-300 outline-none resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px]" />
+                                                                                                                <PencilLine size={16} className="absolute left-3 top-2 text-gray-500" />
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    {/* Footer */}
+                                                                                                    <div className="h-[64px] px-6 flex items-center justify-end gap-2 border-t border-gray-200">
+                                                                                                        <button type="button" onClick={() => setShowAdjustModal(false)}
+                                                                                                            className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white text-gray-700 text-[14px] font-semibold hover:bg-gray-50" >
+                                                                                                            Bỏ qua
+                                                                                                        </button>
+                                                                                                        <button type="button"
+                                                                                                            onClick={() => {
+                                                                                                                console.log("Điều chỉnh công nợ:", {
+                                                                                                                    supplier: selectedSupplier,
+                                                                                                                    ...adjustForm,
+                                                                                                                });
+                                                                                                                // Sau này gọi API ở đây
+                                                                                                                setShowAdjustModal(false);
+                                                                                                            }}
+                                                                                                            className="h-[40px] px-5 rounded-lg bg-blue-500 text-white text-[14px] font-semibold hover:bg-blue-600" >
+                                                                                                            Chỉnh sửa
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        )}
+                                                                                        {showExportModal && (
+                                                                                            <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50" onClick={() => setShowExportModal(false)}  >
+                                                                                                <div className="w-[780px] bg-white rounded-xl shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}  >
+                                                                                                    {/* ================= HEADER ================= */}
+                                                                                                    <div className="h-[64px] px-6 flex items-center justify-between border-b border-gray-200">
+                                                                                                        <h2 className="text-[20px] font-semibold text-gray-800">
+                                                                                                            Xuất file công nợ
+                                                                                                        </h2>
+
+                                                                                                        <button type="button" onClick={() => setShowExportModal(false)} className="text-gray-500 hover:text-gray-800 transition-colors" >
+                                                                                                            <X size={22} />
+                                                                                                        </button>
+                                                                                                    </div>
+
+                                                                                                    {/* ================= CONTENT ================= */}
+                                                                                                    <div className="p-6">
+                                                                                                        {/* ================= THỜI GIAN ================= */}
+                                                                                                        <div className="border border-gray-200 rounded-lg p-3">
+                                                                                                            <div className="text-[15px] font-semibold text-gray-800 mb-3">
+                                                                                                                Thời gian
+                                                                                                            </div>
+                                                                                                            {/* Các lựa chọn thời gian */}
+                                                                                                            <div className="flex flex-wrap gap-2">
+                                                                                                                {[
+                                                                                                                    { key: "today", label: "Hôm nay" },
+                                                                                                                    { key: "week", label: "Tuần này" },
+                                                                                                                    { key: "7days", label: "7 ngày qua" },
+                                                                                                                    { key: "30days", label: "30 ngày qua" },
+                                                                                                                    { key: "month", label: "Tháng này" },
+                                                                                                                    { key: "lastMonth", label: "Tháng trước" },
+                                                                                                                    { key: "lunarMonth", label: "Tháng này (âm lịch)" },
+                                                                                                                    { key: "lastLunarMonth", label: "Tháng trước (âm lịch)" },
+                                                                                                                    { key: "quarter", label: "Quý này" },
+                                                                                                                    { key: "year", label: "Năm nay" },
+                                                                                                                    { key: "lunarYear", label: "Năm nay (âm lịch)" },
+                                                                                                                    { key: "all", label: "Toàn thời gian" },
+                                                                                                                    { key: "custom", label: "Lựa chọn khác" },
+                                                                                                                ].map((item) => (
+                                                                                                                    <button key={item.key} type="button" onClick={() => setExportTime(item.key)}
+                                                                                                                        className={` h-[34px] px-3 rounded-full  border text-[14px] transition-colors ${exportTime === item.key ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"} `} >
+                                                                                                                        {item.label}
+                                                                                                                    </button>
+                                                                                                                ))}
+                                                                                                            </div>
+                                                                                                            {/* ================= CHỌN NGÀY ================= */}
+                                                                                                            {exportTime === "custom" && (
+                                                                                                                <div className="mt-4 flex items-center gap-3">
+                                                                                                                    <span className="text-[14px] text-gray-700 whitespace-nowrap">
+                                                                                                                        Lựa chọn khác
+                                                                                                                    </span>
+                                                                                                                    {/* Từ ngày */}
+                                                                                                                    <div className="relative">
+                                                                                                                        <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)}
+                                                                                                                            className=" w-[200px] h-[34px] px-3 border border-gray-300 rounded-lg text-[14px] text-gray-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                                                                                    </div>
+                                                                                                                    <span className="text-[14px] text-gray-700">
+                                                                                                                        Đến
+                                                                                                                    </span>
+                                                                                                                    {/* Đến ngày */}
+                                                                                                                    <div className="relative">
+                                                                                                                        <input
+                                                                                                                            type="date" value={toDate} onChange={(e) => setToDate(e.target.value)}
+                                                                                                                            className=" w-[200px] h-[34px] px-3 border border-gray-300 rounded-lg text-[14px] text-gray-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            )}
+                                                                                                        </div>
+                                                                                                        {/* ================= THÔNG TIN XUẤT FILE ================= */}
+                                                                                                        <div className="border border-gray-200 rounded-lg mt-4 p-3">
+                                                                                                            <div className="text-[15px] font-semibold text-gray-800">
+                                                                                                                Thông tin xuất file
+                                                                                                            </div>
+
+                                                                                                            <div className="py-3 border-b border-gray-200">
+                                                                                                                <div className="text-[14px] text-gray-800">
+                                                                                                                    Dữ liệu tổng quan (luôn có)
+                                                                                                                </div>
+                                                                                                                <div className="text-[12px] text-gray-500 mt-1">
+                                                                                                                    Thời gian, Mã, Ghi nợ, Ghi có
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            {/* Chi tiết */}
+                                                                                                            <div className="bg-[#eef7ff] px-2 py-2">
+                                                                                                                <div className="flex items-start gap-2">
+                                                                                                                    <input
+                                                                                                                        type="checkbox"
+                                                                                                                        checked={
+                                                                                                                            exportOptions.unit &&
+                                                                                                                            exportOptions.quantity &&
+                                                                                                                            exportOptions.price &&
+                                                                                                                            exportOptions.discount &&
+                                                                                                                            exportOptions.vat &&
+                                                                                                                            exportOptions.importPrice &&
+                                                                                                                            exportOptions.total
+                                                                                                                        }
+                                                                                                                        ref={(el) => {
+                                                                                                                            if (el) {
+                                                                                                                                const count = [
+                                                                                                                                    exportOptions.unit,
+                                                                                                                                    exportOptions.quantity,
+                                                                                                                                    exportOptions.price,
+                                                                                                                                    exportOptions.discount,
+                                                                                                                                    exportOptions.vat,
+                                                                                                                                    exportOptions.importPrice,
+                                                                                                                                    exportOptions.total,
+                                                                                                                                ].filter(Boolean).length;
+
+                                                                                                                                el.indeterminate = count > 0 && count < 7;
+                                                                                                                            }
+                                                                                                                        }}
+                                                                                                                        onChange={(e) =>
+                                                                                                                            setExportOptions({
+                                                                                                                                ...exportOptions,
+                                                                                                                                detail: e.target.checked,
+                                                                                                                                unit: e.target.checked,
+                                                                                                                                quantity: e.target.checked,
+                                                                                                                                price: e.target.checked,
+                                                                                                                                discount: e.target.checked,
+                                                                                                                                vat: e.target.checked,
+                                                                                                                                importPrice: e.target.checked,
+                                                                                                                                total: e.target.checked,
+                                                                                                                            })
+                                                                                                                        }
+                                                                                                                        className="mt-[3px] w-[16px] h-[16px] accent-blue-600" />
+                                                                                                                    <div>
+                                                                                                                        <div className="text-[14px] text-gray-800">
+                                                                                                                            Chi tiết từng hàng giao dịch
+                                                                                                                        </div>
+                                                                                                                        <div className="text-[12px] text-gray-500 mt-1">
+                                                                                                                            Diễn giải chi tiết từng dòng sản phẩm/dịch vụ
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                {/* Các field con */}
+                                                                                                                <div className="ml-7 mt-3">
+                                                                                                                    {[
+                                                                                                                        ["unit", "ĐVT"],
+                                                                                                                        ["quantity", "Số lượng"],
+                                                                                                                        ["price", "Đơn giá"],
+                                                                                                                        ["discount", "Giảm giá"],
+                                                                                                                        ["vat", "VAT"],
+                                                                                                                        ["importPrice", "Giá nhập/trả"],
+                                                                                                                        ["total", "Thành tiền"],
+                                                                                                                    ].map(([key, label]) => (
+                                                                                                                        <label key={key} className="flex items-center gap-2 h-[38px] cursor-pointer" >
+                                                                                                                            <input type="checkbox" checked={exportOptions[key]}
+                                                                                                                                onChange={(e) =>
+                                                                                                                                    setExportOptions({
+                                                                                                                                        ...exportOptions,
+                                                                                                                                        [key]: e.target.checked,
+                                                                                                                                    })
+                                                                                                                                }
+                                                                                                                                className="w-[16px] h-[16px] accent-blue-600" />
+                                                                                                                            <span className="text-[14px] text-gray-700">
+                                                                                                                                {label}
+                                                                                                                            </span>
+                                                                                                                        </label>
+                                                                                                                    ))}
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            {/* Ghi chú */}
+                                                                                                            <label className="flex items-center gap-2 px-2 py-2 cursor-pointer">
+                                                                                                                <input type="checkbox" checked={exportOptions.note}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setExportOptions({
+                                                                                                                            ...exportOptions,
+                                                                                                                            note: e.target.checked,
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    className="w-[16px] h-[16px] accent-blue-600" />
+                                                                                                                <span className="text-[14px] text-gray-700">
+                                                                                                                    Ghi chú
+                                                                                                                </span>
+                                                                                                            </label>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    {/* ================= FOOTER ================= */}
+                                                                                                    <div className="h-[66px] border-t border-gray-200 flex items-center justify-end gap-2 px-6">
+                                                                                                        <button type="button" onClick={() => setShowExportModal(false)} className=" h-[40px] px-4 rounded-lg border border-gray-300 bg-white text-gray-700 text-[14px] font-semibold hover:bg-gray-100 " >
+                                                                                                            Bỏ qua
+                                                                                                        </button>
+                                                                                                        <button type="button" onClick={() => {
+                                                                                                            console.log("Xuất công nợ", { supplierId: supplier.id, exportTime, fromDate, toDate, exportOptions, });
+                                                                                                            // xử lý API xuất file ở đây
+                                                                                                        }}
+                                                                                                            className=" h-[40px] px-5 rounded-lg bg-blue-600 text-white text-[14px] font-semibold hover:bg-blue-700" >
+                                                                                                            Đồng ý
+                                                                                                        </button>
+
+                                                                                                    </div>
+
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        )}
+                                                                                        {showPaymentModal && (
+                                                                                            <div className="fixed inset-0 z-[9999] bg-black/50 flex items-start justify-center pt-4" onClick={() => setShowPaymentModal(false)} >
+                                                                                                <div className="w-[960px] max-h-[90vh] bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()} >
+                                                                                                    {/* ================= HEADER ================= */}
+                                                                                                    <div className="px-6 pt-5 pb-3 flex items-start justify-between">
+                                                                                                        <div>
+                                                                                                            <h2 className="text-[20px] font-semibold text-gray-900">
+                                                                                                                Thanh toán
+                                                                                                            </h2>
+                                                                                                            <div className="flex items-center gap-2 mt-1 text-[14px]">
+                                                                                                                <span className="text-gray-500">
+                                                                                                                    {selectedDebt?.name}
+                                                                                                                </span>
+                                                                                                                <span className="text-gray-400">·</span>
+                                                                                                                <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-600">
+                                                                                                                    Nợ hiện tại:{" "}
+                                                                                                                    <b className="text-gray-700">
+                                                                                                                        {Number(selectedDebt?.debt || 0).toLocaleString("vi-VN")}
+                                                                                                                    </b>
+                                                                                                                </span>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <button type="button" onClick={() => setShowPaymentModal(false)} className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-800" >
+                                                                                                            <X size={20} />
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    {/* ================= BODY ================= */}
+                                                                                                    <div className="px-6 pb-5 overflow-y-auto">
+                                                                                                        {/* Thời gian + Người chi */}
+                                                                                                        <div className="grid grid-cols-2 gap-6">
+                                                                                                            {/* Thời gian */}
+                                                                                                            <div>
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                    Thời gian
+                                                                                                                </label>
+                                                                                                                <div className="relative">
+                                                                                                                    <input
+                                                                                                                        type="datetime-local"
+                                                                                                                        value={paymentForm.time}
+                                                                                                                        onChange={(e) =>
+                                                                                                                            setPaymentForm({
+                                                                                                                                ...paymentForm,
+                                                                                                                                time: e.target.value,
+                                                                                                                            })
+                                                                                                                        }
+                                                                                                                        className="w-full h-[40px] px-3 pr-10 rounded-lg border border-gray-300 outline-none focus:border-blue-500 text-[14px]" />
+                                                                                                                    <CalendarDays size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            {/* Người chi */}
+                                                                                                            <div>
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                    Người chi
+                                                                                                                </label>
+                                                                                                                <select
+                                                                                                                    value={paymentForm.payer}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setPaymentForm({
+                                                                                                                            ...paymentForm,
+                                                                                                                            payer: e.target.value,
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none focus:border-blue-500 text-[14px] bg-white" >
+                                                                                                                    <option value="tramy">tramy</option>
+                                                                                                                    <option value="Hương - Kế Toán">
+                                                                                                                        Hương - Kế Toán
+                                                                                                                    </option>
+                                                                                                                    <option value="Hoàng - Kinh Doanh">
+                                                                                                                        Hoàng - Kinh Doanh
+                                                                                                                    </option>
+                                                                                                                </select>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        {/* ================= PHƯƠNG THỨC ================= */}
+                                                                                                        <div className="grid grid-cols-2 gap-6 mt-4">
+
+                                                                                                            {/* Phương thức thanh toán */}
+                                                                                                            <div>
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                    Phương thức thanh toán
+                                                                                                                </label>
+
+                                                                                                                <select
+                                                                                                                    value={paymentForm.paymentMethod}
+                                                                                                                    onChange={(e) => {
+                                                                                                                        const method = e.target.value;
+
+                                                                                                                        setPaymentForm({
+                                                                                                                            ...paymentForm,
+                                                                                                                            paymentMethod: method,
+                                                                                                                            account:
+                                                                                                                                method === "cash"
+                                                                                                                                    ? ""
+                                                                                                                                    : paymentForm.account,
+                                                                                                                        });
+                                                                                                                    }}
+                                                                                                                    className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none focus:border-blue-500 text-[14px] bg-white" >
+                                                                                                                    <option value="cash">
+                                                                                                                        Tiền mặt
+                                                                                                                    </option>
+                                                                                                                    <option value="card">
+                                                                                                                        Thẻ
+                                                                                                                    </option>
+                                                                                                                    <option value="transfer">
+                                                                                                                        Chuyển khoản
+                                                                                                                    </option>
+                                                                                                                </select>
+                                                                                                            </div>
+                                                                                                            {/* Số tài khoản */}
+                                                                                                            {(paymentForm.paymentMethod === "card" ||
+                                                                                                                paymentForm.paymentMethod === "transfer") && (
+                                                                                                                    <div>
+                                                                                                                        <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                            Số tài khoản
+                                                                                                                        </label>
+
+                                                                                                                        <select
+                                                                                                                            value={paymentForm.account}
+                                                                                                                            onChange={(e) =>
+                                                                                                                                setPaymentForm({
+                                                                                                                                    ...paymentForm,
+                                                                                                                                    account: e.target.value,
+                                                                                                                                })
+                                                                                                                            }
+                                                                                                                            className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none focus:border-blue-500 text-[14px] bg-white" >
+                                                                                                                            <option value="">
+                                                                                                                                Lựa chọn
+                                                                                                                            </option>
+                                                                                                                            {paymentAccounts
+                                                                                                                                .filter((account) =>
+                                                                                                                                    paymentForm.paymentMethod === "card"
+                                                                                                                                        ? account.name.includes("Thẻ")
+                                                                                                                                        : !account.name.includes("Thẻ")
+                                                                                                                                )
+                                                                                                                                .map((account) => (
+                                                                                                                                    <option
+                                                                                                                                        key={account.id}
+                                                                                                                                        value={account.number}
+                                                                                                                                    >
+                                                                                                                                        {account.name} - {account.number}
+                                                                                                                                    </option>
+                                                                                                                                ))}
+                                                                                                                        </select>
+                                                                                                                    </div>
+                                                                                                                )}
+                                                                                                            {/* Khi tiền mặt thì hiển thị Nợ còn */}
+                                                                                                            {paymentForm.paymentMethod === "cash" && (
+                                                                                                                <div>
+                                                                                                                    <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                        Nợ còn
+                                                                                                                    </label>
+
+                                                                                                                    <div className="w-full h-[40px] px-3 rounded-lg bg-gray-100 flex items-center justify-end text-[14px] text-gray-800">
+                                                                                                                        {Number(
+                                                                                                                            selectedDebt?.debt || 0
+                                                                                                                        ).toLocaleString("vi-VN")}
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            )}
+                                                                                                        </div>
+
+                                                                                                        {/* Nếu Thẻ / Chuyển khoản thì Nợ còn nằm bên dưới */}
+                                                                                                        {(paymentForm.paymentMethod === "card" ||
+                                                                                                            paymentForm.paymentMethod === "transfer") && (
+                                                                                                                <div className="grid grid-cols-2 gap-6 mt-4">
+                                                                                                                    <div>
+                                                                                                                        <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                            Số tiền
+                                                                                                                        </label>
+
+                                                                                                                        <input
+                                                                                                                            type="text"
+                                                                                                                            value={paymentForm.amount}
+                                                                                                                            onChange={(e) => {
+                                                                                                                                const value = e.target.value.replace(
+                                                                                                                                    /\D/g,
+                                                                                                                                    ""
+                                                                                                                                );
+
+                                                                                                                                setPaymentForm({
+                                                                                                                                    ...paymentForm,
+                                                                                                                                    amount: value,
+                                                                                                                                });
+                                                                                                                            }}
+                                                                                                                            placeholder="Nhập số tiền"
+                                                                                                                            className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none focus:border-blue-500 text-[14px]"
+                                                                                                                        />
+                                                                                                                    </div>
+
+                                                                                                                    <div>
+                                                                                                                        <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                            Nợ còn
+                                                                                                                        </label>
+
+                                                                                                                        <div className="w-full h-[40px] px-3 rounded-lg bg-gray-100 flex items-center justify-end text-[14px] text-gray-800">
+                                                                                                                            {Number(
+                                                                                                                                selectedDebt?.debt || 0
+                                                                                                                            ).toLocaleString("vi-VN")}
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            )}
+
+                                                                                                        {/* Tiền mặt */}
+                                                                                                        {paymentForm.paymentMethod === "cash" && (
+                                                                                                            <div className="mt-4">
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                    Số tiền
+                                                                                                                </label>
+                                                                                                                <input
+                                                                                                                    type="text"
+                                                                                                                    value={paymentForm.amount}
+                                                                                                                    onChange={(e) => {
+                                                                                                                        const value = e.target.value.replace(
+                                                                                                                            /\D/g,
+                                                                                                                            ""
+                                                                                                                        );
+                                                                                                                        setPaymentForm({
+                                                                                                                            ...paymentForm,
+                                                                                                                            amount: value,
+                                                                                                                        });
+                                                                                                                    }}
+                                                                                                                    placeholder="Nhập số tiền" className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none focus:border-blue-500 text-[14px]" />
+                                                                                                            </div>
+                                                                                                        )}
+                                                                                                        {/* Ghi chú */}
+                                                                                                        <div className="mt-4">
+                                                                                                            <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                Ghi chú
+                                                                                                            </label>
+                                                                                                            <textarea value={paymentForm.note}
+                                                                                                                onChange={(e) =>
+                                                                                                                    setPaymentForm({
+                                                                                                                        ...paymentForm,
+                                                                                                                        note: e.target.value,
+                                                                                                                    })
+                                                                                                                }
+                                                                                                                placeholder="Nhập ghi chú" className="w-full h-[52px] px-3 py-2 rounded-lg border border-gray-300 resize-none outline-none focus:border-blue-500 text-[14px]" />
+                                                                                                        </div>
+
+                                                                                                        {/* ================= PHÂN BỔ ================= */}
+                                                                                                        <div className="mt-5">
+                                                                                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                                                                                <input type="checkbox" checked={paymentForm.distribute}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setPaymentForm({
+                                                                                                                            ...paymentForm,
+                                                                                                                            distribute: e.target.checked,
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    className="w-4 h-4 accent-blue-600" />
+                                                                                                                <span className="text-[14px] text-gray-700">
+                                                                                                                    Phân bổ vào phiếu nhập và phiếu mua dịch vụ
+                                                                                                                </span>
+                                                                                                            </label>
+                                                                                                        </div>
+
+                                                                                                        {/* ================= BẢNG CÔNG NỢ ================= */}
+                                                                                                        {paymentForm.distribute && (
+                                                                                                            <div className="mt-2 border border-gray-200 rounded-lg overflow-hidden">
+                                                                                                                {/* Header */}
+                                                                                                                <div className="grid grid-cols-[115px_160px_145px_125px_145px_120px_100px] bg-[#eef2f5] border-b border-gray-200 h-[40px] items-center text-[13px] font-semibold">
+                                                                                                                    <div className="px-2">Mã hóa đơn</div>
+                                                                                                                    <div className="px-2">Thời gian</div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        Giá trị phiếu nhập
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        Đã trả trước
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        Còn cần trả ⓘ
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        Tiền trả
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        Còn nợ
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                {/* Tổng */}
+                                                                                                                <div className="grid grid-cols-[115px_160px_145px_125px_145px_120px_100px] h-[42px] items-center border-b border-gray-200 text-[14px] font-semibold">
+                                                                                                                    <div></div>
+                                                                                                                    <div></div>
+                                                                                                                    <div></div>
+                                                                                                                    <div></div>
+                                                                                                                    <div className="text-right">
+                                                                                                                        {Number(
+                                                                                                                            selectedDebt?.debt || 0
+                                                                                                                        ).toLocaleString("vi-VN")}
+                                                                                                                    </div>
+
+                                                                                                                    <div className="text-right">
+                                                                                                                        0
+                                                                                                                    </div>
+                                                                                                                    <div className="text-right px-2">
+                                                                                                                        {Number(
+                                                                                                                            selectedDebt?.debt || 0
+                                                                                                                        ).toLocaleString("vi-VN")}
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                {/* Phiếu nhập */}
+                                                                                                                <div className="grid grid-cols-[115px_160px_145px_125px_145px_120px_100px] min-h-[58px] items-center text-[14px]">
+                                                                                                                    <div className="px-2 text-blue-600 cursor-pointer">
+                                                                                                                        PN000046
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2">
+                                                                                                                        24/08/2026 13:05
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        4,260,000
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        1,000,000
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        2,600,000
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2">
+                                                                                                                        <input type="text" value={paymentForm.amount}
+                                                                                                                            onChange={(e) => {
+                                                                                                                                const value =
+                                                                                                                                    e.target.value.replace(
+                                                                                                                                        /\D/g,
+                                                                                                                                        ""
+                                                                                                                                    );
+
+                                                                                                                                setPaymentForm({
+                                                                                                                                    ...paymentForm,
+                                                                                                                                    amount: value,
+                                                                                                                                });
+                                                                                                                            }}
+                                                                                                                            className="w-full h-[32px] text-right px-2 border border-gray-300 rounded-lg outline-none focus:border-blue-500"
+                                                                                                                        />
+                                                                                                                    </div>
+
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        {Number(
+                                                                                                                            selectedDebt?.debt || 0
+                                                                                                                        ).toLocaleString("vi-VN")}
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        )}
+                                                                                                        {/* Tiền chưa phân bổ */}
+                                                                                                        {paymentForm.distribute && (
+                                                                                                            <div className="flex justify-end mt-3 text-[14px]">
+                                                                                                                <span>Tiền chưa phân bổ:</span>
+                                                                                                                <b className="ml-2">
+                                                                                                                    0
+                                                                                                                </b>
+                                                                                                            </div>
+                                                                                                        )}
+                                                                                                    </div>
+
+                                                                                                    {/* ================= FOOTER ================= */}
+                                                                                                    <div className="h-[64px] px-6 border-t border-gray-200 flex items-center justify-end gap-2">
+                                                                                                        <button type="button" onClick={() => setShowPaymentModal(false)}
+                                                                                                            className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white text-gray-700 font-semibold hover:bg-gray-50">
+                                                                                                            Bỏ qua
+                                                                                                        </button>
+                                                                                                        <button
+                                                                                                            type="button"
+                                                                                                            onClick={() => {
+                                                                                                                console.log("Tạo phiếu chi & In:", {
+                                                                                                                    supplier: selectedDebt,
+                                                                                                                    ...paymentForm,
+                                                                                                                });
+                                                                                                            }}
+                                                                                                            className="h-[40px] px-4 rounded-lg border border-gray-300 bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200">
+                                                                                                            Tạo phiếu chi & In
+                                                                                                        </button>
+
+                                                                                                        <button
+                                                                                                            type="button"
+                                                                                                            onClick={() => {
+                                                                                                                setShowPaymentModal(false);
+                                                                                                                console.log("Tạo phiếu chi:", {
+                                                                                                                    supplier: selectedDebt,
+                                                                                                                    ...paymentForm,
+                                                                                                                });
+                                                                                                            }}
+                                                                                                            className="h-[40px] px-5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">
+                                                                                                            Tạo phiếu chi
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        )}
+                                                                                        {/* ========================================================= MODAL CHIẾT KHẤU THANH TOÁN========================================================= */}
+                                                                                        {showDiscountModal && (
+                                                                                            <div className="fixed inset-0 z-[9999] bg-black/50 flex items-start justify-center pt-4" onClick={() => setShowDiscountModal(false)} >
+                                                                                                <div className="w-[960px] max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()} >
+                                                                                                    <div className="px-6 pt-5 pb-4 flex items-start justify-between">
+                                                                                                        <div>
+                                                                                                            <h2 className="text-[20px] font-semibold text-gray-900">
+                                                                                                                Chiết khấu thanh toán
+                                                                                                            </h2>
+                                                                                                            <div className="flex items-center gap-2 mt-1 text-[14px]">
+                                                                                                                <span className="text-gray-500">
+                                                                                                                    {selectedDiscount?.name}
+                                                                                                                </span>
+                                                                                                                <span className="text-gray-400">
+                                                                                                                    ·
+                                                                                                                </span>
+                                                                                                                <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-600">
+                                                                                                                    Nợ hiện tại:{" "}
+                                                                                                                    <b className="text-gray-700">
+                                                                                                                        {Number(
+                                                                                                                            selectedDiscount?.debt || 0
+                                                                                                                        ).toLocaleString("vi-VN")}
+                                                                                                                    </b>
+                                                                                                                </span>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <button type="button" onClick={() => setShowDiscountModal(false)} className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-800" >
+                                                                                                            <X size={20} />
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div className="px-6 pb-5">
+                                                                                                        {/* Thời gian + Người thực hiện */}
+                                                                                                        <div className="grid grid-cols-2 gap-6">
+                                                                                                            {/* Thời gian */}
+                                                                                                            <div>
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                    Thời gian
+                                                                                                                </label>
+                                                                                                                <div className="relative">
+                                                                                                                    <input
+                                                                                                                        type="datetime-local"
+                                                                                                                        value={discountForm.time}
+                                                                                                                        onChange={(e) =>
+                                                                                                                            setDiscountForm({
+                                                                                                                                ...discountForm,
+                                                                                                                                time: e.target.value,
+                                                                                                                            })
+                                                                                                                        }
+                                                                                                                        className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none focus:border-blue-500 text-[14px]" />
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            {/* Người thực hiện */}
+                                                                                                            <div>
+                                                                                                                <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                    Người thực hiện
+                                                                                                                </label>
+                                                                                                                <select
+                                                                                                                    value={discountForm.performer}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setDiscountForm({
+                                                                                                                            ...discountForm,
+                                                                                                                            performer: e.target.value,
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    className="w-full h-[40px] px-3 rounded-lg border border-gray-300 bg-white outline-none focus:border-blue-500 text-[14px]">
+                                                                                                                    <option value="tramy">
+                                                                                                                        tramy
+                                                                                                                    </option>
+                                                                                                                    <option value="Hương - Kế Toán">
+                                                                                                                        Hương - Kế Toán
+                                                                                                                    </option>
+                                                                                                                    <option value="Hoàng - Kinh Doanh">
+                                                                                                                        Hoàng - Kinh Doanh
+                                                                                                                    </option>
+                                                                                                                </select>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        {/* ================= CHIẾT KHẤU ================= */}
+                                                                                                        <div className="mt-3">
+                                                                                                            <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                Chiết khấu từ nhà cung cấp
+                                                                                                            </label>
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                value={
+                                                                                                                    discountForm.discount
+                                                                                                                        ? Number(
+                                                                                                                            discountForm.discount
+                                                                                                                        ).toLocaleString("vi-VN")
+                                                                                                                        : ""
+                                                                                                                }
+                                                                                                                onChange={(e) => {
+                                                                                                                    const value = e.target.value.replace(
+                                                                                                                        /\D/g,
+                                                                                                                        ""
+                                                                                                                    );
+                                                                                                                    setDiscountForm({
+                                                                                                                        ...discountForm,
+                                                                                                                        discount: value,
+                                                                                                                    });
+                                                                                                                }}
+                                                                                                                className="w-full h-[40px] px-3 rounded-lg border border-gray-300 outline-none focus:border-blue-500 text-[14px]" />
+                                                                                                            {/* Còn nợ */}
+                                                                                                            <div className="flex justify-end mt-1">
+                                                                                                                <span className="text-[13px] text-gray-500">
+                                                                                                                    Còn nợ:{" "}
+                                                                                                                    {Number(
+                                                                                                                        selectedDiscount?.debt || 0
+                                                                                                                    ).toLocaleString("vi-VN")}
+                                                                                                                </span>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        {/* ================= GHI CHÚ ================= */}
+                                                                                                        <div className="mt-3">
+                                                                                                            <label className="block text-[14px] text-gray-700 mb-1.5">
+                                                                                                                Ghi chú
+                                                                                                            </label>
+                                                                                                            <textarea value={discountForm.note}
+                                                                                                                onChange={(e) =>
+                                                                                                                    setDiscountForm({
+                                                                                                                        ...discountForm,
+                                                                                                                        note: e.target.value,
+                                                                                                                    })
+                                                                                                                }
+                                                                                                                placeholder="Nhập ghi chú"
+                                                                                                                className="w-full h-[48px] px-3 py-2 rounded-lg border border-gray-300 resize-none outline-none focus:border-blue-500 text-[14px]" />
+                                                                                                        </div>
+                                                                                                        {/* ================= CHECKBOX ================= */}
+                                                                                                        <div className="mt-4">
+                                                                                                            <label className="flex items-center gap-2 cursor-pointer select-none">
+                                                                                                                <input type="checkbox" checked={discountForm.distribute}
+                                                                                                                    onChange={(e) =>
+                                                                                                                        setDiscountForm({
+                                                                                                                            ...discountForm,
+                                                                                                                            distribute: e.target.checked,
+                                                                                                                            allocatedDiscount: "",
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                    className="w-4 h-4 accent-blue-600 cursor-pointer" />
+                                                                                                                <span className="text-[14px] text-gray-700">
+                                                                                                                    Phân bổ vào phiếu nhập hàng
+                                                                                                                </span>
+                                                                                                            </label>
+                                                                                                        </div>
+                                                                                                        {/* =====================================================BẢNG PHÂN BỔ Chỉ hiện khi checkbox được tick  ====================================================== */}
+                                                                                                        {discountForm.distribute && (
+                                                                                                            <div className="mt-2">
+                                                                                                                {/* HEADER */}
+                                                                                                                <div className="grid grid-cols-[135px_150px_170px_145px_170px_100px] bg-[#eef2f5] h-[40px] items-center text-[13px] font-semibold border-b border-gray-200">
+                                                                                                                    <div className="px-2">
+                                                                                                                        Mã nhập hàng
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2">
+                                                                                                                        Thời gian
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        Giá trị phiếu nhập
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        Còn cần trả
+                                                                                                                        <span className="ml-1 text-gray-500">
+                                                                                                                            ⓘ
+                                                                                                                        </span>
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        Chiết khấu phân bổ
+                                                                                                                    </div>
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        Còn nợ
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                {/* TỔNG */}
+                                                                                                                <div className="grid grid-cols-[135px_150px_170px_145px_170px_100px] h-[42px] items-center border-b border-gray-200 text-[14px] font-semibold">
+                                                                                                                    <div></div>
+                                                                                                                    <div></div>
+                                                                                                                    <div></div>
+                                                                                                                    <div className="text-right">
+                                                                                                                        {Number(
+                                                                                                                            selectedDiscount?.debt || 0
+                                                                                                                        ).toLocaleString("vi-VN")}
+                                                                                                                    </div>
+                                                                                                                    <div className="text-right">
+                                                                                                                        0
+                                                                                                                    </div>
+                                                                                                                    <div className="text-right px-2">
+                                                                                                                        {Number(
+                                                                                                                            selectedDiscount?.debt || 0
+                                                                                                                        ).toLocaleString("vi-VN")}
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                {/* ================= PHIẾU NHẬP ================= */}
+                                                                                                                <div className="grid grid-cols-[135px_150px_170px_145px_170px_100px] min-h-[58px] items-center text-[14px]">
+                                                                                                                    {/* Mã */}
+                                                                                                                    <div className="px-2 text-blue-600 cursor-pointer">
+                                                                                                                        PN000046
+                                                                                                                    </div>
+                                                                                                                    {/* Thời gian */}
+                                                                                                                    <div className="px-2">
+                                                                                                                        24/08/2026 13:05
+                                                                                                                    </div>
+                                                                                                                    {/* Giá trị */}
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        4,260,000
+                                                                                                                    </div>
+                                                                                                                    {/* Còn cần trả */}
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        2,600,000
+                                                                                                                    </div>
+                                                                                                                    {/* Chiết khấu phân bổ */}
+                                                                                                                    <div className="px-2">
+                                                                                                                        <input type="text"
+                                                                                                                            value={
+                                                                                                                                discountForm.allocatedDiscount
+                                                                                                                                    ? Number(
+                                                                                                                                        discountForm.allocatedDiscount
+                                                                                                                                    ).toLocaleString("vi-VN")
+                                                                                                                                    : ""
+                                                                                                                            }
+                                                                                                                            onChange={(e) => {
+                                                                                                                                const value =
+                                                                                                                                    e.target.value.replace(
+                                                                                                                                        /\D/g,
+                                                                                                                                        ""
+                                                                                                                                    );
+
+                                                                                                                                setDiscountForm({
+                                                                                                                                    ...discountForm,
+                                                                                                                                    allocatedDiscount: value,
+                                                                                                                                });
+                                                                                                                            }}
+                                                                                                                            className="w-full h-[32px] text-right px-2 border border-gray-300 rounded-lg outline-none focus:border-blue-500" />
+                                                                                                                    </div>
+                                                                                                                    {/* Còn nợ */}
+                                                                                                                    <div className="px-2 text-right">
+                                                                                                                        {Number(
+                                                                                                                            selectedDiscount?.debt || 0
+                                                                                                                        ).toLocaleString("vi-VN")}
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                {/* ================= CHƯA PHÂN BỔ ================= */}
+                                                                                                                <div className="flex justify-end mt-2 text-[14px]">
+                                                                                                                    <span>
+                                                                                                                        Chiết khấu chưa phân bổ:
+                                                                                                                    </span>
+                                                                                                                    <b className="ml-2">
+                                                                                                                        {Math.max(
+                                                                                                                            0,
+                                                                                                                            Number(
+                                                                                                                                discountForm.discount || 0
+                                                                                                                            ) -
+                                                                                                                            Number(
+                                                                                                                                discountForm.allocatedDiscount ||
+                                                                                                                                0
+                                                                                                                            )
+                                                                                                                        ).toLocaleString("vi-VN")}
+                                                                                                                    </b>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        )}
+                                                                                                    </div>
+                                                                                                    {/* ================= FOOTER ================= */}
+                                                                                                    <div className="h-[64px] px-6 border-t border-gray-200 flex items-center justify-end gap-2">
+                                                                                                        <button type="button" onClick={() => setShowDiscountModal(false)}
+                                                                                                            className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white text-gray-700 font-semibold hover:bg-gray-50" >
+                                                                                                            Bỏ qua
+                                                                                                        </button>
+                                                                                                        <button type="button"
+                                                                                                            onClick={() => {
+                                                                                                                console.log(
+                                                                                                                    "Tạo phiếu chiết khấu:",
+                                                                                                                    {
+                                                                                                                        supplier: selectedDiscount,
+                                                                                                                        ...discountForm,
+                                                                                                                    }
+                                                                                                                );
+                                                                                                                setShowDiscountModal(false);
+                                                                                                            }}
+                                                                                                            className="h-[40px] px-5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">
+                                                                                                            Tạo phiếu
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        )}
                                                                                     </div>
                                                                                 </div>
                                                                             )}
