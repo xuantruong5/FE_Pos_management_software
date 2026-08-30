@@ -713,7 +713,7 @@ const Product = () => {
 
     // đơn vị ngoài 
     const [openProductUnit, setOpenProductUnit] = useState<number | null>(null);
-    
+
     return (
         <div className="min-h-screen ">
             <div className="px-30">
@@ -774,13 +774,13 @@ const Product = () => {
                             </span>
 
                             {/* Bỏ chọn */}
-                            <button  type="button"  onClick={() => setSelectedProductIds([])} className="w-[32px] h-[32px] flex items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100">
+                            <button type="button" onClick={() => setSelectedProductIds([])} className="w-[32px] h-[32px] flex items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100">
                                 <X size={18} />
                             </button>
 
                             {/* Xuất file */}
                             <button type="button" className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white flex items-center gap-2 text-gray-700 font-semibold hover:bg-gray-50">
-                                <FileSymlink  size={20} />
+                                <FileSymlink size={20} />
                                 <span>Xuất file</span>
                             </button>
 
@@ -791,7 +791,7 @@ const Product = () => {
                             </button>
 
                             {/* Nhập hàng */}
-                            <button  type="button"  className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white flex items-center gap-2 text-gray-700 font-semibold hover:bg-gray-50">
+                            <button type="button" className="h-[40px] px-4 rounded-lg border border-gray-300 bg-white flex items-center gap-2 text-gray-700 font-semibold hover:bg-gray-50">
                                 <Download size={20} />
                                 <span>Nhập hàng</span>
                             </button>
@@ -867,23 +867,20 @@ const Product = () => {
                                         <div className="grid grid-cols-2 gap-x-6">
                                             {columns.map((column) => (
                                                 <label key={column} className="flex items-center gap-2 h-[36px] cursor-pointer text-[15px] text-gray-700"  >
-                                                    <input type="checkbox"  checked={selectedColumns.includes(column)}
-                                                        onChange={(e) => {
-                                                            if (e.target.checked) {
-                                                                setSelectedColumns([
-                                                                    ...selectedColumns,
-                                                                    column,
-                                                                ]);
-                                                            } else {
-                                                                setSelectedColumns(
-                                                                    selectedColumns.filter(
-                                                                        (item) =>
-                                                                            item !== column
-                                                                    )
+                                                    <input type="checkbox" checked={selectedColumns.includes(column)}
+                                                        onChange={() => {
+                                                            setSelectedColumns((prev) => {
+                                                                // Bỏ cột
+                                                                if (prev.includes(column)) {
+                                                                    return prev.filter((item) => item !== column);
+                                                                }
+                                                                // Thêm lại cột + giữ đúng thứ tự ban đầu
+                                                                return columns.filter(
+                                                                    (item) => item === column || prev.includes(item)
                                                                 );
-                                                            }
+                                                            });
                                                         }}
-                                                        className="w-[16px] h-[16px] accent-blue-600 cursor-pointer"/>
+                                                        className="w-[16px] h-[16px] accent-blue-600 cursor-pointer" />
                                                     <span>{column}</span>
                                                 </label>
                                             ))}
@@ -895,7 +892,6 @@ const Product = () => {
                             <button className="w-[40px] h-[40px] rounded-lg border border-gray-300 bg-white flex items-center justify-center text-gray-700 hover:bg-gray-50">
                                 <Settings size={20} />
                             </button>
-
                             {/* Help */}
                             <button className="w-[40px] h-[40px] rounded-lg border border-gray-300 bg-white flex items-center justify-center text-gray-700 hover:bg-gray-50" >
                                 <CircleHelp size={20} />
@@ -922,17 +918,9 @@ const Product = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowGroupPicker(!showGroupPicker)}
-                                    className={`w-full h-[43px] px-4 border rounded-xl text-left text-[17px] flex items-center justify-between bg-white ${showGroupPicker
-                                        ? "border-blue-500"
-                                        : "border-gray-300 hover:border-blue-400"
-                                        }`}
-                                >
+                                    className={`w-full h-[43px] px-4 border rounded-xl text-left text-[17px] flex items-center justify-between bg-white ${showGroupPicker ? "border-blue-500" : "border-gray-300 hover:border-blue-400"}`}>
                                     <span
-                                        className={`truncate ${selectedGroups.length > 0
-                                            ? "text-gray-800"
-                                            : "text-gray-400"
-                                            }`}
-                                    >
+                                        className={`truncate ${selectedGroups.length > 0 ? "text-gray-800" : "text-gray-400"}`}>
                                         {selectedGroups.length > 0
                                             ? (() => {
                                                 const selectedNames = groups
@@ -950,7 +938,6 @@ const Product = () => {
 
                                                 const visibleNames = selectedNames.slice(0, 3);
                                                 const remainingCount = selectedNames.length - 3;
-
                                                 return (
                                                     <>
                                                         {visibleNames.join(", ")}
@@ -965,68 +952,46 @@ const Product = () => {
                                             : "Chọn nhóm hàng"}
                                     </span>
 
-                                    <ChevronDown
-                                        size={20}
-                                        className={`text-gray-500 transition-transform ${showGroupPicker ? "rotate-180" : ""
-                                            }`}
-                                    />
+                                    <ChevronDown size={20} className={`text-gray-500 transition-transform ${showGroupPicker ? "rotate-180" : ""}`} />
                                 </button>
 
                                 {/* ================= POPUP NHÓM HÀNG ================= */}
                                 {showGroupPicker && (
                                     <>
                                         <div className="fixed inset-0 z-[9998]" onClick={() => setShowGroupPicker(false)} />
-                                        <div className="absolute left-0 top-[52px] z-[9999] w-[400px] bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
-
+                                        <div className="absolute left-[calc(100%+10px)] top-0 z-[9999] w-[400px] bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden" onClick={(e) => e.stopPropagation()} >
                                             {/* Header */}
+
                                             <div className="px-4 pt-4 pb-3">
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <h3 className="text-[16px] font-semibold text-gray-900">
+                                                {/* Tiêu đề + Tạo mới nằm cùng hàng */}
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <h3 className="text-[18px] font-semibold text-gray-900">
                                                         Nhóm hàng
                                                     </h3>
-                                                    <button
-                                                        type="button"
-                                                        className="text-blue-600 text-[15px] font-medium hover:text-blue-700 flex items-center gap-1"
-                                                    >
+                                                    <button type="button" className="text-blue-600 text-[17px] font-medium hover:text-blue-700 flex items-center gap-1" >
                                                         <Plus size={17} />
                                                         Tạo mới
                                                     </button>
                                                 </div>
                                                 {/* Search */}
                                                 <div className="relative">
-                                                    <Search
-                                                        size={19}
-                                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                                                    />
-
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Tìm kiếm"
-                                                        className="w-full h-[40px] pl-10 pr-3 border border-gray-300 rounded-lg outline-none text-[15px] focus:border-blue-500"
-                                                    />
+                                                    <Search size={19} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                                    <input type="text" placeholder="Tìm kiếm" className="w-full h-[40px] pl-10 pr-3 border border-gray-300 rounded-lg outline-none text-[15px] focus:border-blue-500" />
                                                 </div>
                                             </div>
-
                                             {/* Danh sách */}
                                             <div className="max-h-[400px] overflow-y-auto px-3 pb-3">
-
                                                 {groups.map((group) => {
                                                     const isExpanded = expandedGroups.includes(group.id);
-
-                                                    const allChildrenSelected = group.children.every(
-                                                        (child) => selectedGroups.includes(child.id)
-                                                    );
-
+                                                    const allChildrenSelected = group.children.length > 0 &&
+                                                        group.children.every((child) => selectedGroups.includes(child.id));
                                                     return (
                                                         <div key={group.id}>
                                                             {/* Nhóm cha */}
                                                             <div className="flex items-center h-[38px]">
-                                                                {/* Icon kéo */}
                                                                 <span className="text-gray-400 w-[18px] text-center">
                                                                     ⋮⋮
                                                                 </span>
-
-                                                                {/* Mũi tên */}
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => {
@@ -1038,19 +1003,18 @@ const Product = () => {
                                                                                 : [...prev, group.id]
                                                                         );
                                                                     }}
-                                                                    className="w-[25px] flex justify-center"
-                                                                >
+                                                                    className="w-[25px] flex justify-center" >
                                                                     <ChevronRight size={17} className={`text-gray-600 transition-transform ${isExpanded ? "rotate-90" : ""}`} />
                                                                 </button>
 
-                                                                {/* Checkbox nhóm cha */}
                                                                 <input
                                                                     type="checkbox"
                                                                     checked={allChildrenSelected}
                                                                     onChange={(e) => {
-                                                                        const childIds = group.children.map(
-                                                                            (child) => child.id
-                                                                        );
+                                                                        const childIds =
+                                                                            group.children.map(
+                                                                                (child) => child.id
+                                                                            );
 
                                                                         if (e.target.checked) {
                                                                             setSelectedGroups((prev) => [
@@ -1070,10 +1034,8 @@ const Product = () => {
                                                                             );
                                                                         }
                                                                     }}
-                                                                    className="w-[16px] h-[16px] accent-blue-600 cursor-pointer"
-                                                                />
+                                                                    className="w-[16px] h-[16px] accent-blue-600 cursor-pointer" />
 
-                                                                {/* Tên nhóm */}
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => {
@@ -1085,8 +1047,7 @@ const Product = () => {
                                                                                 : [...prev, group.id]
                                                                         );
                                                                     }}
-                                                                    className="ml-2 text-[13px] text-gray-700 hover:text-gray-900 text-left"
-                                                                >
+                                                                    className="ml-2 text-[16px] text-gray-700 hover:text-gray-900 text-left" >
                                                                     {group.name} ({group.count})
                                                                 </button>
                                                             </div>
@@ -1094,17 +1055,9 @@ const Product = () => {
                                                             {/* Nhóm con */}
                                                             {isExpanded && (
                                                                 <div className="ml-[45px]">
-
                                                                     {group.children.map((child) => (
-                                                                        <label
-                                                                            key={child.id}
-                                                                            className="flex items-center gap-2 h-[36px] cursor-pointer"
-                                                                        >
-                                                                            <input
-                                                                                type="checkbox"
-                                                                                checked={selectedGroups.includes(
-                                                                                    child.id
-                                                                                )}
+                                                                        <label key={child.id} className="flex items-center gap-2 h-[36px] cursor-pointer" >
+                                                                            <input type="checkbox" checked={selectedGroups.includes(child.id)}
                                                                                 onChange={(e) => {
                                                                                     if (e.target.checked) {
                                                                                         setSelectedGroups(
@@ -1124,25 +1077,20 @@ const Product = () => {
                                                                                         );
                                                                                     }
                                                                                 }}
-                                                                                className="w-[16px] h-[16px] accent-blue-600 cursor-pointer"
-                                                                            />
-
-                                                                            <span className="text-[15px] text-gray-700">
+                                                                                className="w-[16px] h-[16px] accent-blue-600 cursor-pointer" />
+                                                                            <span className="text-[16px] text-gray-700">
                                                                                 {child.name} ({child.count})
                                                                             </span>
                                                                         </label>
                                                                     ))}
-
                                                                 </div>
                                                             )}
                                                         </div>
                                                     );
                                                 })}
                                             </div>
-
                                             {/* Footer */}
                                             <div className="border-t border-gray-200 px-4 py-3 flex items-center justify-between">
-
                                                 <button
                                                     type="button"
                                                     onClick={() => {
@@ -1152,32 +1100,22 @@ const Product = () => {
                                                         ]);
 
                                                         if (selectedGroups.length >= 2) {
-                                                            // Bỏ chọn tất cả
                                                             setSelectedGroups([]);
                                                         } else {
-                                                            // Chọn tất cả
                                                             setSelectedGroups(allIds);
                                                         }
                                                     }}
-                                                    className="text-blue-600 font-medium text-[15px] hover:text-blue-700"
-                                                >
+                                                    className="text-blue-600 font-medium text-[15px] hover:text-blue-700" >
                                                     {selectedGroups.length >= 2
                                                         ? "Bỏ chọn tất cả"
                                                         : "Chọn tất cả"}
                                                 </button>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowGroupPicker(false)}
-                                                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg"
-                                                >
+                                                <button type="button" onClick={() => setShowGroupPicker(false)} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg" >
                                                     Áp dụng
                                                 </button>
-
                                             </div>
                                         </div>
                                     </>
-
                                 )}
                             </div>
 
@@ -2003,6 +1941,8 @@ const Product = () => {
                                                 <tr key={product.id} onClick={() => setSelectedProduct(selectedProduct === product.id ? null : product.id)}
                                                     className={`h-[60px]  border-b border-gray-100 hover:bg-[#f8fbff] transition-colors cursor-pointer  ${selectedProduct === product.id ? "bg-blue-50 !border-t-2 !border-blue-500 !border-b-0" : ""}`} >
                                                     {/* Checkbox */}
+
+
                                                     <td className={`w-[42px] min-w-[42px] ${selectedProduct === product.id ? "border-l-2 border-blue-500 bg-blue-50" : "bg-white"}`}>
                                                         <div className="flex items-center justify-center">
                                                             <input type="checkbox" checked={selectedProductIds.includes(product.id)} onClick={(e) => e.stopPropagation()} onChange={(e) => { if (e.target.checked) { setSelectedProductIds((prev) => [...prev, product.id,]); } else { setSelectedProductIds((prev) => prev.filter((id) => id !== product.id)); } }}
@@ -2092,34 +2032,22 @@ const Product = () => {
                                                                                         <div className="absolute z-[999] top-[32px] left-0 w-[150px] bg-white border border-gray-200 rounded-lg shadow-lg">
 
                                                                                             {/* Đơn vị cơ bản */}
-                                                                                            <button
-                                                                                                type="button"
-                                                                                                className="w-full px-3 py-2 text-left text-[14px] hover:bg-blue-50"
-                                                                                            >
+                                                                                            <button type="button" className="w-full px-3 py-2 text-left text-[14px] hover:bg-blue-50" >
                                                                                                 {productUnits[product.id].baseUnit}
                                                                                             </button>
-
                                                                                             {/* Đơn vị thêm */}
                                                                                             {productUnits[product.id].additionalUnits.map(
                                                                                                 (unit) => (
-                                                                                                    <button
-                                                                                                        key={unit.id}
-                                                                                                        type="button"
-                                                                                                        className="w-full px-3 py-2 text-left text-[14px] hover:bg-blue-50"
-                                                                                                    >
+                                                                                                    <button key={unit.id} type="button" className="w-full px-3 py-2 text-left text-[14px] hover:bg-blue-50" >
                                                                                                         {unit.name}
                                                                                                     </button>
                                                                                                 )
                                                                                             )}
-
                                                                                         </div>
                                                                                     )}
-
                                                                                 </div>
                                                                             )}
-
                                                                         </div>
-
                                                                     </div>
                                                                 </td>
                                                             );
@@ -2127,17 +2055,13 @@ const Product = () => {
                                                         /* ================= NHÓM HÀNG ================= */
                                                         if (column === "Nhóm hàng") {
                                                             return (
-                                                                <td
-                                                                    key={column}
-                                                                    className="px-3 text-[17px] text-gray-700"
-                                                                >
+                                                                <td key={column} className="px-3 text-[17px] text-gray-700" >
                                                                     <div className="max-w-[210px] whitespace-normal leading-5">
                                                                         {product.group}
                                                                     </div>
                                                                 </td>
                                                             );
                                                         }
-
                                                         /* ================= LOẠI HÀNG ================= */
                                                         if (column === "Loại hàng") {
                                                             return (
@@ -3655,8 +3579,7 @@ const Product = () => {
                                                                                                                                                         },
                                                                                                                                                     }));
                                                                                                                                                 }}
-                                                                                                                                                className="w-[34px] h-[34px] flex items-center justify-center text-gray-500 hover:text-red-500"
-                                                                                                                                            >
+                                                                                                                                                className="w-[34px] h-[34px] flex items-center justify-center text-gray-500 hover:text-red-500" >
                                                                                                                                                 <Trash2 className="w-4 h-4" />
                                                                                                                                             </button>
                                                                                                                                         </td>
