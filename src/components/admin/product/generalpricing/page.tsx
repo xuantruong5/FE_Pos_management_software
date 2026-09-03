@@ -608,6 +608,13 @@ const generalpricing = () => {
         },
     ];
 
+    // bảng giá 
+    const [showPriceListPopup, setShowPriceListPopup] = useState(false);
+    const [priceLists, setPriceLists] = useState(["Bảng giá chung",]);
+    // Danh sách tạm thời khi đang tick trong popup
+    const [tempPriceLists, setTempPriceLists] = useState(["Bảng giá chung",]);
+    const priceListOptions = ["Bảng giá chung", "Bán Sỉ", "Giá lẻ",];
+
 
     return (
         <div className="min-h-screen">
@@ -688,9 +695,7 @@ const generalpricing = () => {
                         </button>
 
                         {/* Trợ giúp */}
-                        <button
-                            type="button"
-                            className="w-[40px] h-[40px] border border-gray-300 rounded-lg flex items-center justify-center text-gray-700 hover:bg-gray-200 transition">
+                        <button type="button" className="w-[40px] h-[40px] border border-gray-300 rounded-lg flex items-center justify-center text-gray-700 hover:bg-gray-200 transition">
                             <CircleHelp size={18} />
                         </button>
                     </div>
@@ -1160,13 +1165,90 @@ const generalpricing = () => {
                                 Tạo mới
                             </button>
                         </div>
-                        <div className="h-[43px] border border-gray-300 rounded-lg flex items-center px-1 mb-5 mt-4">
-                            <span className="bg-blue-600 text-white rounded-md px-2 py-[3px] text-[13px] flex items-center gap-2">
-                                Bảng giá chung
-                                <button type="button">
-                                    <X size={16} />
-                                </button>
-                            </span>
+                        <div className="mb-5 mt-4 relative">
+                            {/* Ô Bảng giá */}
+                            <div className="min-h-[40px] border border-gray-300 rounded-lg flex items-center px-1 cursor-pointer"
+                                onClick={() => { setTempPriceLists(priceLists); setShowPriceListPopup(true); }} >
+                                <div className="flex flex-wrap items-center gap-1">
+                                    {priceLists.map((priceList) => (
+                                        <span key={priceList} className="bg-blue-600 text-white rounded-md px-2 py-[3px] text-[16px] mt-1 mb-1 flex items-center gap-2" onClick={(e) => e.stopPropagation()} >
+                                            {priceList}
+                                            <button type="button"
+                                                onClick={() => {
+                                                    setPriceLists((prev) =>
+                                                        prev.filter((item) => item !== priceList)
+                                                    );
+
+                                                    setTempPriceLists((prev) =>
+                                                        prev.filter((item) => item !== priceList)
+                                                    );
+                                                }} >
+                                                <X size={16} />
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                            {/* ================= POPUP BẢNG GIÁ ================= */}
+                            {showPriceListPopup && (
+                                <>
+                                    <div className="fixed inset-0 z-[9998]" onClick={() => setShowPriceListPopup(false)} />
+                                    <div className="absolute left-[calc(100%+10px)] top-0 z-[9999] w-[400px] h-[600px] bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden" onClick={(e) => e.stopPropagation()} >
+                                        {/* Header */}
+                                        <div className="px-4 py-3 flex items-center justify-between">
+                                            <span className="font-semibold text-[15px]">
+                                                Bảng giá
+                                            </span>
+                                            <button type="button" onClick={() => { setActivePriceTab("info"); setShowPriceModal(true); }} className="text-blue-600 text-[14px] hover:underline">
+                                                Tạo mới
+                                            </button>
+                                        </div>
+                                        {/* Search */}
+                                        <div className="px-4 pb-3">
+                                            <div className="h-[33px] border border-blue-500 rounded-lg flex items-center px-2">
+                                                <Search size={18} className="text-gray-400 mr-2" />
+                                                <input type="text" placeholder="Tìm kiếm" className="w-full outline-none text-sm" />
+                                            </div>
+                                        </div>
+
+                                        {/* Danh sách bảng giá */}
+                                        <div>
+                                            {priceListOptions.map((priceList) => {
+                                                const checked = tempPriceLists.includes(priceList);
+                                                return (
+                                                    <label key={priceList} className={`h-[40px] px-5 flex items-center gap-2 cursor-pointer ${checked ? "bg-blue-50" : "hover:bg-gray-50"}`} >
+                                                        <input type="checkbox" checked={checked}
+                                                            onChange={() => {
+                                                                setTempPriceLists((prev) => {
+                                                                    if (prev.includes(priceList)) {
+                                                                        return prev.filter(
+                                                                            (item) => item !== priceList
+                                                                        );
+                                                                    }
+
+                                                                    return [...prev, priceList];
+                                                                });
+                                                            }}
+                                                            className="w-4 h-4 accent-blue-600" />
+                                                        <span className="text-[16px]">
+                                                            {priceList}
+                                                        </span>
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                        {/* Footer */}
+                                        <div className="border-t border-gray-200 px-4 py-3 flex items-center justify-between">
+                                            <button type="button" className="text-blue-600 text-[14px]" onClick={() => { setTempPriceLists([]); }} >
+                                                Bỏ chọn tất cả
+                                            </button>
+                                            <button type="button" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-[14px] font-medium" onClick={() => { setPriceLists(tempPriceLists); setShowPriceListPopup(false); }} >
+                                                Áp dụng
+                                            </button>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                         {/* Nhóm hàng */}
                         <div className="relative mb-5">
@@ -1416,7 +1498,7 @@ const generalpricing = () => {
                     </div>
                     <div className="flex-1 min-w-0 ml-3 bg-white rounded-lg flex flex-col">
                         <div className="h-[calc(100vh-150px)] overflow-y-auto overflow-x-auto">
-                            <table className="w-full min-w-[900px] border-collapse">
+                            <table className="w-full min-w-[900px] table-fixed border-collapse">
                                 <thead className="sticky top-0 z-10">
                                     {/* ================= TIÊU ĐỀ CỘT ================= */}
                                     <tr className="h-[40px] bg-[#e8f3ff] border-b border-blue-300">
@@ -1450,6 +1532,13 @@ const generalpricing = () => {
                                                 Bảng giá chung
                                             </th>
                                         )}
+                                        {priceLists
+                                            .filter((priceList) => priceList !== "Bảng giá chung")
+                                            .map((priceList) => (
+                                                <th key={priceList} className="px-3 text-right text-[16px] font-semibold text-gray-800 w-[140px]" >
+                                                    {priceList}
+                                                </th>
+                                            ))}
                                     </tr>
                                     {/* ================= TÌM KIẾM ================= */}
                                     <tr className="h-[45px] bg-white border-b border-gray-200">
@@ -1482,6 +1571,10 @@ const generalpricing = () => {
                                         {selectedColumns.includes("Bảng giá chung") && (
                                             <th></th>
                                         )}
+                                        {priceLists
+                                            .filter((priceList) => priceList !== "Bảng giá chung")
+                                            .map((priceList) => (<th key={priceList}></th>
+                                            ))}
 
                                     </tr>
                                 </thead>
@@ -1526,6 +1619,13 @@ const generalpricing = () => {
                                                     <input type="text" defaultValue={item.price} className={`w-full h-[25px] border border-gray-300 rounded-lg px-2 text-[16px] text-right outline-none ${index === 0 ? "text-red-500" : "text-gray-800"}`} />
                                                 </td>
                                             )}
+                                            {priceLists
+                                                .filter((priceList) => priceList !== "Bảng giá chung")
+                                                .map((priceList) => (
+                                                    <td key={priceList} className="px-3">
+                                                        <input type="text" defaultValue={item.prices?.[priceList] ?? ""} className="w-full h-[25px] border border-gray-300 rounded-lg px-2 text-[16px] text-center outline-none" />
+                                                    </td>
+                                                ))}
                                         </tr>
                                     ))}
                                 </tbody>

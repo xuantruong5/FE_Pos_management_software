@@ -28,7 +28,6 @@ const SupplierPage = () => {
     ];
     const [showColumns, setShowColumns] = useState(false);
     const [selectedColumns, setSelectedColumns] = useState<string[]>(columns);
-
     // nút tích
     const [selectedSuppliers, setSelectedSuppliers] = useState<number[]>([]);
 
