@@ -1,6 +1,6 @@
 "use client";
 import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, CircleHelp, FileDown, FileInput, List, Plus, Printer, Search, Settings, SlidersHorizontal, X } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const ImportPage = () => {
     const [showFilter, setShowFilter] = useState(false);
@@ -436,7 +436,9 @@ const ImportPage = () => {
     // nút checkbox
     const [selectedImports, setSelectedImports] = useState<number[]>([]);
 
-    // danh sách cột 
+    // Phiếu nhập đang mở chi tiết
+    const [expandedImportId, setExpandedImportId] = useState<number | null>(null);
+
     // Danh sách cột
     const columns = [
         "Mã nhập hàng",
@@ -972,384 +974,556 @@ const ImportPage = () => {
                     <div className="flex-1 min-w-0">
                         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                             {/* BẢNG */}
-                            <div className="overflow-x-auto">
-                                <table className="w-full min-w-[1000px] border-collapse">
-                                    {/* HEADER */}
-                                    <thead>
-                                        <tr className="bg-[#e8f3ff] border-b border-blue-200 h-[40px]">
-                                            {/* Checkbox */}
-                                            <th className="w-[42px] px-2">
-                                                <div className="flex justify-center">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={
-                                                            currentImports.length > 0 &&
-                                                            currentImports.every((item) =>
-                                                                selectedImports.includes(item.id)
-                                                            )
-                                                        }
-                                                        onChange={(e) => {
-                                                            if (e.target.checked) {
-                                                                // Chọn tất cả dòng đang hiển thị
-                                                                setSelectedImports((prev) => [
-                                                                    ...new Set([
-                                                                        ...prev,
-                                                                        ...currentImports.map((item) => item.id),
-                                                                    ]),
-                                                                ]);
-                                                            } else {
-                                                                // Bỏ chọn tất cả dòng đang hiển thị
-                                                                setSelectedImports((prev) =>
-                                                                    prev.filter(
-                                                                        (id) =>
-                                                                            !currentImports.some(
-                                                                                (item) => item.id === id
-                                                                            )
-                                                                    )
-                                                                );
-                                                            }
-                                                        }}
-                                                        className="w-4 h-4 accent-blue-600 cursor-pointer" />
-                                                </div>
-                                            </th>
-                                            {/* Star */}
-                                            <th className="w-[42px] px-1">
-                                                <div className="flex justify-center">
-                                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500" >
-                                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                                    </svg>
-                                                </div>
-                                            </th>
-                                            {/* 1. Mã nhập hàng */}
-                                            {selectedColumns.includes("Mã nhập hàng") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Mã nhập hàng
-                                                </th>
-                                            )}
-
-                                            {/* 2. Mã trả hàng nhập */}
-                                            {selectedColumns.includes("Mã trả hàng nhập") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Mã trả hàng nhập
-                                                </th>
-                                            )}
-
-                                            {/* 3. Thời gian */}
-                                            {selectedColumns.includes("Thời gian") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Thời gian
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Thời gian tạo") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Thời gian tạo
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Ngày cập nhật") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Ngày cập nhật
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Mã NCC") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Mã NCC
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Nhà cung cấp") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Nhà cung cấp
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Chi nhánh") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Chi nhánh
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Người nhập") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Người nhập
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Người tạo") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Người tạo
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Tổng số lượng") && (
-                                                <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Tổng số lượng
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Số lượng mặt hàng") && (
-                                                <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Số lượng mặt hàng
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Tổng tiền hàng") && (
-                                                <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Tổng tiền hàng
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Giảm giá") && (
-                                                <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Giảm giá
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Cần trả NCC") && (
-                                                <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Cần trả NCC
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Chiết khấu thanh toán") && (
-                                                <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Chiết khấu thanh toán
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Tiền đã trả NCC") && (
-                                                <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Tiền đã trả NCC
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Ghi chú") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Ghi chú
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Trạng thái") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Trạng thái
-                                                </th>
-                                            )}
-
-                                            {selectedColumns.includes("Số hóa đơn đầu vào") && (
-                                                <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
-                                                    Số hóa đơn đầu vào
-                                                </th>
-                                            )}
-                                        </tr>
-                                    </thead>
-
-                                    {/* BODY */}
-                                    <tbody>
-                                        {/* DÒNG TỔNG */}
-                                        <tr className="h-[34px] border-b border-gray-200 bg-white">
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            
-                                            <td className="text-right px-4 font-semibold text-[14px] text-gray-800">
-                                                {totalAmount.toLocaleString("vi-VN")}
-                                            </td>
-                                            <td></td>
-                                            <td className="text-right px-4 font-semibold text-[14px] text-gray-800">
-                                                {totalAmount.toLocaleString("vi-VN")}
-                                            </td>
-                                        </tr>
-                                        {currentImports.map((item) => (
-                                            <tr key={item.id} className="h-[45px] border-b border-gray-200 hover:bg-gray-50" >
+                            <div className="relative">
+                                <div className=" overflow-x-auto" >
+                                    <table className="w-full min-w-[1000px] border-collapse">
+                                        {/* HEADER */}
+                                        <thead>
+                                            <tr className="bg-[#e8f3ff] border-b border-blue-200 h-[40px]">
                                                 {/* Checkbox */}
-                                                <td className="px-2">
+                                                <th className="w-[42px] px-2">
                                                     <div className="flex justify-center">
-                                                        <input type="checkbox" checked={selectedImports.includes(item.id)}
-                                                            onChange={() => {
-                                                                setSelectedImports((prev) =>
-                                                                    prev.includes(item.id)
-                                                                        ? prev.filter((id) => id !== item.id)
-                                                                        : [...prev, item.id]
-                                                                );
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={
+                                                                currentImports.length > 0 &&
+                                                                currentImports.every((item) =>
+                                                                    selectedImports.includes(item.id)
+                                                                )
+                                                            }
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    // Chọn tất cả dòng đang hiển thị
+                                                                    setSelectedImports((prev) => [
+                                                                        ...new Set([
+                                                                            ...prev,
+                                                                            ...currentImports.map((item) => item.id),
+                                                                        ]),
+                                                                    ]);
+                                                                } else {
+                                                                    // Bỏ chọn tất cả dòng đang hiển thị
+                                                                    setSelectedImports((prev) =>
+                                                                        prev.filter(
+                                                                            (id) =>
+                                                                                !currentImports.some(
+                                                                                    (item) => item.id === id
+                                                                                )
+                                                                        )
+                                                                    );
+                                                                }
                                                             }}
                                                             className="w-4 h-4 accent-blue-600 cursor-pointer" />
                                                     </div>
-                                                </td>
+                                                </th>
                                                 {/* Star */}
-                                                <td className="px-1">
+                                                <th className="w-[42px] px-1">
                                                     <div className="flex justify-center">
-                                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 hover:text-yellow-500 cursor-pointer">
+                                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500" >
                                                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                                                         </svg>
                                                     </div>
-                                                </td>
+                                                </th>
+                                                {/* 1. Mã nhập hàng */}
                                                 {selectedColumns.includes("Mã nhập hàng") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.code}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Mã nhập hàng
+                                                    </th>
                                                 )}
 
                                                 {/* 2. Mã trả hàng nhập */}
                                                 {selectedColumns.includes("Mã trả hàng nhập") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.returnCode || "-"}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Mã trả hàng nhập
+                                                    </th>
                                                 )}
 
                                                 {/* 3. Thời gian */}
                                                 {selectedColumns.includes("Thời gian") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.time}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Thời gian
+                                                    </th>
                                                 )}
 
-                                                {/* 4. Thời gian tạo */}
                                                 {selectedColumns.includes("Thời gian tạo") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.createdTime}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Thời gian tạo
+                                                    </th>
                                                 )}
 
-                                                {/* 5. Ngày cập nhật */}
                                                 {selectedColumns.includes("Ngày cập nhật") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.updatedDate}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Ngày cập nhật
+                                                    </th>
                                                 )}
 
-                                                {/* 6. Mã NCC */}
                                                 {selectedColumns.includes("Mã NCC") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.supplierCode}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Mã NCC
+                                                    </th>
                                                 )}
 
-                                                {/* 7. Nhà cung cấp */}
                                                 {selectedColumns.includes("Nhà cung cấp") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.supplier}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Nhà cung cấp
+                                                    </th>
                                                 )}
 
-                                                {/* 8. Chi nhánh */}
                                                 {selectedColumns.includes("Chi nhánh") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.branch}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Chi nhánh
+                                                    </th>
                                                 )}
 
-                                                {/* 9. Người nhập */}
                                                 {selectedColumns.includes("Người nhập") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.receiver}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Người nhập
+                                                    </th>
                                                 )}
 
-                                                {/* 10. Người tạo */}
                                                 {selectedColumns.includes("Người tạo") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.creator}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Người tạo
+                                                    </th>
                                                 )}
 
-                                                {/* 11. Tổng số lượng */}
                                                 {selectedColumns.includes("Tổng số lượng") && (
-                                                    <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {Number(item.totalQty || 0).toLocaleString("vi-VN")}
-                                                    </td>
+                                                    <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Tổng số lượng
+                                                    </th>
                                                 )}
 
-                                                {/* 12. Số lượng mặt hàng */}
                                                 {selectedColumns.includes("Số lượng mặt hàng") && (
-                                                    <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {Number(item.itemCount || 0).toLocaleString("vi-VN")}
-                                                    </td>
+                                                    <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Số lượng mặt hàng
+                                                    </th>
                                                 )}
 
-                                                {/* 13. Tổng tiền hàng */}
                                                 {selectedColumns.includes("Tổng tiền hàng") && (
-                                                    <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {Number(
-                                                            String(item.totalAmount || "0").replace(/,/g, "")
-                                                        ).toLocaleString("vi-VN")}
-                                                    </td>
+                                                    <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Tổng tiền hàng
+                                                    </th>
                                                 )}
 
-                                                {/* 14. Giảm giá */}
                                                 {selectedColumns.includes("Giảm giá") && (
-                                                    <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {Number(
-                                                            String(item.discount || "0").replace(/,/g, "")
-                                                        ).toLocaleString("vi-VN")}
-                                                    </td>
+                                                    <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Giảm giá
+                                                    </th>
                                                 )}
 
-                                                {/* 15. Cần trả NCC */}
                                                 {selectedColumns.includes("Cần trả NCC") && (
-                                                    <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {Number(
-                                                            String(item.payableSupplier || "0").replace(/,/g, "")
-                                                        ).toLocaleString("vi-VN")}
-                                                    </td>
+                                                    <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Cần trả NCC
+                                                    </th>
                                                 )}
 
-                                                {/* 16. Chiết khấu thanh toán */}
                                                 {selectedColumns.includes("Chiết khấu thanh toán") && (
-                                                    <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {Number(
-                                                            String(item.paymentDiscount || "0").replace(/,/g, "")
-                                                        ).toLocaleString("vi-VN")}
-                                                    </td>
+                                                    <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Chiết khấu thanh toán
+                                                    </th>
                                                 )}
 
-                                                {/* 17. Tiền đã trả NCC */}
                                                 {selectedColumns.includes("Tiền đã trả NCC") && (
-                                                    <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {Number(
-                                                            String(item.paidSupplier || "0").replace(/,/g, "")
-                                                        ).toLocaleString("vi-VN")}
-                                                    </td>
+                                                    <th className="text-right px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Tiền đã trả NCC
+                                                    </th>
                                                 )}
 
-                                                {/* 18. Ghi chú */}
                                                 {selectedColumns.includes("Ghi chú") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.note || "-"}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Ghi chú
+                                                    </th>
                                                 )}
 
-                                                {/* 19. Trạng thái */}
                                                 {selectedColumns.includes("Trạng thái") && (
-                                                    <td className="px-3">
-                                                        <span className="inline-flex items-center px-2 py-[4px] rounded bg-green-100 text-green-600 text-[15px] whitespace-nowrap">
-                                                            {item.status}
-                                                        </span>
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Trạng thái
+                                                    </th>
                                                 )}
 
-                                                {/* 20. Số hóa đơn đầu vào */}
                                                 {selectedColumns.includes("Số hóa đơn đầu vào") && (
-                                                    <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
-                                                        {item.eInvoice || "-"}
-                                                    </td>
+                                                    <th className="text-left px-3 text-[14px] font-semibold text-gray-800 whitespace-nowrap">
+                                                        Số hóa đơn đầu vào
+                                                    </th>
                                                 )}
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+
+                                        </thead>
+
+                                        {/* BODY */}
+                                        <tbody>
+                                            {/* DÒNG TỔNG */}
+                                            <tr className="h-[45px] border-b border-gray-200 bg-white">
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+
+                                                <td className="text-right px-4 font-semibold text-[14px] text-gray-800">
+                                                    {totalAmount.toLocaleString("vi-VN")}
+                                                </td>
+                                                <td></td>
+                                                <td className="text-right px-4 font-semibold text-[14px] text-gray-800">
+                                                    {totalAmount.toLocaleString("vi-VN")}
+                                                </td>
+                                            </tr>
+                                            {currentImports.map((item) => (
+                                                <React.Fragment key={item.id}>
+                                                    <tr key={`row-${item.id}`} onClick={() => { setExpandedImportId(expandedImportId === item.id ? null : item.id); }}
+                                                        className={` h-[60px] border-b border-gray-200 cursor-pointer ${expandedImportId === item.id ? "bg-[#f1f8ff]" : "hover:bg-gray-50"} `}>
+                                                        {/* Checkbox */}
+                                                        <td className="px-2" onClick={(e) => e.stopPropagation()}>
+                                                            <div className="flex justify-center">
+                                                                <input type="checkbox" checked={selectedImports.includes(item.id)}
+                                                                    onChange={() => {
+                                                                        setSelectedImports((prev) =>
+                                                                            prev.includes(item.id)
+                                                                                ? prev.filter((id) => id !== item.id)
+                                                                                : [...prev, item.id]
+                                                                        );
+                                                                    }}
+                                                                    className="w-4 h-4 accent-blue-600 cursor-pointer" />
+                                                            </div>
+                                                        </td>
+                                                        {/* Star */}
+                                                        <td className="px-1" onClick={(e) => e.stopPropagation()} >
+                                                            <div className="flex justify-center">
+                                                                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 hover:text-yellow-500 cursor-pointer">
+                                                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </td>
+                                                        {selectedColumns.includes("Mã nhập hàng") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.code}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 2. Mã trả hàng nhập */}
+                                                        {selectedColumns.includes("Mã trả hàng nhập") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.returnCode || "-"}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 3. Thời gian */}
+                                                        {selectedColumns.includes("Thời gian") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.time}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 4. Thời gian tạo */}
+                                                        {selectedColumns.includes("Thời gian tạo") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.createdTime}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 5. Ngày cập nhật */}
+                                                        {selectedColumns.includes("Ngày cập nhật") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.updatedDate}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 6. Mã NCC */}
+                                                        {selectedColumns.includes("Mã NCC") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.supplierCode}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 7. Nhà cung cấp */}
+                                                        {selectedColumns.includes("Nhà cung cấp") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.supplier}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 8. Chi nhánh */}
+                                                        {selectedColumns.includes("Chi nhánh") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.branch}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 9. Người nhập */}
+                                                        {selectedColumns.includes("Người nhập") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.receiver}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 10. Người tạo */}
+                                                        {selectedColumns.includes("Người tạo") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.creator}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 11. Tổng số lượng */}
+                                                        {selectedColumns.includes("Tổng số lượng") && (
+                                                            <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {Number(item.totalQty || 0).toLocaleString("vi-VN")}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 12. Số lượng mặt hàng */}
+                                                        {selectedColumns.includes("Số lượng mặt hàng") && (
+                                                            <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {Number(item.itemCount || 0).toLocaleString("vi-VN")}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 13. Tổng tiền hàng */}
+                                                        {selectedColumns.includes("Tổng tiền hàng") && (
+                                                            <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {Number(
+                                                                    String(item.totalAmount || "0").replace(/,/g, "")
+                                                                ).toLocaleString("vi-VN")}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 14. Giảm giá */}
+                                                        {selectedColumns.includes("Giảm giá") && (
+                                                            <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {Number(
+                                                                    String(item.discount || "0").replace(/,/g, "")
+                                                                ).toLocaleString("vi-VN")}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 15. Cần trả NCC */}
+                                                        {selectedColumns.includes("Cần trả NCC") && (
+                                                            <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {Number(
+                                                                    String(item.payableSupplier || "0").replace(/,/g, "")
+                                                                ).toLocaleString("vi-VN")}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 16. Chiết khấu thanh toán */}
+                                                        {selectedColumns.includes("Chiết khấu thanh toán") && (
+                                                            <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {Number(
+                                                                    String(item.paymentDiscount || "0").replace(/,/g, "")
+                                                                ).toLocaleString("vi-VN")}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 17. Tiền đã trả NCC */}
+                                                        {selectedColumns.includes("Tiền đã trả NCC") && (
+                                                            <td className="px-4 text-right text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {Number(
+                                                                    String(item.paidSupplier || "0").replace(/,/g, "")
+                                                                ).toLocaleString("vi-VN")}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 18. Ghi chú */}
+                                                        {selectedColumns.includes("Ghi chú") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.note || "-"}
+                                                            </td>
+                                                        )}
+
+                                                        {/* 19. Trạng thái */}
+                                                        {selectedColumns.includes("Trạng thái") && (
+                                                            <td className="px-3">
+                                                                <span className="inline-flex items-center px-2 py-[4px] rounded bg-green-100 text-green-600 text-[15px] whitespace-nowrap">
+                                                                    {item.status}
+                                                                </span>
+                                                            </td>
+                                                        )}
+
+                                                        {/* 20. Số hóa đơn đầu vào */}
+                                                        {selectedColumns.includes("Số hóa đơn đầu vào") && (
+                                                            <td className="px-3 text-[15px] text-gray-800 whitespace-nowrap">
+                                                                {item.eInvoice || "-"}
+                                                            </td>
+                                                        )}
+                                                    </tr>
+                                                    {expandedImportId === item.id && (
+                                                        <tr>
+                                                            <td colSpan={selectedColumns.length + 2} className="p-0">
+                                                                <div className="w-[calc(98vw-640px)] max-w-full bg-white border-2 border-blue-600 flex flex-col overflow-hidden">
+                                                                    {/* NỘI DUNG CHI TIẾT CỦA BẠN */}
+                                                                    <div className="p-5">
+                                                                        <div className="flex items-center justify-between mb-5">
+                                                                            <div className="flex items-center gap-3">
+                                                                                <span className="text-[18px] font-semibold">
+                                                                                    {item.code}
+                                                                                </span>
+                                                                                <span className="px-2 py-1 rounded bg-green-100 text-green-600 text-[14px]">
+                                                                                    {item.status}
+                                                                                </span>
+                                                                            </div>
+                                                                            <span className="text-[14px] text-gray-600">
+                                                                                {item.branch}
+                                                                            </span>
+                                                                        </div>
+                                                                        {/* THÔNG TIN */}
+                                                                        <div className="grid grid-cols-3 gap-5 mb-6">
+                                                                            <div>
+                                                                                <div className="text-[13px] text-gray-500">
+                                                                                    Người tạo:
+                                                                                </div>
+                                                                                <div className="text-[14px]">
+                                                                                    {item.creator}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div>
+                                                                                <div className="text-[13px] text-gray-500">
+                                                                                    Người nhập:
+                                                                                </div>
+                                                                                <div className="text-[14px]">
+                                                                                    {item.receiver}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div>
+                                                                                <div className="text-[13px] text-gray-500">
+                                                                                    Ngày nhập:
+                                                                                </div>
+                                                                                <div className="text-[14px]">
+                                                                                    {item.time}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div>
+                                                                                <div className="text-[13px] text-gray-500">
+                                                                                    Tên NCC:
+                                                                                </div>
+                                                                                <div className="text-[14px] text-blue-600">
+                                                                                    {item.supplier}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        {/* BẢNG SẢN PHẨM */}
+                                                                        <div className="border-t border-gray-200 pt-4">
+                                                                            <div className="grid grid-cols-7 bg-gray-100 h-[38px] items-center text-[13px] font-semibold">
+                                                                                <div className="px-3">
+                                                                                    Mã hàng
+                                                                                </div>
+                                                                                <div className="px-3 col-span-2">
+                                                                                    Tên hàng
+                                                                                </div>
+                                                                                <div className="px-3 text-right">
+                                                                                    Số lượng
+                                                                                </div>
+                                                                                <div className="px-3 text-right">
+                                                                                    Đơn giá
+                                                                                </div>
+                                                                                <div className="px-3 text-right">
+                                                                                    Giảm giá
+                                                                                </div>
+                                                                                <div className="px-3 text-right">
+                                                                                    Thành tiền
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="grid grid-cols-7 min-h-[60px] items-center text-[14px]">
+                                                                                <div className="px-3 text-blue-600">
+                                                                                    SP000003
+                                                                                </div>
+                                                                                <div className="px-3 col-span-2">
+                                                                                    Nước ngọt xiting - 10000 - 11000 (Thùng)
+                                                                                </div>
+                                                                                <div className="px-3 text-right">
+                                                                                    15
+                                                                                </div>
+                                                                                <div className="px-3 text-right">
+                                                                                    192,000
+                                                                                </div>
+                                                                                <div className="px-3 text-right">
+                                                                                    0
+                                                                                </div>
+                                                                                <div className="px-3 text-right font-semibold">
+                                                                                    2,880,000
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        {/* GHI CHÚ + TỔNG */}
+                                                                        <div className="flex justify-between gap-10 mt-5">
+                                                                            <textarea placeholder="Ghi chú..." className=" flex-1 min-h-[120px] border border-gray-300 rounded-lg p-3 outline-none resize-none text-[14px] " />
+                                                                            <div className="w-[300px] text-[14px]">
+                                                                                <div className="flex justify-between mb-3">
+                                                                                    <span>
+                                                                                        Số lượng mặt hàng
+                                                                                    </span>
+                                                                                    <span>
+                                                                                        {item.itemCount || 1}
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div className="flex justify-between mb-3">
+                                                                                    <span>
+                                                                                        Tổng tiền hàng
+                                                                                    </span>
+                                                                                    <span>
+                                                                                        {Number(
+                                                                                            String(item.totalAmount || "0")
+                                                                                                .replace(/,/g, "")
+                                                                                        ).toLocaleString("vi-VN")}
+                                                                                    </span>
+                                                                                </div>
+
+                                                                                <div className="flex justify-between mb-3">
+                                                                                    <span>
+                                                                                        Giảm giá
+                                                                                    </span>
+                                                                                    <span>
+                                                                                        {Number(
+                                                                                            String(item.discount || "0")
+                                                                                                .replace(/,/g, "")
+                                                                                        ).toLocaleString("vi-VN")}
+                                                                                    </span>
+                                                                                </div>
+
+                                                                                <div className="flex justify-between font-semibold text-[15px]">
+                                                                                    <span>
+                                                                                        Tổng cộng
+                                                                                    </span>
+                                                                                    <span>
+                                                                                        {Number(
+                                                                                            String(item.payableSupplier || "0")
+                                                                                                .replace(/,/g, "")
+                                                                                        ).toLocaleString("vi-VN")}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        {/* BUTTON */}
+                                                                        <div className="flex items-center gap-3 mt-5 pt-4 border-t border-gray-200">
+                                                                            <button className="px-4 py-2 text-[14px] border border-gray-300 rounded-lg">
+                                                                                Hủy
+                                                                            </button>
+                                                                            <button className="px-4 py-2 text-[14px] border border-gray-300 rounded-lg">
+                                                                                Sao chép
+                                                                            </button>
+                                                                            <button className="px-4 py-2 text-[14px] bg-blue-600 text-white rounded-lg">
+                                                                                Mở phiếu
+                                                                            </button>
+                                                                            <button className="px-4 py-2 text-[14px] border border-gray-300 rounded-lg">
+                                                                                Lưu
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </React.Fragment>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             {/* PAGINATION */}
                             <div className="h-[48px] flex items-center justify-between px-3 border-t border-gray-200">

@@ -65,7 +65,7 @@ const AdminHeader = () => {
 
                                 {/* Dropdown */}
                                 {showProfile && (
-                                    <div  className="absolute right-0 top-12 w-[250px] bg-white rounded-lg shadow-lg border border-gray-100 z-50 overflow-hidden">
+                                    <div className="absolute right-0 top-12 w-[250px] bg-white rounded-lg shadow-lg border border-gray-100 z-50 overflow-hidden">
 
                                         {/* User */}
                                         <div className="px-4 py-4 flex items-center gap-3">

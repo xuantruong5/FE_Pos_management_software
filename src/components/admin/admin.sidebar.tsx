@@ -1,12 +1,13 @@
 
 "use client";
+import Link from "next/link";
 const AdminSidebar = () => {
     return (
         <aside className="w-full h-[49px] bg-[#0078F0] text-white mt-2">
             <div className="h-full flex items-center gap-2 px-40">
-                <div className="flex items-center gap-2 px-5 h-[38px] rounded-lg bg-[#0068D7] cursor-pointer whitespace-nowrap font-bold">
+                <Link  href="/dashboard" className="flex items-center gap-2 px-5 h-[38px] rounded-lg bg-[#0068D7] cursor-pointer whitespace-nowrap font-bold">
                     <span>Tổng quan</span>
-                </div>
+                </Link>
                 <div className="relative group">
 
                     <div className="flex items-center gap-2 px-5 h-[38px] rounded-lg group-hover:bg-[#0068D7] cursor-pointer whitespace-nowrap font-bold">
@@ -20,12 +21,12 @@ const AdminSidebar = () => {
                             <p className="px-4 pt-4 text-[13px] text-gray-400">
                                 Hàng hóa
                             </p>
-                            <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
+                            <Link href="/product/productmanagement" className="block px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer mb-3 mt-4" >
                                 Danh sách hàng hóa
-                            </div>
-                            <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
+                            </Link>
+                            <Link href="/product/pricelist" className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer ">
                                 Thiết lập giá
-                            </div>
+                            </Link>
                         </div>
 
                         {/* Cột phải */}
@@ -33,7 +34,7 @@ const AdminSidebar = () => {
                             <p className="px-4 pt-4 text-[13px] text-gray-400">
                                 Kho hàng
                             </p>
-                            <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
+                            <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer mt-4">
                                 Kiểm kho
                             </div>
                             <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
@@ -55,13 +56,13 @@ const AdminSidebar = () => {
                     <div className="absolute top-[42px] left-0 w-[750px] bg-white text-gray-800 rounded-lg shadow-xl hidden group-hover:flex z-50">
                         {/* Cột 1 */}
                         <div className="w-1/3 border-r border-gray-200">
-                            <p className="px-4 pt-4 pb-2 text-[13px] font-semibold text-gray-400">
+                            <p className="px-4 pt-4 pb-2 text-[13px] font-semibold text-gray-400 mb-3">
                                 Nhà cung cấp
                             </p>
-                            <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
+                            <Link href="/Purchase/supplier" className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer mb-4  ">
                                 Nhà cung cấp
-                            </div>
-                            <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer flex items-center justify-between">
+                            </Link>
+                            <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer flex items-center justify-between mt-3 mb-2">
                                 <span>Hóa đơn đầu vào</span>
                                 <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
                                     Mới
@@ -72,13 +73,13 @@ const AdminSidebar = () => {
 
                         {/* Cột 2 */}
                         <div className="w-1/3 border-r border-gray-200">
-                            <p className="px-4 pt-4 pb-2 text-[13px] font-semibold text-gray-400">
+                            <p className="px-4 pt-4 pb-2 text-[13px] font-semibold text-gray-400 mb-4 ">
                                 Mua hàng
                             </p>
-                            <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
+                            <Link href="/Purchase/import" className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer ">
                                 Nhập hàng
-                            </div>
-                            <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
+                            </Link>
+                            <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer mt-3">
                                 Trả hàng nhập
                             </div>
                         </div>
