@@ -1,6 +1,12 @@
 "use client";
-import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, CircleHelp, FileDown, FileInput, List, Plus, Printer, Search, Settings, SlidersHorizontal, X } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, CircleHelp, Clock, FileDown, FileInput, List, MoreHorizontal, Plus, Printer, Save, Search, Settings, SlidersHorizontal, Trash, Trash2, Upload, X } from "lucide-react";
 import React, { useState } from "react";
+import { DatePicker, TimePicker, Select } from "antd";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import dayjs from "dayjs";
+import "antd/dist/reset.css";
+dayjs.extend(customParseFormat);
+
 
 const ImportPage = () => {
     const [showFilter, setShowFilter] = useState(false);
@@ -464,6 +470,20 @@ const ImportPage = () => {
     ];
     const [showColumns, setShowColumns] = useState(false);
     const [selectedColumns, setSelectedColumns] = useState<string[]>(columns);
+
+    // chi tiết 
+    const [activeDetailTab, setActiveDetailTab] = useState<"info" | "payment">("info");
+
+    // thông tin của chi tiết 
+    const [detailReceiver, setDetailReceiver] = useState("");
+    const [detailDate, setDetailDate] = useState(dayjs());
+    const [detailTime, setDetailTime] = useState(dayjs());
+
+    // mở đồng hồ và lịch 
+    const [dateOpen, setDateOpen] = useState(false);
+    const [timeOpen, setTimeOpen] = useState(false);
+
+
 
 
     return (
@@ -1179,7 +1199,7 @@ const ImportPage = () => {
                                             {currentImports.map((item) => (
                                                 <React.Fragment key={item.id}>
                                                     <tr key={`row-${item.id}`} onClick={() => { setExpandedImportId(expandedImportId === item.id ? null : item.id); }}
-                                                        className={` h-[60px] border-b border-gray-200 cursor-pointer ${expandedImportId === item.id ? "bg-[#f1f8ff]" : "hover:bg-gray-50"} `}>
+                                                        className={` h-[60px] cursor-pointer ${expandedImportId === item.id ? "bg-[#f1f8ff] " : "border-b border-gray-200 hover:bg-gray-100"} `}>
                                                         {/* Checkbox */}
                                                         <td className="px-2" onClick={(e) => e.stopPropagation()}>
                                                             <div className="flex justify-center">
@@ -1359,161 +1379,342 @@ const ImportPage = () => {
                                                                 <div className="w-[calc(98vw-640px)] max-w-full bg-white border-2 border-blue-600 flex flex-col overflow-hidden">
                                                                     {/* NỘI DUNG CHI TIẾT CỦA BẠN */}
                                                                     <div className="p-5">
-                                                                        <div className="flex items-center justify-between mb-5">
-                                                                            <div className="flex items-center gap-3">
-                                                                                <span className="text-[18px] font-semibold">
-                                                                                    {item.code}
-                                                                                </span>
-                                                                                <span className="px-2 py-1 rounded bg-green-100 text-green-600 text-[14px]">
-                                                                                    {item.status}
-                                                                                </span>
-                                                                            </div>
-                                                                            <span className="text-[14px] text-gray-600">
-                                                                                {item.branch}
-                                                                            </span>
+                                                                        {/* TABS */}
+                                                                        <div className="flex items-center gap-8 border-b border-gray-200 -mx-5 px-5 mb-5">
+                                                                            <button type="button" onClick={() => setActiveDetailTab("info")}
+                                                                                className={`relative h-[40px] text-[18px] ${activeDetailTab === "info" ? "text-blue-600 font-medium" : "text-gray-700"}`} >
+                                                                                Thông tin
+                                                                                {activeDetailTab === "info" && (
+                                                                                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600" />
+                                                                                )}
+                                                                            </button>
+                                                                            <button type="button" onClick={() => setActiveDetailTab("payment")}
+                                                                                className={`relative h-[40px] text-[18px] ${activeDetailTab === "payment" ? "text-blue-600 font-medium" : "text-gray-700"}`} >
+                                                                                Lịch sử thanh toán
+                                                                                {activeDetailTab === "payment" && (
+                                                                                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600" />
+                                                                                )}
+                                                                            </button>
                                                                         </div>
-                                                                        {/* THÔNG TIN */}
-                                                                        <div className="grid grid-cols-3 gap-5 mb-6">
-                                                                            <div>
-                                                                                <div className="text-[13px] text-gray-500">
-                                                                                    Người tạo:
-                                                                                </div>
-                                                                                <div className="text-[14px]">
-                                                                                    {item.creator}
-                                                                                </div>
-                                                                            </div>
-                                                                            <div>
-                                                                                <div className="text-[13px] text-gray-500">
-                                                                                    Người nhập:
-                                                                                </div>
-                                                                                <div className="text-[14px]">
-                                                                                    {item.receiver}
-                                                                                </div>
-                                                                            </div>
-                                                                            <div>
-                                                                                <div className="text-[13px] text-gray-500">
-                                                                                    Ngày nhập:
-                                                                                </div>
-                                                                                <div className="text-[14px]">
-                                                                                    {item.time}
-                                                                                </div>
-                                                                            </div>
-                                                                            <div>
-                                                                                <div className="text-[13px] text-gray-500">
-                                                                                    Tên NCC:
-                                                                                </div>
-                                                                                <div className="text-[14px] text-blue-600">
-                                                                                    {item.supplier}
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        {/* BẢNG SẢN PHẨM */}
-                                                                        <div className="border-t border-gray-200 pt-4">
-                                                                            <div className="grid grid-cols-7 bg-gray-100 h-[38px] items-center text-[13px] font-semibold">
-                                                                                <div className="px-3">
-                                                                                    Mã hàng
-                                                                                </div>
-                                                                                <div className="px-3 col-span-2">
-                                                                                    Tên hàng
-                                                                                </div>
-                                                                                <div className="px-3 text-right">
-                                                                                    Số lượng
-                                                                                </div>
-                                                                                <div className="px-3 text-right">
-                                                                                    Đơn giá
-                                                                                </div>
-                                                                                <div className="px-3 text-right">
-                                                                                    Giảm giá
-                                                                                </div>
-                                                                                <div className="px-3 text-right">
-                                                                                    Thành tiền
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="grid grid-cols-7 min-h-[60px] items-center text-[14px]">
-                                                                                <div className="px-3 text-blue-600">
-                                                                                    SP000003
-                                                                                </div>
-                                                                                <div className="px-3 col-span-2">
-                                                                                    Nước ngọt xiting - 10000 - 11000 (Thùng)
-                                                                                </div>
-                                                                                <div className="px-3 text-right">
-                                                                                    15
-                                                                                </div>
-                                                                                <div className="px-3 text-right">
-                                                                                    192,000
-                                                                                </div>
-                                                                                <div className="px-3 text-right">
-                                                                                    0
-                                                                                </div>
-                                                                                <div className="px-3 text-right font-semibold">
-                                                                                    2,880,000
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        {/* GHI CHÚ + TỔNG */}
-                                                                        <div className="flex justify-between gap-10 mt-5">
-                                                                            <textarea placeholder="Ghi chú..." className=" flex-1 min-h-[120px] border border-gray-300 rounded-lg p-3 outline-none resize-none text-[14px] " />
-                                                                            <div className="w-[300px] text-[14px]">
-                                                                                <div className="flex justify-between mb-3">
-                                                                                    <span>
-                                                                                        Số lượng mặt hàng
-                                                                                    </span>
-                                                                                    <span>
-                                                                                        {item.itemCount || 1}
+
+                                                                        {activeDetailTab === "info" && (
+                                                                            <div className="p-5">
+                                                                                <div className="flex items-center justify-between mb-5">
+                                                                                    <div className="flex items-center gap-3">
+                                                                                        <span className="text-[18px] font-semibold">
+                                                                                            {item.code}
+                                                                                        </span>
+                                                                                        <span className="px-2 py-1 rounded bg-green-100 text-green-600 text-[14px]">
+                                                                                            {item.status}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <span className="text-[14px] text-gray-600">
+                                                                                        {item.branch}
                                                                                     </span>
                                                                                 </div>
-                                                                                <div className="flex justify-between mb-3">
-                                                                                    <span>
-                                                                                        Tổng tiền hàng
-                                                                                    </span>
-                                                                                    <span>
-                                                                                        {Number(
-                                                                                            String(item.totalAmount || "0")
-                                                                                                .replace(/,/g, "")
-                                                                                        ).toLocaleString("vi-VN")}
-                                                                                    </span>
+                                                                                {/* THÔNG TIN */}
+                                                                                <div className="grid grid-cols-3 gap-5 mb-6">
+
+                                                                                    {/* Người tạo */}
+                                                                                    <div className="flex items-center gap-1">
+                                                                                        <div className="text-[13px] text-gray-500">
+                                                                                            Người tạo:
+                                                                                        </div>
+
+                                                                                        <div className="text-[14px]">
+                                                                                            {item.creator}
+                                                                                        </div>
+                                                                                    </div>
+
+
+                                                                                    {/* Người nhập */}
+                                                                                    <div>
+                                                                                        <div className="text-[13px] text-gray-500 mb-1">
+                                                                                            Người nhập:
+                                                                                        </div>
+
+                                                                                        <Select
+                                                                                            value={detailReceiver || item.receiver}
+                                                                                            onChange={(value) => setDetailReceiver(value)}
+                                                                                            className="w-[210px]"
+                                                                                            size="middle"
+                                                                                            options={[
+                                                                                                {
+                                                                                                    value: "Nguyễn Văn An",
+                                                                                                    label: "Nguyễn Văn An",
+                                                                                                },
+                                                                                                {
+                                                                                                    value: "Trần Văn Bình",
+                                                                                                    label: "Trần Văn Bình",
+                                                                                                },
+                                                                                                {
+                                                                                                    value: "Lê Thị Hoa",
+                                                                                                    label: "Lê Thị Hoa",
+                                                                                                },
+                                                                                                {
+                                                                                                    value: "Phạm Minh Tuấn",
+                                                                                                    label: "Phạm Minh Tuấn",
+                                                                                                },
+                                                                                                {
+                                                                                                    value: "Hương - Kế Toán",
+                                                                                                    label: "Hương - Kế Toán",
+                                                                                                },
+                                                                                            ]}
+                                                                                        />
+                                                                                    </div>
+
+
+                                                                                    {/* Ngày nhập */}
+                                                                                    <div>
+                                                                                        <div className="text-[13px] text-gray-500 mb-1">
+                                                                                            Ngày nhập:
+                                                                                        </div>
+                                                                                        <div className="flex items-center w-[205px] h-[32px] border border-gray-300 rounded-md bg-white px-1">
+                                                                                            {/* NGÀY */}
+                                                                                            <DatePicker
+                                                                                                value={ detailDate.isValid() ? detailDate : dayjs(item.time, "DD/MM/YYYY HH:mm") }
+                                                                                                onChange={(date) => { if (date) { setDetailDate(date); setDateOpen(false); } }}
+                                                                                                format="DD/MM/YYYY"
+                                                                                                allowClear={false}
+                                                                                                variant="borderless"
+                                                                                                suffixIcon={null}
+                                                                                                open={dateOpen}
+                                                                                                onOpenChange={setDateOpen}
+                                                                                                className="!w-[100px] !h-[30px] !p-0 !text-[13px]" />
+                                                                                            {/* GIỜ */}
+                                                                                            <TimePicker value={ detailTime.isValid() ? detailTime : dayjs(item.time, "DD/MM/YYYY HH:mm") }
+                                                                                                onChange={(time) => { if (time) { setDetailTime(time); setTimeOpen(false); }}}
+                                                                                                format="HH:mm"
+                                                                                                minuteStep={1}
+                                                                                                allowClear={false}
+                                                                                                variant="borderless"
+                                                                                                suffixIcon={null}
+                                                                                                open={timeOpen}
+                                                                                                onOpenChange={setTimeOpen}
+                                                                                                className="!w-[55px] !h-[30px] !p-0 !text-[13px]" />
+
+                                                                                            {/* ICON LỊCH */}
+                                                                                            <button type="button" onClick={() => { setTimeOpen(false); setDateOpen(true); }} className="flex items-center justify-center ml-2 shrink-0"  >
+                                                                                                <CalendarDays size={15} className="text-gray-500" />
+                                                                                            </button>
+
+                                                                                            {/* ICON ĐỒNG HỒ */}
+                                                                                            <button type="button" onClick={() => { setDateOpen(false); setTimeOpen(true); }} className="flex items-center justify-center ml-2 shrink-0 " >
+                                                                                                <Clock size={15} className="text-gray-500" />
+                                                                                            </button>
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                   
+                                                                                    {/* Tên NCC */}
+                                                                                    <div className="flex items-center gap-1">
+                                                                                        <div className="text-[13px] text-gray-500">
+                                                                                            Tên NCC: 
+                                                                                        </div>
+
+                                                                                        <div className="text-[14px] text-blue-600">
+                                                                                            {item.supplier}
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                                {/* BẢNG SẢN PHẨM */}
+                                                                                <div className="border-t border-gray-200 pt-4">
+                                                                                    <div className="grid grid-cols-7 bg-gray-100 h-[38px] items-center text-[13px] font-semibold">
+                                                                                        <div className="px-3">
+                                                                                            Mã hàng
+                                                                                        </div>
+                                                                                        <div className="px-3 col-span-2">
+                                                                                            Tên hàng
+                                                                                        </div>
+                                                                                        <div className="px-3 text-right">
+                                                                                            Số lượng
+                                                                                        </div>
+                                                                                        <div className="px-3 text-right">
+                                                                                            Đơn giá
+                                                                                        </div>
+                                                                                        <div className="px-3 text-right">
+                                                                                            Giảm giá
+                                                                                        </div>
+                                                                                        <div className="px-3 text-right">
+                                                                                            Thành tiền
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="grid grid-cols-7 min-h-[60px] items-center text-[14px]">
+                                                                                        <div className="px-3 text-blue-600">
+                                                                                            SP000003
+                                                                                        </div>
+                                                                                        <div className="px-3 col-span-2">
+                                                                                            Nước ngọt xiting - 10000 - 11000 (Thùng)
+                                                                                        </div>
+                                                                                        <div className="px-3 text-right">
+                                                                                            15
+                                                                                        </div>
+                                                                                        <div className="px-3 text-right">
+                                                                                            192,000
+                                                                                        </div>
+                                                                                        <div className="px-3 text-right">
+                                                                                            0
+                                                                                        </div>
+                                                                                        <div className="px-3 text-right font-semibold">
+                                                                                            2,880,000
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                {/* GHI CHÚ + TỔNG */}
+                                                                                <div className="flex justify-between gap-10 mt-5">
+                                                                                    <textarea placeholder="Ghi chú..." className=" flex-1 min-h-[120px] border border-gray-300 rounded-lg p-3 outline-none resize-none text-[14px] " />
+                                                                                    <div className="w-[300px] text-[14px]">
+                                                                                        <div className="flex justify-between mb-3">
+                                                                                            <span>
+                                                                                                Số lượng mặt hàng
+                                                                                            </span>
+                                                                                            <span>
+                                                                                                {item.itemCount || 1}
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div className="flex justify-between mb-3">
+                                                                                            <span>
+                                                                                                Tổng tiền hàng
+                                                                                            </span>
+                                                                                            <span>
+                                                                                                {Number(
+                                                                                                    String(item.totalAmount || "0")
+                                                                                                        .replace(/,/g, "")
+                                                                                                ).toLocaleString("vi-VN")}
+                                                                                            </span>
+                                                                                        </div>
+
+                                                                                        <div className="flex justify-between mb-3">
+                                                                                            <span>
+                                                                                                Giảm giá
+                                                                                            </span>
+                                                                                            <span>
+                                                                                                {Number(
+                                                                                                    String(item.discount || "0")
+                                                                                                        .replace(/,/g, "")
+                                                                                                ).toLocaleString("vi-VN")}
+                                                                                            </span>
+                                                                                        </div>
+
+                                                                                        <div className="flex justify-between font-semibold text-[15px]">
+                                                                                            <span>
+                                                                                                Tổng cộng
+                                                                                            </span>
+                                                                                            <span>
+                                                                                                {Number(
+                                                                                                    String(item.payableSupplier || "0")
+                                                                                                        .replace(/,/g, "")
+                                                                                                ).toLocaleString("vi-VN")}
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </div>
 
-                                                                                <div className="flex justify-between mb-3">
-                                                                                    <span>
-                                                                                        Giảm giá
-                                                                                    </span>
-                                                                                    <span>
-                                                                                        {Number(
-                                                                                            String(item.discount || "0")
-                                                                                                .replace(/,/g, "")
-                                                                                        ).toLocaleString("vi-VN")}
-                                                                                    </span>
-                                                                                </div>
+                                                                                {/* BUTTON */}
+                                                                                <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-200">
 
-                                                                                <div className="flex justify-between font-semibold text-[15px]">
-                                                                                    <span>
-                                                                                        Tổng cộng
-                                                                                    </span>
-                                                                                    <span>
-                                                                                        {Number(
-                                                                                            String(item.payableSupplier || "0")
-                                                                                                .replace(/,/g, "")
-                                                                                        ).toLocaleString("vi-VN")}
-                                                                                    </span>
+                                                                                    {/* BÊN TRÁI */}
+                                                                                    <div className="flex items-center gap-2">
+
+                                                                                        {/* Hủy */}
+                                                                                        <button className="h-[34px] px-3 flex items-center gap-1.5 text-[14px] text-gray-700 hover:bg-gray-200 rounded-md" >
+                                                                                            <Trash2 size={18} strokeWidth={1.8} />
+                                                                                            Hủy
+                                                                                        </button>
+                                                                                        {/* Sao chép */}
+                                                                                        <button className="h-[34px] px-3 flex items-center gap-1.5 text-[14px] text-gray-700 hover:bg-gray-200 rounded-md" >
+                                                                                            <FileInput size={17} strokeWidth={1.8} />
+                                                                                            Sao chép
+                                                                                        </button>
+
+                                                                                        {/* Xuất file */}
+                                                                                        <button className="h-[34px] px-3 flex items-center gap-1.5 text-[14px] text-gray-700 hover:bg-gray-200 rounded-md" >
+                                                                                            <FileDown size={17} strokeWidth={1.8} />
+                                                                                            Xuất file
+                                                                                        </button>
+
+                                                                                    </div>
+                                                                                    {/* BÊN PHẢI */}
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        {/* Mở phiếu */}
+                                                                                        <button className="h-[34px] px-3 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 !text-white text-[14px] font-medium rounded-lg" >
+                                                                                            <FileInput size={17} strokeWidth={2} />
+                                                                                            Mở phiếu
+                                                                                        </button>
+                                                                                        {/* Lưu */}
+                                                                                        <button className="h-[34px] px-3 flex items-center gap-1.5 border border-gray-300 bg-white hover:bg-gray-200 text-[14px] text-gray-700 rounded-lg" >
+                                                                                            <Save size={17} strokeWidth={1.8} />
+                                                                                            Lưu
+                                                                                        </button>
+                                                                                        {/* Trả hàng nhập */}
+                                                                                        <button
+                                                                                            className="h-[34px] px-3 flex items-center gap-1.5 border border-gray-300 bg-white hover:bg-gray-200 text-[14px] text-gray-700 rounded-lg" >
+                                                                                            <Upload size={17} strokeWidth={1.8} />
+                                                                                            Trả hàng nhập
+                                                                                        </button>
+                                                                                        {/* In tem mã */}
+                                                                                        <button className="h-[34px] px-3 flex items-center gap-1.5 border border-gray-300 bg-white hover:bg-gray-200 text-[14px] text-gray-700 rounded-lg">
+                                                                                            <Printer size={17} strokeWidth={1.8} />
+                                                                                            In tem mã
+                                                                                        </button>
+                                                                                        {/* More */}
+                                                                                        <button className="w-[34px] h-[34px] flex items-center justify-center border border-gray-300 bg-white hover:bg-gray-200 text-gray-700 rounded-lg" >
+                                                                                            <MoreHorizontal size={18} strokeWidth={1.8} />
+                                                                                        </button>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        {/* BUTTON */}
-                                                                        <div className="flex items-center gap-3 mt-5 pt-4 border-t border-gray-200">
-                                                                            <button className="px-4 py-2 text-[14px] border border-gray-300 rounded-lg">
-                                                                                Hủy
-                                                                            </button>
-                                                                            <button className="px-4 py-2 text-[14px] border border-gray-300 rounded-lg">
-                                                                                Sao chép
-                                                                            </button>
-                                                                            <button className="px-4 py-2 text-[14px] bg-blue-600 text-white rounded-lg">
-                                                                                Mở phiếu
-                                                                            </button>
-                                                                            <button className="px-4 py-2 text-[14px] border border-gray-300 rounded-lg">
-                                                                                Lưu
-                                                                            </button>
-                                                                        </div>
+                                                                        )}
+                                                                        {activeDetailTab === "payment" && (
+                                                                            <div className="p-0">
+                                                                                {/* HEADER TABLE */}
+                                                                                <div className="grid grid-cols-6 h-[38px] bg-gray-100 items-center text-[13px] font-semibold">
+                                                                                    <div className="px-3">
+                                                                                        Mã phiếu
+                                                                                    </div>
+                                                                                    <div className="px-3">
+                                                                                        Thời gian
+                                                                                    </div>
+                                                                                    <div className="px-3">
+                                                                                        Người tạo
+                                                                                    </div>
+                                                                                    <div className="px-3">
+                                                                                        Phương thức
+                                                                                    </div>
+                                                                                    <div className="px-3">
+                                                                                        Trạng thái
+                                                                                    </div>
+                                                                                    <div className="px-3 text-right">
+                                                                                        Tiền chi
+                                                                                    </div>
+
+                                                                                </div>
+                                                                                {/* PAYMENT ROW */}
+                                                                                <div className="grid grid-cols-6 min-h-[45px] items-center text-[14px]">
+                                                                                    <div className="px-3 text-blue-600">
+                                                                                        TTPN{item.code.replace("PN", "")}
+                                                                                    </div>
+                                                                                    <div className="px-3">
+                                                                                        10/09/2026 21:38
+                                                                                    </div>
+                                                                                    <div className="px-3">
+                                                                                        truong tran
+                                                                                    </div>
+                                                                                    <div className="px-3">
+                                                                                        Tiền mặt
+                                                                                    </div>
+                                                                                    <div className="px-3">
+                                                                                        <span className="px-2 py-1 rounded bg-green-100 text-green-600 text-[13px]">
+                                                                                            Đã thanh toán
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div className="px-3 text-right">
+                                                                                        0
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
                                                                     </div>
                                                                 </div>
                                                             </td>
