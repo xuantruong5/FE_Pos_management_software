@@ -8,25 +8,15 @@ const Deliverysale = () => {
     const [activeTab, setActiveTab] = useState<"general" | "invoice">("general");
     const [avatar, setAvatar] = useState<string | null>(null);
     const [taxCode, setTaxCode] = useState("");
-
-
     const [codEnabled, setCodEnabled] = useState(false);
-
     // kiện hàng
     const [openPackageModal, setOpenPackageModal] = useState(false);
     const [packageType, setPackageType] = useState("single");
     const [packages, setPackages] = useState([
-        {
-            name: "",
-            weight: "",
-            length: "",
-            width: "",
-            height: "",
-        },
+        { name: "", weight: "", length: "", width: "", height: "", },
     ]);
     const handleMultiPackage = () => {
         setPackageType("multiple");
-
         setPackages([
             {
                 name: "",
@@ -56,9 +46,6 @@ const Deliverysale = () => {
             },
         ]);
     };
-
-
-
 
     const addProduct = usePosStore((s) => s.addProduct); // chọn sản phẩm 
     const currentInvoiceId = usePosStore(
