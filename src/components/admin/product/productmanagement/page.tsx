@@ -3,6 +3,7 @@
 import { Search, SlidersHorizontal, Plus, ChevronDown, FileUp, FileDown, List, Settings, CircleHelp, ChevronRight, CalendarDays, Trash2, Copy, PencilLine, Printer, Ellipsis, FileInput, X, ChevronUp, Info, Image as ImageIcon, Check, Tag, FileSymlink, PrinterCheck, Download, MoreHorizontal, } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
+import AddProduct from "../model/add";
 
 const Product = () => {
     const columns = [
@@ -714,6 +715,8 @@ const Product = () => {
     // đơn vị ngoài 
     const [openProductUnit, setOpenProductUnit] = useState<number | null>(null);
 
+    const [showProductModal, setShowProductModal] = useState(false);
+
     return (
         <div className="min-h-screen ">
             <div className="px-30">
@@ -832,7 +835,7 @@ const Product = () => {
                                 </button>
                                 {/* Dropdown */}
                                 <div className="absolute top-[46px] right-0 w-[250px] bg-white text-gray-800 rounded-lg shadow-xl hidden group-hover:block z-50 overflow-hidden">
-                                    <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer mt-2">
+                                    <div onClick={() => setShowProductModal(true)} className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer mt-2">
                                         Hàng hóa
                                     </div>
                                     <div className="px-4 py-4 hover:bg-[#f1f2f4] cursor-pointer">
@@ -898,6 +901,12 @@ const Product = () => {
                             </button>
                         </div>
                     )}
+
+
+                    {showProductModal && (
+                        <AddProduct onClose={() => setShowProductModal(false)} />
+                    )}
+                    
                 </header>
                 <div className="flex gap-4 mt-4">
                     {/* ================= CỘT FILTER BÊN TRÁI ================= */}
