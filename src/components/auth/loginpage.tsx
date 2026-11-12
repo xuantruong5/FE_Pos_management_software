@@ -1,18 +1,60 @@
 "use client";
 import { useState } from "react";
 import { Eye, EyeOff, BarChart3, ShoppingCart, ChevronDown, } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { setToken } from "@/lib/auth";
+import { apiFetch } from "@/lib/api";
 const LoginPage = () => {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [rememberLogin, setRememberLogin] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const handleLogin = (type: "manage" | "sale") => {
-        console.log("Login type:", type);
-        console.log({
-            username,
-            password,
-            rememberLogin,
-        });
+    const handleLogin = async (type: "manage" | "sale") => {
+        if (!username.trim() || !password) {
+            setError("Vui lòng nhập tên đăng nhập và mật khẩu.");
+            return;
+        }
+        try {
+            setLoading(true);
+            setError("");
+            const data = await apiFetch<{
+                status: boolean;
+                message: string;
+                token: string;
+                user: any;
+            }>("login", {
+                method: "POST",
+                body: JSON.stringify({
+                    email: username,
+                    password: password,
+                    type: type,
+                }),
+            });
+            console.log("LOGIN RESPONSE:", data);
+
+            if (!data.status  || !data.token) {
+                setError(data.message || "Đăng nhập thất bại.");
+                return;
+            }
+            console.log("TOKEN:", data.token);
+
+            setToken(data.token);
+            console.log("ĐANG CHUYỂN TRANG...");
+
+            if (type === "manage") {
+                router.push("/dashboard");
+            } else {
+                router.push("/Pos");
+            }
+
+        } catch (error: any) {
+            setError(error.message || "Đăng nhập thất bại.");
+        } finally {
+            setLoading(false);
+        }
     };
     return (
         <main className="relative min-h-screen w-full overflow-hidden">
@@ -62,6 +104,11 @@ const LoginPage = () => {
                                 )}
                             </button>
                         </div>
+                        {error && (
+                            <p className="mb-4 text-sm text-red-500">
+                                {error}
+                            </p>
+                        )}
                         {/* REMEMBER + FORGOT */}
                         <div className="flex items-center text-[15px]">
                             {/* Remember */}
@@ -81,17 +128,17 @@ const LoginPage = () => {
                     {/* ================= LOGIN BUTTONS ================= */}
                     <div className="flex h-[50px]">
                         {/* QUẢN LÝ */}
-                        <button type="button" onClick={() => handleLogin("manage")}
+                        <button type="button" disabled={loading} onClick={() => handleLogin("manage")}
                             className="  flex flex-1 items-center justify-center  gap-[7px] bg-[#087df5] text-[18px] font-semibold text-white transition hover:bg-[#006fe5] active:bg-[#0066d6]" >
                             <BarChart3 size={18} strokeWidth={2.5} />
-                            <span>Quản lý</span>
+                            {loading ? "Đang đăng nhập..." : "Quản lý"}
                         </button>
 
                         {/* BÁN HÀNG */}
-                        <button type="button" onClick={() => handleLogin("sale")}
+                        <button type="button" disabled={loading} onClick={() => handleLogin("sale")}
                             className=" flex flex-1  items-center justify-center gap-[7px] bg-[#00be3f] text-[18px] font-semibold text-white transition hover:bg-[#00ad39] active:bg-[#009e34] " >
                             <ShoppingCart size={18} strokeWidth={2.5} />
-                            <span>Bán hàng</span>
+                            {loading ? "Đang đăng nhập..." : "Bán Hàng "}
                         </button>
                     </div>
                 </div>

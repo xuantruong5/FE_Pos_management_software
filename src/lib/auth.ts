@@ -1,3 +1,4 @@
+
 export function getToken(): string | null {
   if (typeof window === "undefined") {
     return null;
@@ -7,11 +8,15 @@ export function getToken(): string | null {
 }
 
 export function setToken(token: string): void {
-  localStorage.setItem("token", token);
+  if (typeof window !== "undefined") {
+    localStorage.setItem("token", token);
+  }
 }
 
 export function removeToken(): void {
-  localStorage.removeItem("token");
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("token");
+  }
 }
 
 export function isAuthenticated(): boolean {
